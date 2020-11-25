@@ -1,5 +1,5 @@
 TEMPLATE = app
-HEADERS += STANDASetup.h
-SOURCES += main.cpp STANDASetup.cpp
+HEADERS += STANDADevice.h
+SOURCES += main.cpp STANDADevice.cpp
 QT      += widgets
 TARGET   = testDevice.exe

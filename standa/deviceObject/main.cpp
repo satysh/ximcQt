@@ -1,11 +1,11 @@
 #include <QtWidgets>
-#include "STANDASetup.h"
+#include "STANDADevice.h"
 
 int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
     QWidget wgt;
-    STANDASetup device;
+    STANDADevice device;
 
     QPushButton* pcmdInit = new QPushButton("init");
     QPushButton* pcmdExit = new QPushButton("exit");
@@ -55,10 +55,10 @@ int main(int argc, char **argv)
 
     // ---- Connection
     QObject::connect(pdevNameEdit, SIGNAL(textChanged(QString)),
-                     &device, SLOT(setDevName(QString))
+                     &device, SLOT(setName(QString))
                     );
     QObject::connect(pdevIdEdit, SIGNAL(textChanged(QString)),
-                     &device, SLOT(setDevId(QString))
+                     &device, SLOT(setId(QString))
                     );
     QObject::connect(pxEdit, SIGNAL(textChanged(QString)),
                      &device, SLOT(setXcor(QString))
@@ -73,7 +73,7 @@ int main(int argc, char **argv)
                      &device, SLOT(setStep(QString))
                     );
     QObject::connect(pcmdInit, SIGNAL(clicked()),
-                     &device, SLOT(InitDevice())
+                     &device, SLOT(Init())
                     );
     QObject::connect(pcmdExit, SIGNAL(clicked()),
                      &app, SLOT(quit())
