@@ -15,6 +15,7 @@ public:
     double  getPos () { return devPos; }
     double  getStep() { return devStep; }
 
+    bool check(); // This method provides checking device to be moved safty
 
 public slots:
     void setName(QString name) { devName=name;          emit nameIsSet(); }
@@ -28,7 +29,6 @@ public slots:
     void stop();
     void move();
 
-    void check();              // This slot provides checking device to be moved safty
 signals:
     void nameIsSet   ();
     void idIsSet     ();

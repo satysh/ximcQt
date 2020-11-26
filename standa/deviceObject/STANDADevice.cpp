@@ -52,17 +52,22 @@ void STANDADevice::move()
     emit deviceMoveEnd();
 }
 
-void STANDADevice::check()
-{
-    (devFoundStatus&devIdIsValid&devPosIsValid&devStepIsValid) ?
-        emit deviceIsAvailable() : emit deviceIsNotAvailable();
-
-}
 // ------------- Private methods
 void STANDADevice::makeBaseConnections()
 {
 
 }
 
+bool STANDADevice::check()
+{
+    if (devFoundStatus && devIdIsValid && devPosIsValid && devStepIsValid) {
+        emit deviceIsAvailable();
+        return true;
+    }
+    else {
+        emit deviceIsNotAvailable();
+        return false;
+    }
+}
 
 // -------------------------------------------------------------------------------------

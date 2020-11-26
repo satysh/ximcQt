@@ -2,6 +2,7 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QLineEdit>
+#include <QSlider>
 #include <QIntValidator>
 #include <QDoubleValidator>
 #include <QHBoxLayout>
@@ -14,9 +15,9 @@ STANDADeviceWidget::STANDADeviceWidget(QWidget *parent/*=0*/)
     : QWidget(parent)
 {
     pdevice = new STANDADevice;
-    makeButtons();
     makeLabels();
     makeEditors();
+    makeButtons();
     makeLayout();
     makeConnections();
 }
@@ -33,62 +34,76 @@ STANDADeviceWidget::~STANDADeviceWidget()
     if (pnameEdit) delete pnameEdit;
     if (pidEdit)   delete pidEdit;
     if (pposEdit)  delete pposEdit;
+    if (pcmddownPos) delete pcmddownPos;
+    if (pcmdupPos) delete pcmdupPos;
     if (pstepEdit) delete pstepEdit;
+    if (psldrPos) delete psldrPos;
 }
 
 // -------- make base widgets that the class includes
-void STANDADeviceWidget::makeButtons()
-{
-    pcmdOk   = new QPushButton("Ok");
-    pcmdMove = new QPushButton("move");
-}
 void STANDADeviceWidget::makeLabels()
 {
-    plblName = new QLabel("&name");
-    plblId   = new QLabel("&id");
-    plblPos  = new QLabel("&pos [mm]");
-    plblStep = new QLabel("&step");
+    plblName    = new QLabel("&name");
+    plblId      = new QLabel("&id");
+    plblPos     = new QLabel("&pos [mm]");
+    plblupPos   = new QLabel("&up pos");
+    plbldownPos = new QLabel("&down pos");
+    plblStep    = new QLabel("&step");
 }
 void STANDADeviceWidget::makeEditors()
 {
-    pnameEdit = new QLineEdit;
+    pnameEdit = new QLineEdit("empty");
+    //pnameEdit->setAlignment(Qt::AlignRight);
     plblName->setBuddy(pnameEdit);
 
-    pidEdit   = new QLineEdit;
-    QIntValidator *pidValidator = new QIntValidator;
+    pidEdit = new QLineEdit("0");
+    pidEdit->setAlignment(Qt::AlignRight);
+    QIntValidator *pidValidator = new QIntValidator(pidEdit);
     pidEdit->setValidator(pidValidator);
     plblId->setBuddy(pidEdit);
 
-    pposEdit    = new QLineEdit;
-    QDoubleValidator *pposValidator = new QDoubleValidator;
+    pposEdit = new QLineEdit("0");
+    pposEdit->setAlignment(Qt::AlignRight);
+    QDoubleValidator *pposValidator = new QDoubleValidator(pposEdit);
     pposValidator->setLocale(QLocale::C);
+    pposEdit->setValidator(pposValidator);
+    pposValidator->setRange(getminPos(), getmaxPos());
     plblPos->setBuddy(pposEdit);
 
-    pstepEdit = new QLineEdit;
-    QDoubleValidator *pstepValidator = new QDoubleValidator;
+    pdPosEdit = new QLineEdit(QString("").setNum(getdPos()));
+    pdPosEdit->setAlignment(Qt::AlignRight);
+    const QSize editorSize = QSize(50, 25);
+    pdPosEdit->setFixedSize(editorSize);
+    QDoubleValidator *pdPosValidator = new QDoubleValidator(pdPosEdit);
+    pdPosValidator->setLocale(QLocale::C);
+    pdPosEdit->setValidator(pdPosValidator);
+
+    pstepEdit = new QLineEdit("0");
+    pstepEdit->setAlignment(Qt::AlignRight);
+    QDoubleValidator *pstepValidator = new QDoubleValidator(pstepEdit);
     pstepValidator->setLocale(QLocale::C);
+    pstepEdit->setValidator(pstepValidator);
     plblStep->setBuddy(pstepEdit);
 }
-void STANDADeviceWidget::makeConnections()
+void STANDADeviceWidget::makeButtons()
 {
-    connect(pnameEdit, SIGNAL(textChanged(QString)),
-            pdevice,   SLOT(setName(QString))
-           );
-    connect(pnameEdit, SIGNAL(textChanged(QString)),
-            pdevice,   SLOT(setId(QString))
-           );
-    connect(pposEdit, SIGNAL(textChanged(QString)),
-            pdevice,  SLOT(setPos(QString))
-           );
-    connect(pstepEdit, SIGNAL(textChanged(QString)),
-            pdevice,   SLOT(setStep(QString))
-           );
-    connect(pcmdOk,  SIGNAL(clicked()),
-            pdevice, SLOT(Init())
-           );
-    connect(pcmdMove, SIGNAL(clicked()),
-            pdevice,  SLOT(move())
-           );
+    const QSize cmdSize = QSize(25, 25);
+    pcmdOk      = new QPushButton("Ok");
+    pcmdMove    = new QPushButton("move");
+    pcmddownPos = new QPushButton("-");
+    pcmddownPos->setFixedSize(cmdSize);
+    plbldownPos->setBuddy(pcmddownPos);
+    pcmdupPos   = new QPushButton("+");
+    pcmdupPos->setFixedSize(cmdSize);
+    plblupPos->setBuddy(pcmdupPos);
+
+    const QSize sldrSize = QSize(300, 25);
+    psldrPos = new QSlider(Qt::Horizontal);
+    psldrPos->setFixedSize(sldrSize);
+    psldrPos->setRange(getminPos(), getmaxPos());
+    psldrPos->setValue(getdPos());
+    psldrPos->setTickInterval(5);
+    psldrPos->setTickPosition(QSlider::TicksBelow);
 }
 void STANDADeviceWidget::makeLayout()
 {
@@ -109,13 +124,33 @@ void STANDADeviceWidget::makeLayout()
 
     // 4 column
     QVBoxLayout *pvbxLayout4 = new QVBoxLayout;
-    pvbxLayout4->addWidget(plblStep, 0, Qt::AlignCenter);
-    pvbxLayout4->addWidget(pstepEdit, 0, Qt::AlignCenter);
+    pvbxLayout4->addWidget(new QLabel(""), 0, Qt::AlignCenter);
+    pvbxLayout4->addWidget(pcmddownPos, 0, Qt::AlignCenter);
 
     // 5 column
     QVBoxLayout *pvbxLayout5 = new QVBoxLayout;
-    pvbxLayout5->addWidget(pcmdOk);
-    pvbxLayout5->addWidget(pcmdMove);
+    pvbxLayout5->addWidget(new QLabel(""), 0, Qt::AlignCenter);
+    pvbxLayout5->addWidget(pdPosEdit, 0, Qt::AlignCenter);
+
+    // 6 column
+    QVBoxLayout *pvbxLayout6 = new QVBoxLayout;
+    pvbxLayout6->addWidget(new QLabel(""), 0, Qt::AlignCenter);
+    pvbxLayout6->addWidget(pcmdupPos, 0, Qt::AlignCenter);
+
+    // 7column
+    QVBoxLayout *pvbxLayout7 = new QVBoxLayout;
+    pvbxLayout7->addWidget(new QLabel(""), 0, Qt::AlignCenter);
+    pvbxLayout7->addWidget(psldrPos, 0, Qt::AlignCenter);
+
+    // 8 column
+    QVBoxLayout *pvbxLayout8 = new QVBoxLayout;
+    pvbxLayout8->addWidget(plblStep, 0, Qt::AlignCenter);
+    pvbxLayout8->addWidget(pstepEdit, 0, Qt::AlignCenter);
+
+    // 9 column
+    QVBoxLayout *pvbxLayout9 = new QVBoxLayout;
+    pvbxLayout9->addWidget(pcmdOk);
+    pvbxLayout9->addWidget(pcmdMove);
 
     // 1 row
     QHBoxLayout *phbxLayout = new QHBoxLayout;
@@ -124,7 +159,74 @@ void STANDADeviceWidget::makeLayout()
     phbxLayout->addLayout(pvbxLayout3);
     phbxLayout->addLayout(pvbxLayout4);
     phbxLayout->addLayout(pvbxLayout5);
+    phbxLayout->addLayout(pvbxLayout6);
+    phbxLayout->addLayout(pvbxLayout7);
+    phbxLayout->addLayout(pvbxLayout8);
+    phbxLayout->addLayout(pvbxLayout9);
 
     this->setLayout(phbxLayout);
+}
+void STANDADeviceWidget::makeConnections()
+{
+    connect(pnameEdit, SIGNAL(textChanged(QString)),
+            pdevice,   SLOT(setName(QString))
+           );
+    connect(pnameEdit, SIGNAL(textChanged(QString)),
+            pdevice,   SLOT(setId(QString))
+           );
+    connect(pposEdit, SIGNAL(textChanged(QString)),
+            pdevice,  SLOT(setPos(QString))
+           );
+    connect(pdPosEdit, SIGNAL(textChanged(QString)), SLOT(setdPos(QString))
+           );
+    connect(pstepEdit, SIGNAL(textChanged(QString)),
+            pdevice,   SLOT(setStep(QString))
+           );
+    connect(psldrPos, SIGNAL(valueChanged(int)), SLOT(setPosBySlider(int)));
+    connect(pcmdOk,  SIGNAL(clicked()),
+            pdevice, SLOT(Init())
+           );
+    connect(pcmdMove, SIGNAL(clicked()),
+            pdevice,  SLOT(move())
+           );
+    connect(pcmdupPos,   SIGNAL(clicked()), SLOT(upPos()));
+    connect(pcmddownPos, SIGNAL(clicked()), SLOT(downPos()));
+
+}
+// --------------------------------------------------
+
+// ------- Slots
+void STANDADeviceWidget::checkDevice()
+{
+
+}
+void STANDADeviceWidget::upPos()
+{
+    QString curPosString = pposEdit->text();
+    double curPos = curPosString.toDouble();
+    curPos += getdPos();
+    curPosString.setNum(curPos);
+    pposEdit->setText(curPosString);
+}
+void STANDADeviceWidget::downPos()
+{
+    QString curPosString = pposEdit->text();
+    double curPos = curPosString.toDouble();
+    curPos -= getdPos();
+    curPosString.setNum(curPos);
+    pposEdit->setText(curPosString);
+}
+void STANDADeviceWidget::setdPos(QString str)
+{
+    setdPos(str.toDouble());
+}
+void STANDADeviceWidget::setPosBySlider(int num)
+{
+    QString curValue;
+    curValue.setNum((double)num);
+    int intPart = QString(pdPosEdit->text()).toInt();
+    double doubleValue = QString(pdPosEdit->text()).toDouble();
+    curValue += QString().setNum(doubleValue-intPart);
+    pposEdit->setText(curValue);
 }
 // --------------------------------------------------
