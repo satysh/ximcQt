@@ -18,10 +18,10 @@ STANDADevice::~STANDADevice()
 
 void STANDADevice::Init()
 {
-    qDebug() << "Init device: "
+    qDebug() << "Init device: \n"
              << "Name: " << getName() << "\n"
-             << "Id: "   << getId() << "\n"
-             << "(x,y,z)=(" << getXcor() << ", " << getYcor() << ", " << getZcor() << ")\n"
+             << "Id:   "   << getId() << "\n"
+             << "pos:  "  << getPos() << "\n"
              << "step: "    << getStep();
     qDebug() << " ----------------- Init End -----------------";
 
@@ -32,52 +32,29 @@ void STANDADevice::Init()
 void STANDADevice::Delete()
 {
     stop();
-    qDebug() << "Delete device: "
+    qDebug() << "Delete device: \n"
              << "Name: " << getName() << "\n"
-             << "Id: "   << getId() << "\n"
-             << "(x,y,z)=(" << getXcor() << "," << getYcor() << "," << getZcor() << ")\n"
+             << "Id:   "   << getId() << "\n"
+             << "pos:  "  << getPos() << "\n"
              << "step: "    << getStep();
     qDebug() << " ----------------- DeleteDevice End -----------------";
 }
 // ------------------- Slots -----------------------------------------
 void STANDADevice::stop()
 {
-    qDebug() << "Device "<< getName() << " is stopped! x=" << getXcor()
-                                                    << ", y=" << getYcor()
-                                                    << ", z=" << getZcor();
+    qDebug() << "Device "<< getName() << " is stopped! pos: "  << getPos() << "\n";
     emit deviceIsStopped();
 }
-void STANDADevice::moveToXcor()
+void STANDADevice::move()
 {
     emit deviceMoveStart();
-    qDebug() << "Device " << getName() << " is moving to x=" << getXcor();
-    emit deviceMoveEnd();
-}
-void STANDADevice::moveToYcor()
-{
-    emit deviceMoveStart();
-    qDebug() << "Device " << getName() << " is moving to y=" << getYcor();
-    emit deviceMoveEnd();
-
-}
-void STANDADevice::moveToZcor()
-{
-    emit deviceMoveStart();
-    qDebug() << "Device " << getName() << " is moving to z=" << getZcor();
-    emit deviceMoveEnd();
-}
-void STANDADevice::moveToXYZ ()
-{
-    emit deviceMoveStart();
-    qDebug() << "Device " << getName() << " is moving to x=" << getXcor()
-                                                   << ", y=" << getYcor()
-                                                   << ", z=" << getZcor();
+    qDebug() << "Device " << getName() << " is moving to pos: "  << getPos() << "\n";
     emit deviceMoveEnd();
 }
 
 void STANDADevice::check()
 {
-    (devFoundStatus&devIdIsValid&devXIsValid&devYIsValid&devZIsValid&devStepIsValid) ?
+    (devFoundStatus&devIdIsValid&devPosIsValid&devStepIsValid) ?
         emit deviceIsAvailable() : emit deviceIsNotAvailable();
 
 }

@@ -13,9 +13,7 @@ int main(int argc, char **argv)
     // Lables
     QLabel lblName("&devName");
     QLabel lblId  ("&devId");
-    QLabel lblXcor ("&X");
-    QLabel lblYcor ("&Y");
-    QLabel lblZcor ("&Z");
+    QLabel lblPos ("&Pos");
     QLabel lblStep ("&step");
     // --------------------------------------------------------------------------------------------
 
@@ -28,23 +26,11 @@ int main(int argc, char **argv)
     pdevIdEdit->setValidator(pdevIdValidator);
     lblId.setBuddy(pdevIdEdit);
 
-    QLineEdit* pxEdit = new QLineEdit;
-    QDoubleValidator* pxValidator = new QDoubleValidator(pxEdit);
+    QLineEdit* pposEdit = new QLineEdit;
+    QDoubleValidator* pxValidator = new QDoubleValidator(pposEdit);
     pxValidator->setLocale(QLocale::C);
-    pxEdit->setValidator(pxValidator);
-    lblXcor.setBuddy(pxEdit);
-
-    QLineEdit* pyEdit = new QLineEdit;
-    QDoubleValidator* pyValidator = new QDoubleValidator(pyEdit);
-    pyValidator->setLocale(QLocale::C);
-    pyEdit->setValidator(pyValidator);
-    lblYcor.setBuddy(pyEdit);
-
-    QLineEdit* pzEdit = new QLineEdit;
-    QDoubleValidator* pzValidator = new QDoubleValidator(pzEdit);
-    pzValidator->setLocale(QLocale::C);
-    pzEdit->setValidator(pzValidator);
-    lblZcor.setBuddy(pzEdit);
+    pposEdit->setValidator(pxValidator);
+    lblPos.setBuddy(pposEdit);
 
     QLineEdit* pstepEdit = new QLineEdit;
     QDoubleValidator* pstepValidator = new QDoubleValidator(pstepEdit);
@@ -60,14 +46,8 @@ int main(int argc, char **argv)
     QObject::connect(pdevIdEdit, SIGNAL(textChanged(QString)),
                      &device, SLOT(setId(QString))
                     );
-    QObject::connect(pxEdit, SIGNAL(textChanged(QString)),
-                     &device, SLOT(setXcor(QString))
-                    );
-    QObject::connect(pyEdit, SIGNAL(textChanged(QString)),
-                     &device, SLOT(setYcor(QString))
-                    );
-    QObject::connect(pzEdit, SIGNAL(textChanged(QString)),
-                     &device, SLOT(setZcor(QString))
+    QObject::connect(pposEdit, SIGNAL(textChanged(QString)),
+                     &device, SLOT(setPos(QString))
                     );
     QObject::connect(pstepEdit, SIGNAL(textChanged(QString)),
                      &device, SLOT(setStep(QString))
@@ -84,17 +64,13 @@ int main(int argc, char **argv)
     phbxLayout1->setSpacing(5);
     phbxLayout1->addWidget(&lblName);
     phbxLayout1->addWidget(&lblId);
-    phbxLayout1->addWidget(&lblXcor);
-    phbxLayout1->addWidget(&lblYcor);
-    phbxLayout1->addWidget(&lblZcor);
+    phbxLayout1->addWidget(&lblPos);
     phbxLayout1->addWidget(&lblStep);
 
     QHBoxLayout* phbxLayout2 = new QHBoxLayout;
     phbxLayout2->addWidget(pdevNameEdit);
     phbxLayout2->addWidget(pdevIdEdit);
-    phbxLayout2->addWidget(pxEdit);
-    phbxLayout2->addWidget(pyEdit);
-    phbxLayout2->addWidget(pzEdit);
+    phbxLayout2->addWidget(pposEdit);
     phbxLayout2->addWidget(pstepEdit);
 
     QVBoxLayout* pvbxLayout = new QVBoxLayout;
