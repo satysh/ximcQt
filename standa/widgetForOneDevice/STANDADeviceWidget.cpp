@@ -64,10 +64,11 @@ void STANDADeviceWidget::makeEditors()
 
     pposEdit = new QLineEdit("0");
     pposEdit->setAlignment(Qt::AlignRight);
-    QDoubleValidator *pposValidator = new QDoubleValidator(pposEdit);
+    QDoubleValidator *pposValidator = new QDoubleValidator(getminPos(), getmaxPos(), 2);
+    pposValidator->setNotation(QDoubleValidator::StandardNotation);
     pposValidator->setLocale(QLocale::C);
     pposEdit->setValidator(pposValidator);
-    pposValidator->setRange(getminPos(), getmaxPos());
+    //pposValidator->setRange(getminPos(), getmaxPos());
     plblPos->setBuddy(pposEdit);
 
     pdPosEdit = new QLineEdit(QString("").setNum(getdPos()));
@@ -100,9 +101,11 @@ void STANDADeviceWidget::makeButtons()
     const QSize sldrSize = QSize(300, 25);
     psldrPos = new QSlider(Qt::Horizontal);
     psldrPos->setFixedSize(sldrSize);
-    psldrPos->setRange(getminPos(), getmaxPos());
-    psldrPos->setValue(getdPos());
-    psldrPos->setTickInterval(5);
+    psldrPos-> setSingleStep(getdPos());
+    int maxSliderValue = (int)(getmaxPos()-getminPos())*0.1;
+    psldrPos->setRange(0, maxSliderValue);
+    psldrPos->setValue(0);
+    psldrPos->setTickInterval(1);
     psldrPos->setTickPosition(QSlider::TicksBelow);
 }
 void STANDADeviceWidget::makeLayout()
@@ -168,29 +171,48 @@ void STANDADeviceWidget::makeLayout()
 }
 void STANDADeviceWidget::makeConnections()
 {
+    // Connect step edit
+    connect(pdPosEdit, SIGNAL(textChanged(QString)), SLOT(setdPos(QString)));
+
+    // Connect position edit
+    connect(pposEdit, SIGNAL(textChanged(QString)), SLOT(checkPosIsValid(QString)));
+    /*connect(this,     SIGNAL(posIsValid(QString)),
+            pposEdit, SLOT(setText(QString))
+           );*/
+    //connect(this, SIGNAL(posIsValid(QString)), SLOT(setSliderValue(QString)));
+    connect(pcmddownPos, SIGNAL(clicked()), SLOT(downPos()));
+    connect(pcmdupPos,   SIGNAL(clicked()), SLOT(upPos()));
+    connect(psldrPos, SIGNAL(valueChanged(int)), SLOT(setPosBySlider(int)));
+
+    // ------- Connect device
+    // Connect name Edit
     connect(pnameEdit, SIGNAL(textChanged(QString)),
             pdevice,   SLOT(setName(QString))
            );
-    connect(pnameEdit, SIGNAL(textChanged(QString)),
+    connect(pidEdit, SIGNAL(textChanged(QString)),
             pdevice,   SLOT(setId(QString))
            );
-    connect(pposEdit, SIGNAL(textChanged(QString)),
-            pdevice,  SLOT(setPos(QString))
+
+    // Connect position edit
+    connect(this, SIGNAL(posIsValid(QString)),
+            pdevice, SLOT(setPos(QString))
            );
-    connect(pdPosEdit, SIGNAL(textChanged(QString)), SLOT(setdPos(QString))
-           );
+
+    // Connect step edit
     connect(pstepEdit, SIGNAL(textChanged(QString)),
             pdevice,   SLOT(setStep(QString))
            );
-    connect(psldrPos, SIGNAL(valueChanged(int)), SLOT(setPosBySlider(int)));
-    connect(pcmdOk,  SIGNAL(clicked()),
-            pdevice, SLOT(Init())
-           );
+
+    // Connect cmd move
     connect(pcmdMove, SIGNAL(clicked()),
             pdevice,  SLOT(move())
            );
-    connect(pcmdupPos,   SIGNAL(clicked()), SLOT(upPos()));
-    connect(pcmddownPos, SIGNAL(clicked()), SLOT(downPos()));
+
+    // Connect cmd Ok
+    connect(pcmdOk,  SIGNAL(clicked()),
+            pdevice, SLOT(Init())
+           );
+    // --------------------------------------------------------------------
 
 }
 // --------------------------------------------------
@@ -200,33 +222,57 @@ void STANDADeviceWidget::checkDevice()
 {
 
 }
-void STANDADeviceWidget::upPos()
-{
-    QString curPosString = pposEdit->text();
-    double curPos = curPosString.toDouble();
-    curPos += getdPos();
-    curPosString.setNum(curPos);
-    pposEdit->setText(curPosString);
-}
 void STANDADeviceWidget::downPos()
 {
     QString curPosString = pposEdit->text();
     double curPos = curPosString.toDouble();
     curPos -= getdPos();
     curPosString.setNum(curPos);
-    pposEdit->setText(curPosString);
+    checkPosIsValid(curPosString);
+}
+void STANDADeviceWidget::upPos()
+{
+    QString curPosString = pposEdit->text();
+    double curPos = curPosString.toDouble();
+    curPos += getdPos();
+    curPosString.setNum(curPos);
+    checkPosIsValid(curPosString);
 }
 void STANDADeviceWidget::setdPos(QString str)
 {
     setdPos(str.toDouble());
 }
+void STANDADeviceWidget::setSliderValue(QString str)
+{
+    int sldrValue = int(10.*str.toDouble() / (getmaxPos()-getminPos()));
+    psldrPos->setValue(sldrValue);
+}
 void STANDADeviceWidget::setPosBySlider(int num)
 {
-    QString curValue;
-    curValue.setNum((double)num);
-    int intPart = QString(pdPosEdit->text()).toInt();
-    double doubleValue = QString(pdPosEdit->text()).toDouble();
-    curValue += QString().setNum(doubleValue-intPart);
-    pposEdit->setText(curValue);
+    if (num == 10)     checkPosIsValid(QString().setNum(getmaxPos()));
+    else if (num == 0) checkPosIsValid(QString().setNum(getminPos()));
+    double doubleValue = QString(pposEdit->text()).toDouble();
+    int intPart = int(doubleValue);
+    doubleValue -= (double)intPart;
+    doubleValue += (double)num*0.1*(getmaxPos()-getminPos());
+
+    checkPosIsValid(QString().setNum(doubleValue));
+}
+void STANDADeviceWidget::checkPosIsValid(QString str)
+{
+    //qDebug() << "STANDADeviceWidget::checkPosIsValid(" << str << ")";
+    if (str != getstrPreviousPos()) {
+        double curPos = str.toDouble();
+        if (curPos <= getmaxPos() && curPos >= getminPos()) {
+            emit posIsValid(str);
+            pposEdit->setText(str);
+            setstrPreviousPos(str);
+            //setSliderValue(str);
+        }
+        else {
+            emit posIsNotValid();
+            pposEdit->setText(getstrPreviousPos());
+        }
+    }
 }
 // --------------------------------------------------

@@ -20,6 +20,7 @@ public:
     void setmaxPos(double pos)  { maxPos=pos; }
     void setdPos  (double dpos) { dPos=dpos; }
 
+
     double getdPos  () { return dPos; }
     double getminPos() { return minPos; }
     double getmaxPos() { return maxPos; }
@@ -35,8 +36,20 @@ public slots:
     void checkDevice();
     void upPos();
     void downPos();
+
     void setdPos(QString);
+    void setSliderValue(QString);
     void setPosBySlider(int);
+
+    void checkPosIsValid(QString);
+
+signals:
+    void posIsValid(QString);
+    void posIsNotValid();
+
+private:
+    void setstrPreviousPos(QString str) { strPreviousPos=str; }
+    QString getstrPreviousPos() { return strPreviousPos; }
 
 private:
     STANDADevice *pdevice;
@@ -64,4 +77,6 @@ private:
     double dPos=0.01; // step of position value changing
     double minPos=0.;
     double maxPos=100.;
+
+    QString strPreviousPos="";
 };
