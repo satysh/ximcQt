@@ -14,6 +14,7 @@
 STANDADeviceWidget::STANDADeviceWidget(QWidget *parent/*=0*/)
     : QWidget(parent)
 {
+    setFixedSize(800, 80);
     pdevice = new STANDADevice;
     makeLabels();
     makeEditors();
