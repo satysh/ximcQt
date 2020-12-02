@@ -37,8 +37,8 @@ STANDADeviceWidget::~STANDADeviceWidget()
     if (pposEdit)  delete pposEdit;
     if (pcmddownPos) delete pcmddownPos;
     if (pcmdupPos) delete pcmdupPos;
-    if (pstepEdit) delete pstepEdit;
-    if (psldrPos) delete psldrPos;
+    if (pdevicestepEdit) delete pdevicestepEdit;
+    if (psldrdeviceStep) delete psldrdeviceStep;
 }
 
 // -------- make base widgets that the class includes
@@ -59,8 +59,7 @@ void STANDADeviceWidget::makeEditors()
 
     pidEdit = new QLineEdit("0");
     pidEdit->setAlignment(Qt::AlignRight);
-    QIntValidator *pidValidator = new QIntValidator(pidEdit);
-    pidEdit->setValidator(pidValidator);
+    pidEdit->setValidator(new QIntValidator);
     plblId->setBuddy(pidEdit);
 
     pposEdit = new QLineEdit("0");
@@ -80,12 +79,10 @@ void STANDADeviceWidget::makeEditors()
     pdPosValidator->setLocale(QLocale::C);
     pdPosEdit->setValidator(pdPosValidator);
 
-    pstepEdit = new QLineEdit("0");
-    pstepEdit->setAlignment(Qt::AlignRight);
-    QDoubleValidator *pstepValidator = new QDoubleValidator(pstepEdit);
-    pstepValidator->setLocale(QLocale::C);
-    pstepEdit->setValidator(pstepValidator);
-    plblStep->setBuddy(pstepEdit);
+    pdevicestepEdit = new QLineEdit("");
+    pdevicestepEdit->setAlignment(Qt::AlignRight);
+    pdevicestepEdit->setValidator(new QIntValidator(0, getmaxdeviceStep()));
+    plblStep->setBuddy(pdevicestepEdit);
 }
 void STANDADeviceWidget::makeButtons()
 {
@@ -100,14 +97,13 @@ void STANDADeviceWidget::makeButtons()
     plblupPos->setBuddy(pcmdupPos);
 
     const QSize sldrSize = QSize(300, 25);
-    psldrPos = new QSlider(Qt::Horizontal);
-    psldrPos->setFixedSize(sldrSize);
-    psldrPos-> setSingleStep(getdPos());
-    int maxSliderValue = (int)(getmaxPos()-getminPos())*0.1;
-    psldrPos->setRange(0, maxSliderValue);
-    psldrPos->setValue(0);
-    psldrPos->setTickInterval(1);
-    psldrPos->setTickPosition(QSlider::TicksBelow);
+    psldrdeviceStep = new QSlider(Qt::Horizontal);
+    psldrdeviceStep->setFixedSize(sldrSize);
+    //psldrdeviceStep->setSingleStep(1);
+    psldrdeviceStep->setRange(0, getmaxdeviceStep());
+    psldrdeviceStep->setValue(0);
+    psldrdeviceStep->setTickInterval(10);
+    psldrdeviceStep->setTickPosition(QSlider::TicksBelow);
 }
 void STANDADeviceWidget::makeLayout()
 {
@@ -144,12 +140,12 @@ void STANDADeviceWidget::makeLayout()
     // 7column
     QVBoxLayout *pvbxLayout7 = new QVBoxLayout;
     pvbxLayout7->addWidget(new QLabel(""), 0, Qt::AlignCenter);
-    pvbxLayout7->addWidget(psldrPos, 0, Qt::AlignCenter);
+    pvbxLayout7->addWidget(psldrdeviceStep, 0, Qt::AlignCenter);
 
     // 8 column
     QVBoxLayout *pvbxLayout8 = new QVBoxLayout;
     pvbxLayout8->addWidget(plblStep, 0, Qt::AlignCenter);
-    pvbxLayout8->addWidget(pstepEdit, 0, Qt::AlignCenter);
+    pvbxLayout8->addWidget(pdevicestepEdit, 0, Qt::AlignCenter);
 
     // 9 column
     QVBoxLayout *pvbxLayout9 = new QVBoxLayout;
@@ -172,18 +168,21 @@ void STANDADeviceWidget::makeLayout()
 }
 void STANDADeviceWidget::makeConnections()
 {
-    // Connect step edit
+    // Connect step of pos changing edit
     connect(pdPosEdit, SIGNAL(textChanged(QString)), SLOT(setdPos(QString)));
 
     // Connect position edit
     connect(pposEdit, SIGNAL(textChanged(QString)), SLOT(checkPosIsValid(QString)));
-    /*connect(this,     SIGNAL(posIsValid(QString)),
-            pposEdit, SLOT(setText(QString))
-           );*/
-    //connect(this, SIGNAL(posIsValid(QString)), SLOT(setSliderValue(QString)));
+    
+    // Connect down and up buttons 
     connect(pcmddownPos, SIGNAL(clicked()), SLOT(downPos()));
     connect(pcmdupPos,   SIGNAL(clicked()), SLOT(upPos()));
-    connect(psldrPos, SIGNAL(valueChanged(int)), SLOT(setPosBySlider(int)));
+
+    // Connect device step edit
+    connect(pdevicestepEdit, SIGNAL(textChanged(QString)), SLOT(checkdeviceStepIsValid(QString)));
+
+    // Connect Slider 
+    connect(psldrdeviceStep, SIGNAL(valueChanged(int)), SLOT(checkdeviceStepIsValid(int)));
 
     // ------- Connect device
     // Connect name Edit
@@ -199,8 +198,8 @@ void STANDADeviceWidget::makeConnections()
             pdevice, SLOT(setPos(QString))
            );
 
-    // Connect step edit
-    connect(pstepEdit, SIGNAL(textChanged(QString)),
+    // Connect dvice step edit
+    connect(this, SIGNAL(deviceStepIsValid(QString)),
             pdevice,   SLOT(setStep(QString))
            );
 
@@ -243,22 +242,6 @@ void STANDADeviceWidget::setdPos(QString str)
 {
     setdPos(str.toDouble());
 }
-void STANDADeviceWidget::setSliderValue(QString str)
-{
-    int sldrValue = int(10.*str.toDouble() / (getmaxPos()-getminPos()));
-    psldrPos->setValue(sldrValue);
-}
-void STANDADeviceWidget::setPosBySlider(int num)
-{
-    if (num == 10)     checkPosIsValid(QString().setNum(getmaxPos()));
-    else if (num == 0) checkPosIsValid(QString().setNum(getminPos()));
-    double doubleValue = QString(pposEdit->text()).toDouble();
-    int intPart = int(doubleValue);
-    doubleValue -= (double)intPart;
-    doubleValue += (double)num*0.1*(getmaxPos()-getminPos());
-
-    checkPosIsValid(QString().setNum(doubleValue));
-}
 void STANDADeviceWidget::checkPosIsValid(QString str)
 {
     //qDebug() << "STANDADeviceWidget::checkPosIsValid(" << str << ")";
@@ -268,12 +251,37 @@ void STANDADeviceWidget::checkPosIsValid(QString str)
             emit posIsValid(str);
             pposEdit->setText(str);
             setstrPreviousPos(str);
-            //setSliderValue(str);
         }
         else {
             emit posIsNotValid();
             pposEdit->setText(getstrPreviousPos());
         }
     }
+}
+void STANDADeviceWidget::checkdeviceStepIsValid(QString str)
+{
+    qDebug() << "STANDADeviceWidget::checkdeviceStepIsValid(QString=" << str << ")";
+    if (str != getstrPreviousdeviceStep() && str != "" /*&& str.toInt() >= getmindeviceStep()*/) {
+        int curdeviceStep = str.toInt();
+        
+        if (curdeviceStep >= getmindeviceStep() && curdeviceStep <= getmaxdeviceStep()) {
+            emit deviceStepIsValid(str);    
+            setstrPreviousdeviceStep(str);
+            psldrdeviceStep->setValue(str.toInt()); 
+        }
+        else if (curdeviceStep < getmindeviceStep()) {
+            pdevicestepEdit->setText(QString().setNum(getmindeviceStep()));
+        }
+        else {
+            pdevicestepEdit->setText(getstrPreviousdeviceStep());
+        }
+    }
+}
+void STANDADeviceWidget::checkdeviceStepIsValid(int num)
+{
+    qDebug() << "STANDADeviceWidget::checkdeviceStepIsValid(int=" << num << ")";
+    if (num < getmindeviceStep())       pdevicestepEdit->setText("");
+    else if (num >= getmaxdeviceStep()) pdevicestepEdit->setText(QString().setNum(getmaxdeviceStep()));
+    else                                pdevicestepEdit->setText(QString().setNum(num));
 }
 // --------------------------------------------------
