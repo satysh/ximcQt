@@ -260,7 +260,7 @@ void STANDADeviceWidget::checkPosIsValid(QString str)
 }
 void STANDADeviceWidget::checkdeviceStepIsValid(QString str)
 {
-    qDebug() << "STANDADeviceWidget::checkdeviceStepIsValid(QString=" << str << ")";
+    //qDebug() << "STANDADeviceWidget::checkdeviceStepIsValid(QString=" << str << ")";
     if (str != getstrPreviousdeviceStep() && str != "" /*&& str.toInt() >= getmindeviceStep()*/) {
         int curdeviceStep = str.toInt();
         
@@ -279,7 +279,7 @@ void STANDADeviceWidget::checkdeviceStepIsValid(QString str)
 }
 void STANDADeviceWidget::checkdeviceStepIsValid(int num)
 {
-    qDebug() << "STANDADeviceWidget::checkdeviceStepIsValid(int=" << num << ")";
+    //qDebug() << "STANDADeviceWidget::checkdeviceStepIsValid(int=" << num << ")";
     if (num < getmindeviceStep())       pdevicestepEdit->setText("");
     else if (num >= getmaxdeviceStep()) pdevicestepEdit->setText(QString().setNum(getmaxdeviceStep()));
     else                                pdevicestepEdit->setText(QString().setNum(num));
