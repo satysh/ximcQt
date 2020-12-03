@@ -40,15 +40,15 @@ void STANDAVisualization::timerEvent(QTimerEvent* ptev)
     timerId++; timerId--;
     //qDebug() << "STANDAVisualization::timerEvent(id=" << timerId << ")";
     if (moveXRayFlag) {
-        QPoint point = pos();
+        QPoint point = pxraywgt->pos();
         int curPos = point.rx();
         if (curPos > getXRayPos())      curPos -= (int)getXRayStep();
         else if (curPos < getXRayPos()) curPos += (int)getXRayStep();
         point.setX(curPos);
-        move(point);
+        pxraywgt->move(point);
 
         qDebug() << "moving.. pos=" << curPos;
-        if (curPos == getXRayPos()) stopMoveXRay();
+        if (curPos == (int)getXRayPos()) stopMoveXRay();
     }
 }
 void STANDAVisualization::startMoveXRay()
@@ -63,6 +63,7 @@ void STANDAVisualization::stopMoveXRay()
 
 void STANDAVisualization::setXRayPos(QString str)
 {
+    qDebug() << "STANDAVisualization::setXRayPos("<< str << ")";
     setXRayPos(str.toDouble());
 }
 

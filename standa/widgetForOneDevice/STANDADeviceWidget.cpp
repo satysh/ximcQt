@@ -173,15 +173,15 @@ void STANDADeviceWidget::makeConnections()
 
     // Connect position edit
     connect(pposEdit, SIGNAL(textChanged(QString)), SLOT(checkPosIsValid(QString)));
-    
-    // Connect down and up buttons 
+
+    // Connect down and up buttons
     connect(pcmddownPos, SIGNAL(clicked()), SLOT(downPos()));
     connect(pcmdupPos,   SIGNAL(clicked()), SLOT(upPos()));
 
     // Connect device step edit
     connect(pdevicestepEdit, SIGNAL(textChanged(QString)), SLOT(checkdeviceStepIsValid(QString)));
 
-    // Connect Slider 
+    // Connect Slider
     connect(psldrdeviceStep, SIGNAL(valueChanged(int)), SLOT(checkdeviceStepIsValid(int)));
 
     // ------- Connect device
@@ -207,6 +207,7 @@ void STANDADeviceWidget::makeConnections()
     connect(pcmdMove, SIGNAL(clicked()),
             pdevice,  SLOT(move())
            );
+    connect(pcmdMove, SIGNAL(clicked()), SLOT(moveStart()));
 
     // Connect cmd Ok
     connect(pcmdOk,  SIGNAL(clicked()),
@@ -263,11 +264,11 @@ void STANDADeviceWidget::checkdeviceStepIsValid(QString str)
     //qDebug() << "STANDADeviceWidget::checkdeviceStepIsValid(QString=" << str << ")";
     if (str != getstrPreviousdeviceStep() && str != "" /*&& str.toInt() >= getmindeviceStep()*/) {
         int curdeviceStep = str.toInt();
-        
+
         if (curdeviceStep >= getmindeviceStep() && curdeviceStep <= getmaxdeviceStep()) {
-            emit deviceStepIsValid(str);    
+            emit deviceStepIsValid(str);
             setstrPreviousdeviceStep(str);
-            psldrdeviceStep->setValue(str.toInt()); 
+            psldrdeviceStep->setValue(str.toInt());
         }
         else if (curdeviceStep < getmindeviceStep()) {
             pdevicestepEdit->setText(QString().setNum(getmindeviceStep()));
@@ -283,5 +284,13 @@ void STANDADeviceWidget::checkdeviceStepIsValid(int num)
     if (num < getmindeviceStep())       pdevicestepEdit->setText("");
     else if (num >= getmaxdeviceStep()) pdevicestepEdit->setText(QString().setNum(getmaxdeviceStep()));
     else                                pdevicestepEdit->setText(QString().setNum(num));
+}
+void STANDADeviceWidget::moveStart()
+{
+    emit startMoveDevice();
+}
+void STANDADeviceWidget::moveStop()
+{
+    emit stopMoveDevice();
 }
 // --------------------------------------------------

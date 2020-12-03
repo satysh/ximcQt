@@ -46,10 +46,15 @@ public slots:
     void checkdeviceStepIsValid(QString);
     void checkdeviceStepIsValid(int);
 
+    void moveStart();
+    void moveStop();
+
 signals:
     void posIsValid(QString);
     void posIsNotValid();
     void deviceStepIsValid(QString);
+    void startMoveDevice();
+    void stopMoveDevice ();
 
 private:
     void setstrPreviousPos       (QString str) { strPreviousPos=str; }
@@ -83,7 +88,7 @@ private:
 
     double dPos=0.01; // step of position value changing
     double minPos=0.;
-    double maxPos=100.;
+    double maxPos=1000.;
 
     int mindeviceStep=1;
     int maxdeviceStep=100;
