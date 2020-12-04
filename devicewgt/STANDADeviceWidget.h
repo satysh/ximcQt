@@ -15,17 +15,16 @@ public:
     STANDADeviceWidget(QWidget *parent = nullptr);
     ~STANDADeviceWidget();
 
+    void setdPos  (double dpos) { dPos=dpos; }
     void setminPos(double pos)  { minPos=pos; }
     void setmaxPos(double pos)  { maxPos=pos; }
-    void setdPos  (double dpos) { dPos=dpos; }
 
 
     double getdPos  () { return dPos; }
     double getminPos() { return minPos; }
     double getmaxPos() { return maxPos; }
 
-    int getmindeviceStep() { return mindeviceStep; }
-    int getmaxdeviceStep() { return maxdeviceStep; }
+    int getmaxStepNumber();
 
     void makeLabels();
     void makeEditors();
@@ -34,39 +33,38 @@ public:
     void makeConnections();
 
 public slots:
+    void setdPos(QString);
     void setminPos(QString);
     void setmaxPos(QString);
-    void setminDeviceStep(QString);
-    void setmaxDeviceStep(QString);
     void setDeviceName(QString);
     void setDeviceId(QString);
     void setDeviceBasePosition(QString);
 
 
 private slots:
-    void setdPos(QString);
+    void setPosBySlider(int);
+    void setPosBySlider(QString);
+    //void setSliderPos(int);
+
     void checkDevice();
     void upPos();
     void downPos();
     void checkPosIsValid(QString);
-    void checkdeviceStepIsValid(QString);
-    void checkdeviceStepIsValid(int);
     void moveStart();
     void moveStop();
+
+    void posIsValidDebug(QString);
 
 signals:
     void posIsValid(QString);
     void posIsNotValid();
-    void deviceStepIsValid(QString);
     void startMoveDevice();
     void stopMoveDevice ();
 
 private:
-    void setstrPreviousPos       (QString str) { strPreviousPos=str; }
-    void setstrPreviousdeviceStep(QString str) { strPreviousdeviceStep=str; }
+    void setPreviousPos       (QString str) { strPreviousPos=str; }
 
-    QString getstrPreviousPos       () { return strPreviousPos; }
-    QString getstrPreviousdeviceStep() { return strPreviousdeviceStep; }
+    QString getPreviousPos       () { return strPreviousPos; }
 
 private:
     QPushButton *pcmdOk;
@@ -79,24 +77,19 @@ private:
     QLabel *plblPos;
     QLabel *plblupPos;
     QLabel *plbldownPos;
-    QLabel *plblStep;
 
     QLineEdit *pnameEdit;
     QLineEdit *pidEdit;
     QLineEdit *pposEdit;
     QLineEdit *pdPosEdit;
-    QLineEdit *pdevicestepEdit;
 
     QSlider *psldrdeviceStep;
 
+    bool sliderActiveFlag=false;
+
     double dPos=0.01; // step of position value changing
-
     double minPos=0.;
-    double maxPos=1000.;
-
-    int mindeviceStep=1;
-    int maxdeviceStep=100;
+    double maxPos=100.;
 
     QString strPreviousPos="";
-    QString strPreviousdeviceStep="";
 };
