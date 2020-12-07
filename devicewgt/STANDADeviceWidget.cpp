@@ -160,6 +160,9 @@ void STANDADeviceWidget::makeConnections()
     connect(psldrdeviceStep, SIGNAL(valueChanged(int)), SLOT(setPosBySlider(int)));
 
     //connect(this, SIGNAL(posIsValid(QString)), SLOT(posIsValidDebug(QString)));
+
+    // Connect move button
+    connect(pcmdMove, SIGNAL(clicked()), SLOT(moveStart()));
 }
 // --------------------------------------------------
 
@@ -190,17 +193,13 @@ void STANDADeviceWidget::setDeviceBasePosition(QString str)
 // ------- Private Slots
 void STANDADeviceWidget::setPosBySlider(int num)
 {
-    qDebug() << "STANDADeviceWidget::setPosBySlider(" << num << ")";
+    //qDebug() << "STANDADeviceWidget::setPosBySlider(" << num << ")";
     int mod = num/100;
-    QString strMod;
-    strMod.setNum(mod);
-    qDebug() << " mod=" << mod;
+    //qDebug() << " mod=" << mod;
     int div = num%100;
-    QString strDiv;
-    strDiv.setNum(div);
-    qDebug() << " div=" << div;
+    //qDebug() << " div=" << div;
     double axisSliderPos = double(mod) + double(div)/100.;
-    qDebug() << " axisSliderPos=" << axisSliderPos;
+    //qDebug() << " axisSliderPos=" << axisSliderPos;
     disconnect(pposEdit, SIGNAL(textChanged(QString)), this, SLOT(checkUserTypedPosIsValid(QString)));
     pposEdit->setText(QString().setNum(axisSliderPos));
     emit posIsValid(QString().setNum(axisSliderPos));
@@ -209,12 +208,12 @@ void STANDADeviceWidget::setPosBySlider(int num)
 
 void STANDADeviceWidget::setSliderToPos(QString str)
 {
-    qDebug() << "STANDADeviceWidget::setSliderToPos(" << str << ")";
-        int curSliderValue = int(100.*str.toDouble());
-        qDebug() << "curSliderValue=" << curSliderValue;
-        disconnect(psldrdeviceStep, SIGNAL(valueChanged(int)), this, SLOT(setPosBySlider(int)));
-        psldrdeviceStep->setValue(curSliderValue);
-        connect(psldrdeviceStep, SIGNAL(valueChanged(int)), this, SLOT(setPosBySlider(int)));
+    //qDebug() << "STANDADeviceWidget::setSliderToPos(" << str << ")";
+    int curSliderValue = int(100.*str.toDouble());
+    //qDebug() << "curSliderValue=" << curSliderValue;
+    disconnect(psldrdeviceStep, SIGNAL(valueChanged(int)), this, SLOT(setPosBySlider(int)));
+    psldrdeviceStep->setValue(curSliderValue);
+    connect(psldrdeviceStep, SIGNAL(valueChanged(int)), this, SLOT(setPosBySlider(int)));
 }
 void STANDADeviceWidget::checkDevice()
 {
@@ -244,7 +243,7 @@ void STANDADeviceWidget::setdPos(QString str)
 }
 void STANDADeviceWidget::checkUserTypedPosIsValid(QString str)
 {
-    qDebug() << "STANDADeviceWidget::checkUserTypedPosIsValid(" << str << ")";
+    //qDebug() << "STANDADeviceWidget::checkUserTypedPosIsValid(" << str << ")";
     if (str != getPreviousPos() && str != "") {
         double curPos = str.toDouble();
         if (curPos <= getmaxPos() && curPos >= getminPos()) {
