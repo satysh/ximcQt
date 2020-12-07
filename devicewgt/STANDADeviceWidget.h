@@ -43,13 +43,13 @@ public slots:
 
 private slots:
     void setPosBySlider(int);
-    void setPosBySlider(QString);
+    void setSliderToPos(QString);
     //void setSliderPos(int);
 
     void checkDevice();
     void upPos();
     void downPos();
-    void checkPosIsValid(QString);
+    void checkUserTypedPosIsValid(QString);
     void moveStart();
     void moveStop();
 
