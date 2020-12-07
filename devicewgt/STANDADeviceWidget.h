@@ -40,6 +40,9 @@ public slots:
     void setDeviceId(QString);
     void setDeviceBasePosition(QString);
 
+    void setMoveMod();
+    void setStopMod();
+
 
 private slots:
     void setPosBySlider(int);

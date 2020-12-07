@@ -17,6 +17,12 @@ int main(int argc, char **argv)
     QObject::connect(&devWgt,  SIGNAL(startMoveDevice()),
                      &viewWgt, SLOT  (startMoveXRay())
                     );
+    QObject::connect(&devWgt,  SIGNAL(stopMoveDevice()),
+                     &viewWgt, SLOT  (stopMoveXRay())
+                    );
+    QObject::connect(&viewWgt, SIGNAL(xRayIsStopped()),
+                     &devWgt,  SLOT  (setMoveMod())
+                    );
 
     devWgt.show();
     viewWgt.show();

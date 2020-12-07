@@ -187,6 +187,18 @@ void STANDADeviceWidget::setDeviceBasePosition(QString str)
 {
     qDebug() << "STANDADeviceWidget::setDeviceBasePosition(" << str << ")";
 }
+void STANDADeviceWidget::setMoveMod()
+{
+    pcmdMove->setText("move");
+    disconnect(pcmdMove, SIGNAL(clicked()), this, SLOT(moveStop()));
+    connect(pcmdMove, SIGNAL(clicked()), this, SLOT(moveStart()));
+}
+void STANDADeviceWidget::setStopMod()
+{
+    disconnect(pcmdMove, SIGNAL(clicked()), this, SLOT(moveStart()));
+    pcmdMove->setText("stop");
+    connect(pcmdMove, SIGNAL(clicked()), this, SLOT(moveStop()));
+}
 // --------------------------------------------------
 
 
@@ -261,10 +273,12 @@ void STANDADeviceWidget::checkUserTypedPosIsValid(QString str)
 void STANDADeviceWidget::moveStart()
 {
     emit startMoveDevice();
+    setStopMod();
 }
 void STANDADeviceWidget::moveStop()
 {
     emit stopMoveDevice();
+    setMoveMod();
 }
 void STANDADeviceWidget::posIsValidDebug(QString str)
 {
