@@ -18,7 +18,7 @@ STANDADeviceWidget::STANDADeviceWidget(QWidget *parent/*=0*/)
     makeEditors();
     makeButtons();
     makeLayout();
-    makeConnections();
+    makeBaseConnections();
 }
 
 STANDADeviceWidget::~STANDADeviceWidget()
@@ -56,6 +56,7 @@ void STANDADeviceWidget::makeEditors()
     pposValidator->setNotation(QDoubleValidator::StandardNotation);
     pposValidator->setLocale(QLocale::C);
     pposEdit->setValidator(pposValidator);
+    pposEdit->setReadOnly(true);
     //pposValidator->setRange(getminPos(), getmaxPos());
     plblPos->setBuddy(pposEdit);
 
@@ -70,8 +71,9 @@ void STANDADeviceWidget::makeEditors()
 void STANDADeviceWidget::makeButtons()
 {
     const QSize cmdSize = QSize(25, 25);
-    pcmdOk      = new QPushButton("Ok");
+    pcmdOnOff      = new QPushButton("turn on");
     pcmdMove    = new QPushButton("move");
+    pcmdMove->setEnabled(false);
     pcmddownPos = new QPushButton("-");
     pcmddownPos->setFixedSize(cmdSize);
     plbldownPos->setBuddy(pcmddownPos);
@@ -80,14 +82,14 @@ void STANDADeviceWidget::makeButtons()
     plblupPos->setBuddy(pcmdupPos);
 
     const QSize sldrSize = QSize(300, 25);
-    psldrdeviceStep = new QSlider(Qt::Horizontal);
-    psldrdeviceStep->setFixedSize(sldrSize);
-    psldrdeviceStep->setSingleStep(1);
-    psldrdeviceStep->setRange(0, getmaxStepNumber());
-    psldrdeviceStep->setValue(QString(pposEdit->text()).toInt());
+    psldr = new QSlider(Qt::Horizontal);
+    psldr->setFixedSize(sldrSize);
+    psldr->setSingleStep(1);
+    psldr->setRange(0, getmaxStepNumber());
+    psldr->setValue(QString(pposEdit->text()).toInt());
     int tickInterval = getmaxStepNumber()/20;
-    psldrdeviceStep->setTickInterval(tickInterval);
-    psldrdeviceStep->setTickPosition(QSlider::TicksBelow);
+    psldr->setTickInterval(tickInterval);
+    psldr->setTickPosition(QSlider::TicksBelow);
 }
 void STANDADeviceWidget::makeLayout()
 {
@@ -124,11 +126,11 @@ void STANDADeviceWidget::makeLayout()
     // 7column
     QVBoxLayout *pvbxLayout7 = new QVBoxLayout;
     pvbxLayout7->addWidget(new QLabel(""), 0, Qt::AlignCenter);
-    pvbxLayout7->addWidget(psldrdeviceStep, 0, Qt::AlignCenter);
+    pvbxLayout7->addWidget(psldr, 0, Qt::AlignCenter);
 
     // 8 column
     QVBoxLayout *pvbxLayout8 = new QVBoxLayout;
-    pvbxLayout8->addWidget(pcmdOk);
+    pvbxLayout8->addWidget(pcmdOnOff);
     pvbxLayout8->addWidget(pcmdMove);
 
     // 1 row
@@ -144,25 +146,10 @@ void STANDADeviceWidget::makeLayout()
 
     this->setLayout(phbxLayout);
 }
-void STANDADeviceWidget::makeConnections()
+void STANDADeviceWidget::makeBaseConnections()
 {
-    // Connect step of pos changing edit
-    connect(pdPosEdit, SIGNAL(textChanged(QString)), SLOT(setdPos(QString)));
-
-    // Connect position edit
-    connect(pposEdit, SIGNAL(textChanged(QString)), SLOT(checkUserTypedPosIsValid(QString)));
-
-    // Connect down and up buttons
-    connect(pcmddownPos, SIGNAL(clicked()), SLOT(downPos()));
-    connect(pcmdupPos,   SIGNAL(clicked()), SLOT(upPos()));
-
-    // Connect Slider
-    connect(psldrdeviceStep, SIGNAL(valueChanged(int)), SLOT(setPosBySlider(int)));
-
-    //connect(this, SIGNAL(posIsValid(QString)), SLOT(posIsValidDebug(QString)));
-
-    // Connect move button
-    connect(pcmdMove, SIGNAL(clicked()), SLOT(moveStart()));
+	connect   (pcmdOnOff, SIGNAL(clicked()), this, SLOT(turnOn()));
+	connect(psldr, SIGNAL(valueChanged(int)), this, SLOT(setSliderToFixedPos()));
 }
 // --------------------------------------------------
 
@@ -183,9 +170,9 @@ void STANDADeviceWidget::setDeviceId(QString str)
 {
     qDebug() << "STANDADeviceWidget::setDeviceId(" << str << ")";
 }
-void STANDADeviceWidget::setDeviceBasePosition(QString str)
+void STANDADeviceWidget::setDeviceToBasePosition()
 {
-    qDebug() << "STANDADeviceWidget::setDeviceBasePosition(" << str << ")";
+    qDebug() << "STANDADeviceWidget::setDeviceToBasePosition()";
 }
 void STANDADeviceWidget::setMoveMod()
 {
@@ -195,8 +182,8 @@ void STANDADeviceWidget::setMoveMod()
     pposEdit->setReadOnly(false);
     connect(pcmddownPos, SIGNAL(clicked()), this, SLOT(downPos()));
     connect(pcmdupPos,   SIGNAL(clicked()), this, SLOT(upPos()));
-    disconnect(psldrdeviceStep, SIGNAL(valueChanged(int)), this, SLOT(setSliderToFixedPos()));
-    connect(psldrdeviceStep, SIGNAL(valueChanged(int)), this, SLOT(setPosBySlider(int)));
+    disconnect(psldr, SIGNAL(valueChanged(int)), this, SLOT(setSliderToFixedPos()));
+    connect(psldr, SIGNAL(valueChanged(int)), this, SLOT(setPosBySlider(int)));
 }
 void STANDADeviceWidget::setStopMod()
 {
@@ -206,13 +193,67 @@ void STANDADeviceWidget::setStopMod()
     pposEdit->setReadOnly(true);
     disconnect(pcmddownPos, SIGNAL(clicked()), this, SLOT(downPos()));
     disconnect(pcmdupPos,   SIGNAL(clicked()), this, SLOT(upPos()));
-    disconnect(psldrdeviceStep, SIGNAL(valueChanged(int)), this, SLOT(setPosBySlider(int)));
-    connect(psldrdeviceStep, SIGNAL(valueChanged(int)), this, SLOT(setSliderToFixedPos()));
+    disconnect(psldr, SIGNAL(valueChanged(int)), this, SLOT(setPosBySlider(int)));
+    connect(psldr, SIGNAL(valueChanged(int)), this, SLOT(setSliderToFixedPos()));
 }
 // --------------------------------------------------
 
 
 // ------- Private Slots
+void STANDADeviceWidget::turnOn()
+{
+	pcmdOnOff->setText("turn off");
+	pcmdMove->setEnabled(true);
+	disconnect(pcmdOnOff, SIGNAL(clicked()), this, SLOT(turnOn()));
+	connect   (pcmdOnOff, SIGNAL(clicked()), this, SLOT(turnOff()));
+	disconnect(psldr, SIGNAL(valueChanged(int)), this, SLOT(setSliderToFixedPos()));
+    // Connect step of pos changing edit
+    connect(pdPosEdit, SIGNAL(textChanged(QString)), this, SLOT(setdPos(QString)));
+
+    // Connect position edit
+    connect(pposEdit, SIGNAL(textChanged(QString)), this, SLOT(checkUserTypedPosIsValid(QString)));
+
+    // Connect down and up buttons
+    connect(pcmddownPos, SIGNAL(clicked()), this, SLOT(downPos()));
+    connect(pcmdupPos,   SIGNAL(clicked()), this, SLOT(upPos()));
+
+    // Connect Slider
+    connect(psldr, SIGNAL(valueChanged(int)), this, SLOT(setPosBySlider(int)));
+
+    // Connect move button
+    connect(pcmdMove, SIGNAL(clicked()), SLOT(moveStart()));
+
+    emit turnOnDevice();
+}
+void STANDADeviceWidget::turnOff()
+{
+	moveStop();
+	setDeviceToBasePosition();
+	pcmdOnOff->setText("turn on");
+	pcmdMove->setEnabled(false);
+	disconnect(pcmdOnOff, SIGNAL(clicked()), this, SLOT(turnOff()));
+	connect   (pcmdOnOff, SIGNAL(clicked()), this, SLOT(turnOn()));
+	connect(psldr, SIGNAL(valueChanged(int)), this, SLOT(setSliderToFixedPos()));
+
+    // Connect step of pos changing edit
+    disconnect(pdPosEdit, SIGNAL(textChanged(QString)), this, SLOT(setdPos(QString)));
+
+    // Connect position edit
+    disconnect(pposEdit, SIGNAL(textChanged(QString)), this, SLOT(checkUserTypedPosIsValid(QString)));
+
+    // Connect down and up buttons
+    disconnect(pcmddownPos, SIGNAL(clicked()), this, SLOT(downPos()));
+    disconnect(pcmdupPos,   SIGNAL(clicked()), this, SLOT(upPos()));
+
+    // Connect Slider
+    disconnect(psldr, SIGNAL(valueChanged(int)), this, SLOT(setPosBySlider(int)));
+
+    // Connect move button
+    disconnect(pcmdMove, SIGNAL(clicked()), this, SLOT(moveStart()));
+
+    emit turnOffDevice();
+
+}
 void STANDADeviceWidget::setPosBySlider(int num)
 {
     //qDebug() << "STANDADeviceWidget::setPosBySlider(" << num << ")";
@@ -233,9 +274,9 @@ void STANDADeviceWidget::setSliderToPos(QString str)
     //qDebug() << "STANDADeviceWidget::setSliderToPos(" << str << ")";
     int curSliderValue = int(100.*str.toDouble());
     //qDebug() << "curSliderValue=" << curSliderValue;
-    disconnect(psldrdeviceStep, SIGNAL(valueChanged(int)), this, SLOT(setPosBySlider(int)));
-    psldrdeviceStep->setValue(curSliderValue);
-    connect(psldrdeviceStep, SIGNAL(valueChanged(int)), this, SLOT(setPosBySlider(int)));
+    disconnect(psldr, SIGNAL(valueChanged(int)), this, SLOT(setPosBySlider(int)));
+    psldr->setValue(curSliderValue);
+    connect(psldr, SIGNAL(valueChanged(int)), this, SLOT(setPosBySlider(int)));
 }
 void STANDADeviceWidget::checkDevice()
 {
@@ -293,7 +334,7 @@ void STANDADeviceWidget::moveStop()
 void STANDADeviceWidget::setSliderToFixedPos()
 {
 	int fixedValue = (int)QString(pposEdit->text()).toDouble()*100.;
-	psldrdeviceStep->setValue(fixedValue);
+	psldr->setValue(fixedValue);
 }
 void STANDADeviceWidget::posIsValidDebug(QString str)
 {

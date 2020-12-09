@@ -31,7 +31,7 @@ private:
     void makeEditors();
     void makeButtons();
     void makeLayout();
-    void makeConnections();
+    void makeBaseConnections();
 
 public slots:
     void setdPos(QString);
@@ -39,13 +39,15 @@ public slots:
     void setmaxPos(QString);
     void setDeviceName(QString);
     void setDeviceId(QString);
-    void setDeviceBasePosition(QString);
+    void setDeviceToBasePosition();
 
     void setMoveMod();
     void setStopMod();
 
 
 private slots:
+    void turnOn();
+    void turnOff();
     void setPosBySlider(int);
     void setSliderToPos(QString);
     //void setSliderPos(int);
@@ -62,6 +64,8 @@ private slots:
 
 
 signals:
+    void turnOnDevice();
+    void turnOffDevice();
     void posIsValid(QString);
     void posIsNotValid();
     void startMoveDevice();
@@ -73,7 +77,7 @@ private:
     QString getPreviousPos       () { return strPreviousPos; }
 
 private:
-    QPushButton *pcmdOk;
+    QPushButton *pcmdOnOff;
     QPushButton *pcmdMove;
     QPushButton *pcmdupPos;
     QPushButton *pcmddownPos;
@@ -89,7 +93,7 @@ private:
     QLineEdit *pposEdit;
     QLineEdit *pdPosEdit;
 
-    QSlider *psldrdeviceStep;
+    QSlider *psldr;
 
     bool sliderActiveFlag=false;
 
