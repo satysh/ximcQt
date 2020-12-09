@@ -26,6 +26,7 @@ public:
 
     int getmaxStepNumber();
 
+private:
     void makeLabels();
     void makeEditors();
     void makeButtons();
@@ -55,8 +56,10 @@ private slots:
     void checkUserTypedPosIsValid(QString);
     void moveStart();
     void moveStop();
+    void setSliderToFixedPos();
 
     void posIsValidDebug(QString);
+
 
 signals:
     void posIsValid(QString);

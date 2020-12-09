@@ -192,12 +192,22 @@ void STANDADeviceWidget::setMoveMod()
     pcmdMove->setText("move");
     disconnect(pcmdMove, SIGNAL(clicked()), this, SLOT(moveStop()));
     connect(pcmdMove, SIGNAL(clicked()), this, SLOT(moveStart()));
+    pposEdit->setReadOnly(false);
+    connect(pcmddownPos, SIGNAL(clicked()), this, SLOT(downPos()));
+    connect(pcmdupPos,   SIGNAL(clicked()), this, SLOT(upPos()));
+    disconnect(psldrdeviceStep, SIGNAL(valueChanged(int)), this, SLOT(setSliderToFixedPos()));
+    connect(psldrdeviceStep, SIGNAL(valueChanged(int)), this, SLOT(setPosBySlider(int)));
 }
 void STANDADeviceWidget::setStopMod()
 {
     disconnect(pcmdMove, SIGNAL(clicked()), this, SLOT(moveStart()));
     pcmdMove->setText("stop");
     connect(pcmdMove, SIGNAL(clicked()), this, SLOT(moveStop()));
+    pposEdit->setReadOnly(true);
+    disconnect(pcmddownPos, SIGNAL(clicked()), this, SLOT(downPos()));
+    disconnect(pcmdupPos,   SIGNAL(clicked()), this, SLOT(upPos()));
+    disconnect(psldrdeviceStep, SIGNAL(valueChanged(int)), this, SLOT(setPosBySlider(int)));
+    connect(psldrdeviceStep, SIGNAL(valueChanged(int)), this, SLOT(setSliderToFixedPos()));
 }
 // --------------------------------------------------
 
@@ -280,8 +290,14 @@ void STANDADeviceWidget::moveStop()
     emit stopMoveDevice();
     setMoveMod();
 }
+void STANDADeviceWidget::setSliderToFixedPos()
+{
+	int fixedValue = (int)QString(pposEdit->text()).toDouble()*100.;
+	psldrdeviceStep->setValue(fixedValue);
+}
 void STANDADeviceWidget::posIsValidDebug(QString str)
 {
     qDebug() << "posIsValid = " << str;
 }
+
 // --------------------------------------------------

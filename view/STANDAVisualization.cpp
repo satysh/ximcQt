@@ -47,7 +47,7 @@ void STANDAVisualization::timerEvent(QTimerEvent* ptev)
         point.setX(curPos);
         pxraywgt->move(point);
 
-        qDebug() << "moving.. pos=" << curPos;
+        //qDebug() << "moving.. pos=" << curPos;
         if (curPos == (int)getXRayPos()) stopMoveXRay();
     }
 }
@@ -64,7 +64,7 @@ void STANDAVisualization::stopMoveXRay()
 
 void STANDAVisualization::setXRayPos(QString str)
 {
-    qDebug() << "STANDAVisualization::setXRayPos("<< str << ")";
+    //qDebug() << "STANDAVisualization::setXRayPos("<< str << ")";
     setXRayPos(str.toDouble());
 }
 
