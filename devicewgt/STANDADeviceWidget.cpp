@@ -204,6 +204,7 @@ void STANDADeviceWidget::turnOn()
 {
 	pcmdOnOff->setText("turn off");
 	pcmdMove->setEnabled(true);
+    pposEdit->setReadOnly(false);
 	disconnect(pcmdOnOff, SIGNAL(clicked()), this, SLOT(turnOn()));
 	connect   (pcmdOnOff, SIGNAL(clicked()), this, SLOT(turnOff()));
 	disconnect(psldr, SIGNAL(valueChanged(int)), this, SLOT(setSliderToFixedPos()));
@@ -231,6 +232,7 @@ void STANDADeviceWidget::turnOff()
 	setDeviceToBasePosition();
 	pcmdOnOff->setText("turn on");
 	pcmdMove->setEnabled(false);
+    pposEdit->setReadOnly(true);
 	disconnect(pcmdOnOff, SIGNAL(clicked()), this, SLOT(turnOff()));
 	connect   (pcmdOnOff, SIGNAL(clicked()), this, SLOT(turnOn()));
 	connect(psldr, SIGNAL(valueChanged(int)), this, SLOT(setSliderToFixedPos()));
