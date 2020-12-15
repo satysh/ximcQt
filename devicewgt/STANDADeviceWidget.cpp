@@ -147,6 +147,7 @@ void STANDADeviceWidget::makeLayout()
 }
 void STANDADeviceWidget::makeBaseConnections()
 {
+	connect(pdPosEdit, SIGNAL(textChanged(QString)), this , SLOT(setdPos(QString)));
 	connect(pposEdit, SIGNAL(textChanged(QString)), this, SLOT(checkUserTypedPosIsValid(QString)));
 	connect(pcmdMove, SIGNAL(clicked()), this, SLOT(moveStart()));
 	connect(psldr, SIGNAL(valueChanged(int)), this, SLOT(setPosBySlider(int)));
