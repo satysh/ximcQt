@@ -6,7 +6,7 @@ STANDADevice::STANDADevice(QObject *parent/*=nullptr*/)
     : QObject(parent)
 {
     qDebug() << "STANDADevice::STANDADevice";
-    emit deviceIsNotAvailable();
+    emit Disabled();
 }
 
 STANDADevice::~STANDADevice()
@@ -63,11 +63,11 @@ void STANDADevice::makeBaseConnections()
 bool STANDADevice::check()
 {
     if (devFoundStatus && devIdIsValid && devPosIsValid && devStepIsValid) {
-        emit deviceIsAvailable();
+        emit Enabled();
         return true;
     }
     else {
-        emit deviceIsNotAvailable();
+        emit Disabled();
         return false;
     }
 }

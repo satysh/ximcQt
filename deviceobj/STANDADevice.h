@@ -43,8 +43,8 @@ signals:
     void deviceIsFound   ();
     void deviceIsNotFound();
 
-    void deviceIsAvailable   ();
-    void deviceIsNotAvailable();
+    void Enabled ();
+    void Disabled();
 
 private:
     void makeBaseConnections();
