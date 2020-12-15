@@ -46,8 +46,6 @@ public slots:
 
 
 private slots:
-    void turnOn();
-    void turnOff();
     void setPosBySlider(int);
     void setSliderToPos(QString);
     //void setSliderPos(int);
@@ -77,7 +75,6 @@ private:
     QString getPreviousPos       () { return strPreviousPos; }
 
 private:
-    QPushButton *pcmdOnOff;
     QPushButton *pcmdMove;
     QPushButton *pcmdupPos;
     QPushButton *pcmddownPos;
@@ -99,7 +96,7 @@ private:
 
     double dPos=0.01; // step of position value changing
     double minPos=0.;
-    double maxPos=1000.;
+    double maxPos=720.;
 
     QString strPreviousPos="";
 };

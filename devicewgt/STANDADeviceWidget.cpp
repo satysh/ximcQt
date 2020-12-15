@@ -56,7 +56,6 @@ void STANDADeviceWidget::makeEditors()
     pposValidator->setNotation(QDoubleValidator::StandardNotation);
     pposValidator->setLocale(QLocale::C);
     pposEdit->setValidator(pposValidator);
-    pposEdit->setReadOnly(true);
     //pposValidator->setRange(getminPos(), getmaxPos());
     plblPos->setBuddy(pposEdit);
 
@@ -70,10 +69,11 @@ void STANDADeviceWidget::makeEditors()
 }
 void STANDADeviceWidget::makeButtons()
 {
-    const QSize cmdSize = QSize(25, 25);
-    pcmdOnOff      = new QPushButton("turn on");
+	const QSize cmdMoveSize = QSize(80, 60);
     pcmdMove    = new QPushButton("move");
-    pcmdMove->setEnabled(false);
+    pcmdMove->setFixedSize(cmdMoveSize);
+
+    const QSize cmdSize = QSize(25, 25);
     pcmddownPos = new QPushButton("-");
     pcmddownPos->setFixedSize(cmdSize);
     plbldownPos->setBuddy(pcmddownPos);
@@ -130,8 +130,7 @@ void STANDADeviceWidget::makeLayout()
 
     // 8 column
     QVBoxLayout *pvbxLayout8 = new QVBoxLayout;
-    pvbxLayout8->addWidget(pcmdOnOff);
-    pvbxLayout8->addWidget(pcmdMove);
+    pvbxLayout8->addWidget(pcmdMove, 0, Qt::AlignCenter);
 
     // 1 row
     QHBoxLayout *phbxLayout = new QHBoxLayout;
@@ -148,8 +147,11 @@ void STANDADeviceWidget::makeLayout()
 }
 void STANDADeviceWidget::makeBaseConnections()
 {
-	connect   (pcmdOnOff, SIGNAL(clicked()), this, SLOT(turnOn()));
-	connect(psldr, SIGNAL(valueChanged(int)), this, SLOT(setSliderToFixedPos()));
+	connect(pposEdit, SIGNAL(textChanged(QString)), this, SLOT(checkUserTypedPosIsValid(QString)));
+	connect(pcmdMove, SIGNAL(clicked()), this, SLOT(moveStart()));
+	connect(psldr, SIGNAL(valueChanged(int)), this, SLOT(setPosBySlider(int)));
+	connect(pcmddownPos, SIGNAL(clicked()), this, SLOT(downPos()));
+    connect(pcmdupPos,   SIGNAL(clicked()), this, SLOT(upPos()));
 }
 // --------------------------------------------------
 
@@ -200,62 +202,6 @@ void STANDADeviceWidget::setStopMod()
 
 
 // ------- Private Slots
-void STANDADeviceWidget::turnOn()
-{
-	pcmdOnOff->setText("turn off");
-	pcmdMove->setEnabled(true);
-    pposEdit->setReadOnly(false);
-	disconnect(pcmdOnOff, SIGNAL(clicked()), this, SLOT(turnOn()));
-	connect   (pcmdOnOff, SIGNAL(clicked()), this, SLOT(turnOff()));
-	disconnect(psldr, SIGNAL(valueChanged(int)), this, SLOT(setSliderToFixedPos()));
-    // Connect step of pos changing edit
-    connect(pdPosEdit, SIGNAL(textChanged(QString)), this, SLOT(setdPos(QString)));
-
-    // Connect position edit
-    connect(pposEdit, SIGNAL(textChanged(QString)), this, SLOT(checkUserTypedPosIsValid(QString)));
-
-    // Connect down and up buttons
-    connect(pcmddownPos, SIGNAL(clicked()), this, SLOT(downPos()));
-    connect(pcmdupPos,   SIGNAL(clicked()), this, SLOT(upPos()));
-
-    // Connect Slider
-    connect(psldr, SIGNAL(valueChanged(int)), this, SLOT(setPosBySlider(int)));
-
-    // Connect move button
-    connect(pcmdMove, SIGNAL(clicked()), SLOT(moveStart()));
-
-    emit turnOnDevice();
-}
-void STANDADeviceWidget::turnOff()
-{
-	moveStop();
-	setDeviceToBasePosition();
-	pcmdOnOff->setText("turn on");
-	pcmdMove->setEnabled(false);
-    pposEdit->setReadOnly(true);
-	disconnect(pcmdOnOff, SIGNAL(clicked()), this, SLOT(turnOff()));
-	connect   (pcmdOnOff, SIGNAL(clicked()), this, SLOT(turnOn()));
-	connect(psldr, SIGNAL(valueChanged(int)), this, SLOT(setSliderToFixedPos()));
-
-    // Connect step of pos changing edit
-    disconnect(pdPosEdit, SIGNAL(textChanged(QString)), this, SLOT(setdPos(QString)));
-
-    // Connect position edit
-    disconnect(pposEdit, SIGNAL(textChanged(QString)), this, SLOT(checkUserTypedPosIsValid(QString)));
-
-    // Connect down and up buttons
-    disconnect(pcmddownPos, SIGNAL(clicked()), this, SLOT(downPos()));
-    disconnect(pcmdupPos,   SIGNAL(clicked()), this, SLOT(upPos()));
-
-    // Connect Slider
-    disconnect(psldr, SIGNAL(valueChanged(int)), this, SLOT(setPosBySlider(int)));
-
-    // Connect move button
-    disconnect(pcmdMove, SIGNAL(clicked()), this, SLOT(moveStart()));
-
-    emit turnOffDevice();
-
-}
 void STANDADeviceWidget::setPosBySlider(int num)
 {
     //qDebug() << "STANDADeviceWidget::setPosBySlider(" << num << ")";
