@@ -1,1 +1,1 @@
-# xmicQt
+# ximcQt
