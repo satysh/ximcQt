@@ -7,17 +7,32 @@ int main(int argc, char** argv)
     QWidget      wgt;
 
     QPushButton* pcmdOk = new QPushButton("ok", &wgt);
+    QPushButton* pcmdLeft = new QPushButton("left", &wgt);
+    QPushButton* pcmdRight = new QPushButton("right", &wgt);
+    QPushButton* pcmdStop = new QPushButton("stop", &wgt);
     STANDALoader loader(&wgt);
 
     QObject::connect(pcmdOk,  SIGNAL(clicked()),
     	             &loader, SLOT(testappeasy())
     	            );
-    QObject::connect(&loader, SIGNAL(failed()),
-    	             &app,    SLOT(quit())
+    QObject::connect(pcmdLeft, SIGNAL(clicked()),
+    	             &loader,  SLOT(left())
     	            );
+    QObject::connect(pcmdRight, SIGNAL(clicked()),
+    	             &loader,  SLOT(right())
+    	            );
+    QObject::connect(pcmdStop, SIGNAL(clicked()),
+    	             &loader,  SLOT(stop())
+    	            );
+    /*QObject::connect(&loader, SIGNAL(failed()),
+    	             &app,    SLOT(quit())
+    	            );*/
     
     QVBoxLayout* pvbxLayout = new QVBoxLayout;
     pvbxLayout->addWidget(pcmdOk);
+    pvbxLayout->addWidget(pcmdLeft);
+    pvbxLayout->addWidget(pcmdRight);
+    pvbxLayout->addWidget(pcmdStop);
     wgt.setLayout(pvbxLayout);
     
     wgt.show();
