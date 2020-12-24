@@ -1,19 +1,11 @@
 #include <stdio.h>
 
+#include <QDebug>
+#include <QString>
+#include <QByteArray>
+
 #include "STANDALoader.h"
 
-const int seconds = 3;
-const char* units = "mm";
-const int probe_flags = ENUMERATE_PROBE /*| ENUMERATE_NETWORK*/;
-const char* enumerate_hints = "addr=192.168.1.1,172.16.2.3";
-engine_settings_t engine_settings;
-status_t status;
-status_calb_t status_calb;
-calibration_t calibration;
-int names_count;
-char device_name[256];
-char ximc_version_str[32];
-device_enumeration_t devenum;
 
 //const char* enumerate_hints = "addr="; // this hint will use broadcast enumeration, if ENUMERATE_NETWORK flag is enabled
 STANDALoader::STANDALoader(QObject *parent/* = nullptr*/)
@@ -23,21 +15,31 @@ STANDALoader::STANDALoader(QObject *parent/* = nullptr*/)
 }
 STANDALoader::~STANDALoader()
 {
-	printf( "Closing device..." );
-//	Close specified device
-	close_device( &device );
-	printf( "done.\n" );
 }
 
-
-// ----- Public slots ----------------------------------------------
-void STANDALoader::testappeasy()
+QString STANDALoader::getDevName(int i)
 {
-/*
-	Variables declaration.
-	device_t, status_t, engine_settings_t, status_calb and calibration_t are types provided by the libximc library.
-*/
-	printf( "This is a ximc test program.\n" );
+	if (i >= m_vDevnameslist.size()) {
+		qDebug() << "STANDALoader::getDevName(" << i << ") is uncorrect!";
+		return NULL;
+	}
+    return m_vDevnameslist.at(i);
+}
+void STANDALoader::findDevices()
+{
+	const int probe_flags = ENUMERATE_PROBE/* | BORDER_IS_ENCODER*/;
+	//const char* enumerate_hints = "addr=192.168.1.1,172.16.2.3";
+	const char* enumerate_hints = "";
+	/*engine_settings_t engine_settings;
+	const char* units = "mm";
+	const int seconds = 3;
+	status_t status;
+	status_calb_t status_calb;
+	calibration_t calibration;
+	char device_name[256];*/
+	char ximc_version_str[32];
+	device_enumeration_t devenum;
+
 //	ximc_version returns library version string.
 	ximc_version( ximc_version_str );
 	printf( "libximc version %s\n", ximc_version_str );
@@ -50,87 +52,34 @@ void STANDALoader::testappeasy()
 //	Device enumeration function. Returns an opaque pointer to device enumeration data.
 	devenum = enumerate_devices( probe_flags, enumerate_hints );
 
-    bool devsCountFlag = true;
 //	Gets device count from device enumeration data
-	names_count = get_device_count( devenum );
+	m_ndevs = get_device_count( devenum );
 
+    //m_ndevs=2;
 //	Terminate if there are no connected devices
-	if (names_count <= 0)
+	if (m_ndevs <= 0)
 	{
 		printf( "No devices found\n" );
 	//	Free memory used by device enumeration data
 		free_enumerate_devices( devenum );
-		devsCountFlag = false;
 		emit failed();
 	}
+    else {
+		for (int i=0; i<m_ndevs; i++) {
+			/*QString s = "device_";
+			s += QString().setNum(i+1);
+			qDebug() << "s=" << s;
+			m_vDevnameslist << s;*/
+			m_vDevnameslist << get_device_name(devenum, i);
+		}
 
-    if (devsCountFlag) {
-//	    Copy first found device name into a string
-	    strcpy( device_name, get_device_name( devenum, 0 ) );
-//	    Free memory used by device enumeration data
+
+		qDebug() << m_ndevs << " devices are found:";
+		for (int i=0; i<m_vDevnameslist.size(); i++) {
+			qDebug() << " " << i+1 << ": " << m_vDevnameslist.at(i);
+		}
+		//Free memory used by device enumeration data
 	    free_enumerate_devices( devenum );
-
-	    printf( "Opening device...");
-//	    Open device by device name
-	    device = open_device( device_name );
-	    printf( "done.\n" );
-
-	    printf( "Getting status parameters: " );
-//	    Read device status from a device
-	    get_status( device, &status );
-	    printf( "position %d, encoder %lld, speed %d\n", status.CurPosition, status.EncPosition, status.CurSpeed );
-
-	    printf( "Getting engine parameters: " );
-//	    Read engine settings from a device
-	    get_engine_settings( device, &engine_settings );
-	    printf( "voltage %d, current %d, speed %d\n", engine_settings.NomVoltage, engine_settings.NomCurrent, engine_settings.NomSpeed );
-
-
-	    printf( "Getting calibrated parameters: " );
-//      Setting calibration constant to 0.1 (one controller step equals this many units)
-	    calibration.A = 0.1;
-//      We have to set microstep mode to convert microsteps to calibrated units correctly
-	    calibration.MicrostepMode = engine_settings.MicrostepMode;
-
-//      Read calibrated device status from a device
-	    get_status_calb( device, &status_calb, &calibration);
-	    printf( "calibrated position %.3f %s, calibrated speed %.3f %s/s\n", status_calb.CurPosition, units, status_calb.CurSpeed, units );
-/*
-	    printf( "Closing device..." );
-//	    Close specified device
-	    close_device( &device );
-	    printf( "done.\n" );*/
-	    printf( "done.\n" );
+		emit successfull();
 	}
-}
-
-void STANDALoader::left()
-{
-	printf( "Rotating to the left for %d seconds...", seconds);
-	command_left( device );
-	/*msec_sleep( seconds*1000 );
-	command_stop( device );*/
-    printf( "\nGetting status parameters: " );
-//	Read device status from a device
-	get_status( device, &status );
-	printf( "position %d, encoder %lld, speed %d\n", status.CurPosition, status.EncPosition, status.CurSpeed );
-	printf( "done.\n" );
-}
-
-void STANDALoader::right()
-{
-	printf( "Rotating to the right for %d seconds...", seconds);
-	command_right( device );
-    /*msec_sleep( seconds*1000 );
-    command_stop( device );*/
-    //	Read device status from a device
-    printf( "\nGetting status parameters: " );
-	get_status( device, &status );
-	printf( "position %d, encoder %lld, speed %d\n", status.CurPosition, status.EncPosition, status.CurSpeed );
-	printf( "done.\n" );	
-}
-
-void  STANDALoader::stop()
-{
-    command_stop( device );
 }

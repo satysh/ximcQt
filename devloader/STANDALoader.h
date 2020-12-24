@@ -2,7 +2,12 @@
 
 #include <ximc.h>
 
+#include <vector>
+
 #include <QObject>
+
+class QStringList;
+class QString;
 
 class STANDALoader : public QObject
 {
@@ -11,15 +16,18 @@ public:
 	STANDALoader(QObject *parent = nullptr);
 	~STANDALoader();
 
-public slots:
-    void testappeasy();
-    void left();
-    void right();
-    void stop();
+    int getnDevs() { return m_ndevs; }
+    QString getDevName(int i);
 
+
+    void findDevices();
 signals:
+    void successfull();
     void failed();
 
 private:
-	device_t device;
+    int m_ndevs=0;
+    QStringList m_vDevnameslist;
+
+	device_t m_device;
 };

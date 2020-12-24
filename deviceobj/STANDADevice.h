@@ -1,5 +1,7 @@
 #pragma once
 
+#include <ximc.h>
+
 #include <QObject>
 #include <QString>
 
@@ -11,15 +13,17 @@ public:
     ~STANDADevice();
 
     QString getName() { return devName; }
-    int     getId  () { return devId; }
+    int     getId  () { return m_device; }
     double  getPos () { return devPos; }
     double  getStep() { return devStep; }
 
     bool check(); // This method provides checking device to be moved safty
 
+    void moveToBasePos(); // TODO Implements me!
+
 public slots:
     void setName(QString name) { devName=name;          emit nameIsSet(); }
-    void setId  (QString idev) { devId=idev.toInt();    emit idIsSet(); }
+    //void setId  (QString idev) { devId=idev.toInt();    emit idIsSet(); }
     void setPos (QString pos)  { devPos=pos.toDouble(); emit posIsSet(); }
     void setStep(QString sp)   { devStep=sp.toDouble(); emit stepIsSet(); }
 
@@ -32,16 +36,16 @@ public slots:
 signals:
     void nameIsSet   ();
     void idIsSet     ();
-    void posIsSet   ();
+    void posIsSet    ();
     void stepIsSet   ();
 
     void deviceIsStopped();
 
     void deviceMoveStart();
     void deviceMoveEnd  ();
-
+/*
     void deviceIsFound   ();
-    void deviceIsNotFound();
+    void deviceIsNotFound();*/
 
     void Enabled ();
     void Disabled();
@@ -51,12 +55,21 @@ private:
 
 private:
     QString devName="";
-    int     devId=0;
+    //int     devId=0;
+    double  m_devMinPos=0.;
+    double  m_devMaxPos=1000.;
     double  devPos=0.;
     double  devStep=0.;
 
-    bool devFoundStatus=false;
     bool devIdIsValid=false;
     bool devPosIsValid=false;
     bool devStepIsValid=false;
+
+    device_t          m_device;
+    status_t          m_status;
+    engine_settings_t m_engine_settings;
+    status_calb_t     m_status_calb;
+    calibration_t     m_calibration;
+
+    edges_settings_t  *m_edges_settings;
 };

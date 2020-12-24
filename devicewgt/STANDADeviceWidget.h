@@ -96,7 +96,7 @@ private:
 
     double dPos=0.01; // step of position value changing
     double minPos=0.;
-    double maxPos=720.;
+    double maxPos=1000.;
 
     QString strPreviousPos="";
 };

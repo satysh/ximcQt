@@ -12,6 +12,7 @@ int main(int argc, char** argv)
     QPushButton* pcmdStop = new QPushButton("stop", &wgt);
     STANDALoader loader(&wgt);
 
+/*
     QObject::connect(pcmdOk,  SIGNAL(clicked()),
     	             &loader, SLOT(testappeasy())
     	            );
@@ -24,17 +25,17 @@ int main(int argc, char** argv)
     QObject::connect(pcmdStop, SIGNAL(clicked()),
     	             &loader,  SLOT(stop())
     	            );
-    /*QObject::connect(&loader, SIGNAL(failed()),
+    QObject::connect(&loader, SIGNAL(failed()),
     	             &app,    SLOT(quit())
     	            );*/
-    
+
     QVBoxLayout* pvbxLayout = new QVBoxLayout;
     pvbxLayout->addWidget(pcmdOk);
     pvbxLayout->addWidget(pcmdLeft);
     pvbxLayout->addWidget(pcmdRight);
     pvbxLayout->addWidget(pcmdStop);
     wgt.setLayout(pvbxLayout);
-    
+
     wgt.show();
 	return app.exec();
 }
