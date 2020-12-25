@@ -11,7 +11,11 @@ class STANDADevice : public QObject
 public:
     STANDADevice(QObject *parent = nullptr);
     ~STANDADevice();
+    
+    void setHomePos(int pos) { m_homePos=pos; }
 
+
+    int getHomePos()  { return m_homePos; }
     QString getName() { return devName; }
     int     getId  () { return m_device; }
     double  getPos () { return devPos; }
@@ -61,6 +65,8 @@ private:
     double  devPos=0.;
     double  devStep=0.;
 
+    int m_homePos=0;
+
     bool devIdIsValid=false;
     bool devPosIsValid=false;
     bool devStepIsValid=false;
@@ -70,6 +76,7 @@ private:
     engine_settings_t m_engine_settings;
     status_calb_t     m_status_calb;
     calibration_t     m_calibration;
+    get_position_t    m_get_position;
 
-    edges_settings_t  *m_edges_settings;
+    edges_settings_t  m_edges_settings;
 };

@@ -18,7 +18,8 @@ STANDADevice::~STANDADevice()
 
 void STANDADevice::moveToBasePos()
 {
-    command_move ( m_device, m_edges_settings->LeftBorder, m_edges_settings->uLeftBorder);
+    get_status( m_device, &m_status );
+    //command_move ( m_device, m_status.CurPosition+180, 0);
 }
 // ------------------- Init Device -----------------------------------
 
@@ -42,12 +43,14 @@ void STANDADevice::Init()
 //  Read device status from a device
     get_status( m_device, &m_status );
     printf( "position %d, encoder %lld, speed %d\n", m_status.CurPosition, m_status.EncPosition, m_status.CurSpeed );
+    setHomePos(m_status.CurPosition);
 
     printf( "Getting engine parameters: " );
 //  Read engine settings from a device
     get_engine_settings( m_device, &m_engine_settings );
     printf( "voltage %d, current %d, speed %d\n", m_engine_settings.NomVoltage, m_engine_settings.NomCurrent, m_engine_settings.NomSpeed );
-
+    m_engine_settings.NomSpeed=1500;
+    set_engine_settings( m_device, &m_engine_settings );
     const char* units = "mm";
 
     printf( "Getting calibrated parameters: " );
@@ -58,15 +61,14 @@ void STANDADevice::Init()
     //Read calibrated device status from a device
     get_status_calb( m_device, &m_status_calb, &m_calibration);
     printf( "calibrated position %.3f %s, calibrated speed %.3f %s/s\n", m_status_calb.CurPosition, units, m_status_calb.CurSpeed, units );
-/*
+
     printf("Getting edges settings: ");
-    get_edges_settings(m_device, m_edges_settings);
-    printf( "lB %d, ulb %d, rB %d, urB\n", m_edges_settings->LeftBorder, m_edges_settings->uLeftBorder
-                                         , m_edges_settings->RightBorder, m_edges_settings->uRightBorder
+    get_edges_settings(m_device, &m_edges_settings);
+    printf( "lB %d, ulb %d, rB %d, urB\n", m_edges_settings.LeftBorder, m_edges_settings.uLeftBorder
+                                         , m_edges_settings.RightBorder, m_edges_settings.uRightBorder
           );
 
     moveToBasePos();
-*/
     qDebug() << " ----------------- Init End -----------------";
 }
 // ------------------- Delete Device ---------------------------------
@@ -78,6 +80,7 @@ void STANDADevice::Delete()
              << "Id:   "   << getId() << "\n"
              << "pos:  "  << getPos() << "\n"
              << "step: "    << getStep();
+    command_home(m_device);
     close_device( &m_device );
     qDebug() << " ----------------- DeleteDevice End -----------------";
 }
@@ -92,13 +95,8 @@ void STANDADevice::move()
 {
     emit deviceMoveStart();
     qDebug() << "Device " << getName() << " is moving to pos: "  << getPos() << "\n";
-    double diff = getPos()/(m_devMaxPos - m_devMinPos);
-    qDebug() << "diff=" << diff;
-    double Position;
-    Position = double(m_edges_settings->RightBorder - m_edges_settings->LeftBorder)*diff;
-    qDebug() << "Position=" << Position;
-    int uPosition=0; // -255:255
-    command_move ( m_device, (int)Position, uPosition);
+    double Position = (double)getHomePos() + getPos();
+    command_move ( m_device, (int)Position, 0);
     emit deviceMoveEnd();
 }
 

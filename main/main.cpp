@@ -17,9 +17,7 @@ int main(int argc, char **argv)
     //STANDAVisualization viewWgt;
 
     devsloader.findDevices();
-    for (int i=0; i<devsloader.getnDevs(); i++) {
-      device[i].setName(devsloader.getDevName(i));
-      device[i].Init();
+    for (int i=0; i<1; i++) {
       QObject::connect(&devWgt[i], SIGNAL(turnOnDevice()),
                        &device[i], SLOT(Init())
                       );
@@ -35,6 +33,8 @@ int main(int argc, char **argv)
       QObject::connect(&devWgt[i], SIGNAL(stopMoveDevice()),
                        &device[i], SLOT(stop())
                       );
+      device[i].setName(devsloader.getDevName(i));
+      device[i].Init();
       pvbxLayout->addWidget(&devWgt[i]);
     }
 
