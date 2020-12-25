@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include <QDebug>
+#include <QTimerEvent>
 
 #include "STANDADevice.h"
 
@@ -18,8 +19,18 @@ STANDADevice::~STANDADevice()
 
 void STANDADevice::moveToBasePos()
 {
-    get_status( m_device, &m_status );
+    //get_status( m_device, &m_status );
     //command_move ( m_device, m_status.CurPosition+180, 0);
+}
+
+void STANDADevice::timerEvent(QTimerEvent* ptev)
+{
+    get_status( m_device, &m_status );
+    //qDebug() << "QTimerEvent speed = " << m_status.CurSpeed;
+    if (m_status.CurSpeed == 0) {
+        killTimer(ptev->timerId());
+        emit deviceMoveEnd();
+    }
 }
 // ------------------- Init Device -----------------------------------
 
@@ -93,11 +104,11 @@ void STANDADevice::stop()
 }
 void STANDADevice::move()
 {
+    startTimer(1000);
     emit deviceMoveStart();
     qDebug() << "Device " << getName() << " is moving to pos: "  << getPos() << "\n";
     double Position = (double)getHomePos() + getPos();
     command_move ( m_device, (int)Position, 0);
-    emit deviceMoveEnd();
 }
 
 // ------------- Private methods

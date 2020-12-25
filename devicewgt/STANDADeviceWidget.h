@@ -15,6 +15,8 @@ public:
     STANDADeviceWidget(QWidget *parent = nullptr);
     ~STANDADeviceWidget();
 
+    void Init();
+
     void setdPos  (double dpos) { dPos=dpos; }
     void setminPos(double pos)  { minPos=pos; }
     void setmaxPos(double pos)  { maxPos=pos; }
@@ -25,7 +27,7 @@ public:
     double getmaxPos() { return maxPos; }
 
     int getmaxStepNumber();
-
+    
 private:
     void makeLabels();
     void makeEditors();
@@ -96,7 +98,7 @@ private:
 
     double dPos=0.01; // step of position value changing
     double minPos=0.;
-    double maxPos=50000.;
+    double maxPos=1000.;
 
     QString strPreviousPos="";
 };

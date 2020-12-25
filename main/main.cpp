@@ -16,8 +16,10 @@ int main(int argc, char **argv)
 
     //STANDAVisualization viewWgt;
 
+    devWgt[0].setmaxPos(73000);
+    devWgt[1].setmaxPos(73000);
     devsloader.findDevices();
-    for (int i=0; i<1; i++) {
+    for (int i=0; i<devsloader.getnDevs(); i++) {
       QObject::connect(&devWgt[i], SIGNAL(turnOnDevice()),
                        &device[i], SLOT(Init())
                       );
@@ -33,11 +35,15 @@ int main(int argc, char **argv)
       QObject::connect(&devWgt[i], SIGNAL(stopMoveDevice()),
                        &device[i], SLOT(stop())
                       );
+      QObject::connect(&device[i], SIGNAL(deviceMoveEnd()),
+                       &devWgt[i], SLOT(setMoveMod())
+                      );
       device[i].setName(devsloader.getDevName(i));
       device[i].Init();
+      devWgt[i].Init();
       pvbxLayout->addWidget(&devWgt[i]);
     }
-
+    
     mainWgt.setLayout(pvbxLayout);
 
     // Connect device widget and view widget

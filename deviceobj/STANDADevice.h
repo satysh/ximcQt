@@ -25,6 +25,9 @@ public:
 
     void moveToBasePos(); // TODO Implements me!
 
+protected:
+    virtual void timerEvent(QTimerEvent*);
+
 public slots:
     void setName(QString name) { devName=name;          emit nameIsSet(); }
     //void setId  (QString idev) { devId=idev.toInt();    emit idIsSet(); }
@@ -66,6 +69,7 @@ private:
     double  devStep=0.;
 
     int m_homePos=0;
+    int m_timerId;
 
     bool devIdIsValid=false;
     bool devPosIsValid=false;

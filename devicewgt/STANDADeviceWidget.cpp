@@ -14,15 +14,19 @@ STANDADeviceWidget::STANDADeviceWidget(QWidget *parent/*=0*/)
     : QWidget(parent)
 {
     setFixedSize(800, 80);
+}
+
+STANDADeviceWidget::~STANDADeviceWidget()
+{
+}
+
+void STANDADeviceWidget::Init()
+{
     makeLabels();
     makeEditors();
     makeButtons();
     makeLayout();
     makeBaseConnections();
-}
-
-STANDADeviceWidget::~STANDADeviceWidget()
-{
 }
 
 int STANDADeviceWidget::getmaxStepNumber()
