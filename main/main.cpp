@@ -4,6 +4,7 @@
 #include "../view/STANDAVisualization.h"
 #include "../deviceobj/STANDADevice.h"
 #include "../devloader/STANDALoader.h"
+#include "../devsettings/STANDASettingsWidget.h"
 
 int main(int argc, char **argv)
 {
@@ -11,22 +12,24 @@ int main(int argc, char **argv)
     QWidget      mainWgt;
     QVBoxLayout* pvbxLayout = new QVBoxLayout;
     STANDALoader devsloader;
-    STANDADevice* device;
-    STANDADeviceWidget* devWgt;
+    STANDADevice device[2];
+    STANDADeviceWidget devWgt[2];
+    STANDASettingsWidget* devSettWgt;
 
     //STANDAVisualization viewWgt;
 
     devsloader.findDevices(); 
     const int nDevs = devsloader.getnDevs();
-
+/*
     if (nDevs > 0) {
         device = new STANDADevice[nDevs];
         devWgt = new STANDADeviceWidget[nDevs];
+        //devSettWgt = new STANDASettingsWidget[nDevs];
     }
     else {
     	return -1;
     }
-
+*/
     for (int i=0; i<nDevs; i++) {
       QObject::connect(&devWgt[i], SIGNAL(turnOnDevice()),
                        &device[i], SLOT(Init())

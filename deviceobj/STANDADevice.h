@@ -42,12 +42,16 @@ public slots:
     void setStep(QString sp)   { devStep=sp.toDouble(); emit stepIsSet(); }
     void setNomSpeed(QString speed) { setNomSpeed(speed.toInt()); emit speedChecked(speed); }
 
+
     void Init();
     void Delete();
 
     void stop();
     void move();
 
+    void getNomVoltageSlot() { emit voltageChecked(QString().setNum(getNomVoltage())); }
+    void getNomCurrentSlot()     { emit currentChecked(QString().setNum(getNomCurrent())); }
+    void getNomSpeedSlot()       { emit speedChecked(QString().setNum(getNomSpeed())); }
 signals:
     void nameIsSet   ();
     void idIsSet     ();
