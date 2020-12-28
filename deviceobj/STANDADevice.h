@@ -21,9 +21,16 @@ public:
     double  getPos () { return devPos; }
     double  getStep() { return devStep; }
 
-    bool check(); // This method provides checking device to be moved safty
+public:
+    void setNomSpeed(int speed);
 
-    void moveToBasePos(); // TODO Implements me!
+    int getNomVoltage();
+    int getNomCurrent();
+    int getNomSpeed();
+
+public:
+    bool check(); // This method provides checking device to be moved safty
+    void moveToBasePos(); // TODO Implement me!
 
 protected:
     virtual void timerEvent(QTimerEvent*);
@@ -33,6 +40,7 @@ public slots:
     //void setId  (QString idev) { devId=idev.toInt();    emit idIsSet(); }
     void setPos (QString pos)  { devPos=pos.toDouble(); emit posIsSet(); }
     void setStep(QString sp)   { devStep=sp.toDouble(); emit stepIsSet(); }
+    void setNomSpeed(QString speed) { setNomSpeed(speed.toInt()); emit speedChecked(speed); }
 
     void Init();
     void Delete();
@@ -45,6 +53,9 @@ signals:
     void idIsSet     ();
     void posIsSet    ();
     void stepIsSet   ();
+    void voltageChecked(QString);
+    void currentChecked(QString);
+    void speedChecked(QString);
 
     void deviceIsStopped();
 

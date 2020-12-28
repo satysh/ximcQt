@@ -17,6 +17,36 @@ STANDADevice::~STANDADevice()
     Delete();
 }
 
+void STANDADevice::setNomSpeed(int speed)
+{
+    m_engine_settings.NomSpeed = speed;
+    set_engine_settings( m_device, &m_engine_settings );
+}
+
+int STANDADevice::getNomVoltage()
+{
+    get_engine_settings( m_device, &m_engine_settings );
+    int nomVoltage = m_engine_settings.NomVoltage;
+    emit voltageChecked(QString().setNum(nomVoltage));
+    return nomVoltage;
+}
+
+int STANDADevice::getNomCurrent()
+{
+    get_engine_settings( m_device, &m_engine_settings );
+    int nomCurrent = m_engine_settings.NomCurrent;
+    emit currentChecked(QString().setNum(nomCurrent));
+    return nomCurrent;
+}
+
+int STANDADevice::getNomSpeed()
+{
+    get_engine_settings( m_device, &m_engine_settings );
+    int nomSpeed = m_engine_settings.NomSpeed;
+    emit speedChecked(QString().setNum(nomSpeed));
+    return nomSpeed;
+}
+
 void STANDADevice::moveToBasePos()
 {
     //get_status( m_device, &m_status );
