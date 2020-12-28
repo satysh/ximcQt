@@ -11,15 +11,23 @@ int main(int argc, char **argv)
     QWidget      mainWgt;
     QVBoxLayout* pvbxLayout = new QVBoxLayout;
     STANDALoader devsloader;
-    STANDADevice device[3];
-    STANDADeviceWidget devWgt[3];
+    STANDADevice* device;
+    STANDADeviceWidget* devWgt;
 
     //STANDAVisualization viewWgt;
 
-    devWgt[0].setmaxPos(73000);
-    devWgt[1].setmaxPos(73000);
-    devsloader.findDevices();
-    for (int i=0; i<devsloader.getnDevs(); i++) {
+    devsloader.findDevices(); 
+    const int nDevs = devsloader.getnDevs();
+
+    if (nDevs > 0) {
+        device = new STANDADevice[nDevs];
+        devWgt = new STANDADeviceWidget[nDevs];
+    }
+    else {
+    	return -1;
+    }
+
+    for (int i=0; i<nDevs; i++) {
       QObject::connect(&devWgt[i], SIGNAL(turnOnDevice()),
                        &device[i], SLOT(Init())
                       );
@@ -38,6 +46,7 @@ int main(int argc, char **argv)
       QObject::connect(&device[i], SIGNAL(deviceMoveEnd()),
                        &devWgt[i], SLOT(setMoveMod())
                       );
+      devWgt[i].setmaxPos(73000);
       device[i].setName(devsloader.getDevName(i));
       device[i].Init();
       devWgt[i].Init();
@@ -63,6 +72,7 @@ int main(int argc, char **argv)
     viewWgt.show();
     */
     mainWgt.show();
+
 
     return app.exec();
 }

@@ -13,7 +13,7 @@
 STANDADeviceWidget::STANDADeviceWidget(QWidget *parent/*=0*/)
     : QWidget(parent)
 {
-    setFixedSize(800, 80);
+    setFixedSize(650, 80);
 }
 
 STANDADeviceWidget::~STANDADeviceWidget()
@@ -37,22 +37,23 @@ int STANDADeviceWidget::getmaxStepNumber()
 // -------- make base widgets that the class includes
 void STANDADeviceWidget::makeLabels()
 {
-    plblName    = new QLabel("&name");
-    plblId      = new QLabel("&id");
+    //plblName    = new QLabel("&name");
+    //plblId      = new QLabel("&id");
     plblPos     = new QLabel("&pos [mm]");
     plblupPos   = new QLabel("&up pos");
     plbldownPos = new QLabel("&down pos");
 }
 void STANDADeviceWidget::makeEditors()
 {
-    pnameEdit = new QLineEdit("empty");
+    //pnameEdit = new QLineEdit("empty");
     //pnameEdit->setAlignment(Qt::AlignRight);
-    plblName->setBuddy(pnameEdit);
-
+    //plblName->setBuddy(pnameEdit);
+/*
     pidEdit = new QLineEdit("0");
     pidEdit->setAlignment(Qt::AlignRight);
     pidEdit->setValidator(new QIntValidator);
     plblId->setBuddy(pidEdit);
+*/
 
     pposEdit = new QLineEdit("0");
     pposEdit->setAlignment(Qt::AlignRight);
@@ -98,6 +99,7 @@ void STANDADeviceWidget::makeButtons()
 void STANDADeviceWidget::makeLayout()
 {
     // 1 column
+/*
     QVBoxLayout *pvbxLayout1 = new QVBoxLayout;
     pvbxLayout1->addWidget(plblName,  0, Qt::AlignCenter);
     pvbxLayout1->addWidget(pnameEdit, 0, Qt::AlignCenter);
@@ -106,7 +108,7 @@ void STANDADeviceWidget::makeLayout()
     QVBoxLayout *pvbxLayout2 = new QVBoxLayout;
     pvbxLayout2->addWidget(plblId,  0, Qt::AlignCenter);
     pvbxLayout2->addWidget(pidEdit, 0, Qt::AlignCenter);
-
+*/
     // 3 column
     QVBoxLayout *pvbxLayout3 = new QVBoxLayout;
     pvbxLayout3->addWidget(plblPos,  0, Qt::AlignCenter);
@@ -138,8 +140,10 @@ void STANDADeviceWidget::makeLayout()
 
     // 1 row
     QHBoxLayout *phbxLayout = new QHBoxLayout;
+/*
     phbxLayout->addLayout(pvbxLayout1);
     phbxLayout->addLayout(pvbxLayout2);
+*/
     phbxLayout->addLayout(pvbxLayout3);
     phbxLayout->addLayout(pvbxLayout4);
     phbxLayout->addLayout(pvbxLayout5);
