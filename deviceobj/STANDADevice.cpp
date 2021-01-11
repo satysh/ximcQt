@@ -140,6 +140,16 @@ void STANDADevice::move()
     double Position = (double)getHomePos() + getPos();
     command_move ( m_device, (int)Position, 0);
 }
+
+void STANDADevice::left()
+{
+    command_left(m_device);
+}
+
+void STANDADevice::right()
+{
+    command_right(m_device);
+}
 // ------------------------------------------------------------------
 // ------------- Private methods
 void STANDADevice::makeBaseConnections()

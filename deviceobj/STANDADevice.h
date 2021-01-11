@@ -11,7 +11,7 @@ class STANDADevice : public QObject
 public:
     STANDADevice(QObject *parent = nullptr);
     ~STANDADevice();
-    
+
     void setHomePos(int pos) { m_homePos=pos; }
 
 
@@ -46,8 +46,10 @@ public slots:
     void Init();
     void Delete();
 
-    void stop();
-    void move();
+    void stop ();
+    void move ();
+    void left ();
+    void right();
 
     void getNomVoltageSlot() { emit voltageChecked(QString().setNum(getNomVoltage())); }
     void getNomCurrentSlot()     { emit currentChecked(QString().setNum(getNomCurrent())); }
