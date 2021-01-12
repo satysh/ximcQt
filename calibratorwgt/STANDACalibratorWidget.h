@@ -2,8 +2,6 @@
 
 #include <vector>
 
-//#include <ximc.h>
-
 #include <QWidget>
 #include <QString>
 #include <QStringList>
@@ -22,12 +20,22 @@ public:
     void LoadAvailableDevices();
     void addDevice(QString devName) { m_devNamesList << devName; }
 
-    void InitDev(int index);
-    void DeleteDev(int index);
+    void InitDevice(int index);
+    void DeleteDevice(int index);
 
     void setndevs(int ndevs) { m_ndevs=ndevs; }
 
     int getndevs() { return m_ndevs; }
+
+private:
+    void Close();
+
+private slots:
+    void InitCalibration();
+
+signals:
+    void successfull();
+    void failed();
 
 private:
     int m_ndevs=0;
@@ -39,8 +47,8 @@ private:
     std::vector<int> m_vDevMaxPoses;
 
     /*Labels*/
-    QLabel *m_pNomVoltageLabel;
-    QLabel *m_pNomSpeedLabel;
+    QLabel *m_pCurVoltageLabel;
+    QLabel *m_pCurSpeedLabel;
     QLabel *m_pCurPosLabel;
 
     /*Editors*/
