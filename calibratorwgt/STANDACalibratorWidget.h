@@ -10,6 +10,8 @@
 #include <QLabel>
 #include <QPushButton>
 
+#include "../deviceobj/STANDADevice.h"
+
 class STANDACalibratorWidget : public QWidget
 {
     Q_OBJECT
@@ -20,15 +22,23 @@ public:
     void LoadAvailableDevices();
     void addDevice(QString devName) { m_devNamesList << devName; }
 
-    void InitDevice(int index);
-    void DeleteDevice(int index);
+    void InitDevice();
+    void CloseDevice();
 
     void setndevs(int ndevs) { m_ndevs=ndevs; }
+    void setcurIndex(int index) { m_curIndex=index; }
 
     int getndevs() { return m_ndevs; }
+    int getcurIndex() { return m_curIndex; }
+
+    QString getcurDevName();
 
 private:
     void Close();
+    void connectButtons();
+
+protected:
+    virtual void timerEvent(QTimerEvent*);
 
 private slots:
     void InitCalibration();
@@ -46,10 +56,13 @@ private:
     std::vector<int> m_vDevZeroPoses;
     std::vector<int> m_vDevMaxPoses;
 
+    STANDADevice *m_pcurDevice=nullptr;
+
     /*Labels*/
     QLabel *m_pCurVoltageLabel;
     QLabel *m_pCurSpeedLabel;
     QLabel *m_pCurPosLabel;
+    QLabel *m_pDevNameLabel;
 
     /*Editors*/
     QLineEdit *m_pNomVoltageEdit;

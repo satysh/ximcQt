@@ -10,6 +10,7 @@ class STANDADevice : public QObject
     Q_OBJECT
 public:
     STANDADevice(QObject *parent = nullptr);
+    STANDADevice(QString name, QObject *parent = nullptr);
     ~STANDADevice();
 
     void setHomePos(int pos) { m_homePos=pos; }
@@ -28,6 +29,10 @@ public:
     int getNomCurrent();
     int getNomSpeed();
 
+    int getCurVoltage();
+    int getCurSpeed();
+    int getCurOwnPosition();
+
 public:
     bool check(); // This method provides checking device to be moved safty
     void moveToBasePos(); // TODO Implement me!
@@ -44,12 +49,13 @@ public slots:
 
 
     void Init();
-    void Delete();
+    void Close();
 
     void stop ();
     void move ();
     void left ();
     void right();
+    void home();
 
     void getNomVoltageSlot() { emit voltageChecked(QString().setNum(getNomVoltage())); }
     void getNomCurrentSlot()     { emit currentChecked(QString().setNum(getNomCurrent())); }

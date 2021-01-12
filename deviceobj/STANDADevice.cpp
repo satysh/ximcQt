@@ -12,9 +12,15 @@ STANDADevice::STANDADevice(QObject *parent/*=nullptr*/)
     if (getName() == "") emit Disabled();
 }
 
+STANDADevice::STANDADevice(QString name, QObject *parent /*= nullptr*/)
+    : QObject(parent), devName(name)
+
+{
+    qDebug() << "STANDADevice::STANDADevice(" << getName() << ")";
+}
 STANDADevice::~STANDADevice()
 {
-    Delete();
+    Close();
 }
 
 void STANDADevice::setNomSpeed(int speed)
@@ -47,6 +53,21 @@ int STANDADevice::getNomSpeed()
     return nomSpeed;
 }
 
+int STANDADevice::getCurVoltage()
+{
+    get_status(m_device, &m_status);
+    return m_status.Upwr;
+}
+int STANDADevice::getCurSpeed()
+{
+    get_status(m_device, &m_status);
+    return m_status.CurSpeed;
+}
+int STANDADevice::getCurOwnPosition()
+{
+    get_status(m_device, &m_status);
+    return m_status.CurPosition;
+}
 void STANDADevice::moveToBasePos()
 {
     //get_status( m_device, &m_status );
@@ -105,25 +126,23 @@ void STANDADevice::Init()
 
     printf("Getting edges settings: ");
     get_edges_settings(m_device, &m_edges_settings);
-    printf( "lB %d, ulb %d, rB %d, urB\n", m_edges_settings.LeftBorder, m_edges_settings.uLeftBorder
-                                         , m_edges_settings.RightBorder, m_edges_settings.uRightBorder
-          );
+    printf( "lB %d, ulb %d, rB %d, urB\n", m_edges_settings.LeftBorder, m_edges_settings.uLeftBorder, m_edges_settings.RightBorder, m_edges_settings.uRightBorder);
 
     moveToBasePos();
     qDebug() << " ----------------- Init End -----------------";
 }
-// ------------------- Delete Device ---------------------------------
-void STANDADevice::Delete()
+// ------------------- Close Device ---------------------------------
+void STANDADevice::Close()
 {
     stop();
-    qDebug() << "Delete device: \n"
+    qDebug() << "Close device: \n"
              << "Name: " << getName() << "\n"
              << "Id:   "   << getId() << "\n"
              << "pos:  "  << getPos() << "\n"
              << "step: "    << getStep();
-    command_home(m_device);
+    home();
     close_device( &m_device );
-    qDebug() << " ----------------- DeleteDevice End -----------------";
+    qDebug() << " ----------------- CloseDevice End -----------------";
 }
 // ------------------- Slots -----------------------------------------
 void STANDADevice::stop()
@@ -149,6 +168,11 @@ void STANDADevice::left()
 void STANDADevice::right()
 {
     command_right(m_device);
+}
+
+void STANDADevice::home()
+{
+    command_home(m_device);
 }
 // ------------------------------------------------------------------
 // ------------- Private methods

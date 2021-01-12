@@ -6,6 +6,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QFont>
+#include <QTimerEvent>
 
 STANDACalibratorWidget::STANDACalibratorWidget(QWidget *parent/* = nullptr*/)
     : QWidget(parent)
@@ -13,7 +14,6 @@ STANDACalibratorWidget::STANDACalibratorWidget(QWidget *parent/* = nullptr*/)
     qDebug() << "STANDACalibratorWidget::STANDACalibratorWidget";
     int fixedw=500;
     int fixedh=500;
-
 
     setFixedSize(fixedw, fixedh);
     m_pInfoWindow = new QTextEdit(this);
@@ -26,6 +26,7 @@ STANDACalibratorWidget::STANDACalibratorWidget(QWidget *parent/* = nullptr*/)
 STANDACalibratorWidget::~STANDACalibratorWidget()
 {
     qDebug() << "STANDACalibratorWidget::~STANDACalibratorWidget";
+    if (m_pcurDevice) delete m_pcurDevice;
     Close();
 }
 
@@ -55,7 +56,7 @@ void STANDACalibratorWidget::LoadAvailableDevices()
 //  Gets device count from device enumeration data
     setndevs(get_device_count(devenum));
 
-    //setndevs(3);
+    setndevs(3);
 //  Terminate if there are no connected devices
     if (getndevs() <= 0)
     {
@@ -96,6 +97,19 @@ void STANDACalibratorWidget::LoadAvailableDevices()
     }
 }
 
+void STANDACalibratorWidget::InitDevice()
+{
+    m_pcurDevice = new STANDADevice(getcurDevName());
+    m_pcurDevice->Init();
+}
+
+QString STANDACalibratorWidget::getcurDevName()
+{
+    if ( m_devNamesList.size() > 0)
+        return m_devNamesList.at(getcurIndex());
+    else
+        return "";
+}
 void STANDACalibratorWidget::Close()
 {
     m_devNamesList.clear();
@@ -124,15 +138,43 @@ void STANDACalibratorWidget::Close()
 */
 }
 
+void STANDACalibratorWidget::connectButtons()
+{
+    connect(m_pLeft, SIGNAL(pressed()),  m_pcurDevice, SLOT(left()));
+    connect(m_pLeft, SIGNAL(released()), m_pcurDevice, SLOT(stop()));
+
+    connect(m_pRight, SIGNAL(pressed()),  m_pcurDevice, SLOT(right()));
+    connect(m_pRight, SIGNAL(released()), m_pcurDevice, SLOT(stop()));
+}
+
+void STANDACalibratorWidget::timerEvent(QTimerEvent *ptimerEv)
+{
+    //qDebug() << "timer " << ptimerEv->timerId();
+    m_pCurVoltageLabel->setText(QString().setNum(m_pcurDevice->getCurVoltage()));
+    m_pCurSpeedLabel->setText(QString().setNum(m_pcurDevice->getCurSpeed()));
+    m_pCurPosLabel->setText(QString().setNum(m_pcurDevice->getCurOwnPosition()));
+}
+
 // ---- Private slots -----------------------------------------------------------------
 void STANDACalibratorWidget::InitCalibration()
 {
 //    m_pInfoWindow->resize(size().width(), size().height()-400);
     disconnect(m_pNext, SIGNAL(clicked()), this, SLOT(InitCalibration()));
+    m_pNext->setEnabled(false);
     //m_pInfoWindow->clear();
+    startTimer(10);
+    InitDevice();
 
     QVBoxLayout *pvbxLayout = new QVBoxLayout;
-    pvbxLayout->addWidget(m_pNext); // 1 row
+
+    QString devName("curDevName: ");
+    devName += m_devNamesList.at(0);
+    m_pDevNameLabel = new QLabel(devName);
+
+    QHBoxLayout *phbx1RowLayout = new QHBoxLayout; // 1 row
+    phbx1RowLayout->addWidget(m_pDevNameLabel);
+    phbx1RowLayout->addWidget(m_pNext);
+    pvbxLayout->addLayout(phbx1RowLayout);
 
     QVBoxLayout *pvbx1ColumnLayout = new QVBoxLayout;
     QLabel *voltageLabel = new QLabel("curVoltage");
