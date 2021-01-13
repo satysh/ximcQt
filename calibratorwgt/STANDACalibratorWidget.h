@@ -34,7 +34,6 @@ public:
     QString getcurDevName();
 
 private:
-    void Close();
     void connectButtons();
     bool check();
 
@@ -49,10 +48,12 @@ private slots:
     void setMaxPos();
     void next();
     void finish();
+    void Close();
 
 signals:
     void successfull();
     void failed();
+    void calibrationFinished();
 
 private:
     int m_ndevs=0;

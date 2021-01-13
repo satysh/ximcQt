@@ -57,7 +57,7 @@ void STANDACalibratorWidget::LoadAvailableDevices()
 //  Gets device count from device enumeration data
     setndevs(get_device_count(devenum));
 
-    setndevs(3);
+    //setndevs(3);
 //  Terminate if there are no connected devices
     if (getndevs() <= 0)
     {
@@ -70,8 +70,8 @@ void STANDACalibratorWidget::LoadAvailableDevices()
     }
     else {
         for (int i=0; i<getndevs(); i++) {
-            QString curDevName/*(get_device_name(devenum, i))*/;
-            curDevName = "device_"+QString().setNum(i); // Test
+            QString curDevName(get_device_name(devenum, i));
+            //curDevName = "device_"+QString().setNum(i); // Test
             addDevice(curDevName);
         }
 
@@ -126,6 +126,9 @@ void STANDACalibratorWidget::CloseDevice()
         m_pSetNomSpeed->setEnabled(false);
         m_pSetZeroPos->setEnabled(false);
         m_pSetMaxPos->setEnabled(false);
+        m_pHome->setEnabled(false);
+        m_pLeft->setEnabled(false);
+        m_pRight->setEnabled(false);
     }
 }
 QString STANDACalibratorWidget::getcurDevName()
@@ -135,33 +138,7 @@ QString STANDACalibratorWidget::getcurDevName()
     else
         return "";
 }
-void STANDACalibratorWidget::Close()
-{
-    m_devNamesList.clear();
-    m_vDevVoltages.clear();
-    m_vDevSpeeds.clear();
-    m_vDevZeroPoses.clear();
-    m_vDevMaxPoses.clear();
 
-/*
-    if(m_pCurVoltageLabel) delete m_pCurVoltageLabel;
-    if(m_pNomSpeedLabel) delete m_pNomSpeedLabel;
-    if(m_pCurPosLabel) delete m_pCurPosLabel;
-
-    if(m_pNomVoltageEdit) delete ;
-    if(m_pNomSpeedEdit) delete ;
-
-    if(m_pInfoWindow) delete ;
-
-    if(m_pSetNomVoltage) delete ;
-    if(m_pSetNomSpeed) delete ;
-    if(m_pSetZeroPos) delete ;
-    if(m_pSetMaxPos) delete ;
-    if(m_pLeft) delete ;
-    if(m_pRight) delete ;
-    if(m_pNext) delete ;
-*/
-}
 
 void STANDACalibratorWidget::connectButtons()
 {
@@ -369,8 +346,47 @@ void STANDACalibratorWidget::next()
 
 void STANDACalibratorWidget::finish()
 {
-    QString outString("The end!");
+    QString outString("The end!\n\n");
+    for (int i=0; i<getndevs(); i++) {
+        outString += "For device: " + m_devNamesList.at(i) + QString("\n");
+        outString += " nomVoltage = " + QString().setNum(m_vDevVoltages.at(i)) + QString("\n");
+        outString += " nomSpeed = "   + QString().setNum(m_vDevSpeeds.at(i)) + QString("\n");
+        outString += " zeroPos = "    + QString().setNum(m_vDevZeroPoses.at(i)) + QString("\n");
+        outString += " maxPos = "     + QString().setNum(m_vDevMaxPoses.at(i)) + QString("\n\n");
+    }
+
     m_pInfoWindow->setText(outString);
+    disconnect(m_pNext, SIGNAL(clicked()), this, SLOT(finish()));
+    connect(m_pNext, SIGNAL(clicked()), this, SLOT(Close()));
+    m_pNext->setText("Close");
+}
+void STANDACalibratorWidget::Close()
+{
+    m_devNamesList.clear();
+    m_vDevVoltages.clear();
+    m_vDevSpeeds.clear();
+    m_vDevZeroPoses.clear();
+    m_vDevMaxPoses.clear();
+    emit calibrationFinished();
+
+/*
+    if(m_pCurVoltageLabel) delete m_pCurVoltageLabel;
+    if(m_pNomSpeedLabel) delete m_pNomSpeedLabel;
+    if(m_pCurPosLabel) delete m_pCurPosLabel;
+
+    if(m_pNomVoltageEdit) delete ;
+    if(m_pNomSpeedEdit) delete ;
+
+    if(m_pInfoWindow) delete ;
+
+    if(m_pSetNomVoltage) delete ;
+    if(m_pSetNomSpeed) delete ;
+    if(m_pSetZeroPos) delete ;
+    if(m_pSetMaxPos) delete ;
+    if(m_pLeft) delete ;
+    if(m_pRight) delete ;
+    if(m_pNext) delete ;
+*/
 }
 // ------------------------------------------------------------------------------------
 
