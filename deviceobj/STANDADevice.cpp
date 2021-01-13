@@ -140,7 +140,7 @@ void STANDADevice::Close()
              << "Id:   "   << getId() << "\n"
              << "pos:  "  << getPos() << "\n"
              << "step: "    << getStep();
-    home();
+    //home();
     close_device( &m_device );
     qDebug() << " ----------------- CloseDevice End -----------------";
 }
