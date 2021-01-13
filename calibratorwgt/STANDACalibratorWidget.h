@@ -29,19 +29,26 @@ public:
     void setcurIndex(int index) { m_curIndex=index; }
 
     int getndevs() { return m_ndevs; }
-    int getcurIndex() { return m_curIndex; }
+    //int getcurIndex() { return m_curIndex; }
 
     QString getcurDevName();
 
 private:
     void Close();
     void connectButtons();
+    bool check();
 
 protected:
     virtual void timerEvent(QTimerEvent*);
 
 private slots:
     void InitCalibration();
+    void setNomVoltage();
+    void setNomSpeed();
+    void setZeroPos();
+    void setMaxPos();
+    void next();
+    void finish();
 
 signals:
     void successfull();
@@ -81,4 +88,8 @@ private:
     QPushButton *m_pRight;
     QPushButton *m_pNext;
 
+    bool m_nomVoltageIsSet=false;
+    bool m_nomSpeedIsSet=false;
+    bool m_zeroPosIsSet=false;
+    bool m_maxPosIsSet=false;
 };

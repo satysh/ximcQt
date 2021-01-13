@@ -162,16 +162,19 @@ void STANDADevice::move()
 
 void STANDADevice::left()
 {
+    qDebug() << getName() << " is moving to the left";
     command_left(m_device);
 }
 
 void STANDADevice::right()
 {
+    qDebug() << getName() << " is moving to the right";
     command_right(m_device);
 }
 
 void STANDADevice::home()
 {
+    qDebug() << getName() << " is moving to the home";
     command_home(m_device);
 }
 // ------------------------------------------------------------------

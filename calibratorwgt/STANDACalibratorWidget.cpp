@@ -7,6 +7,7 @@
 #include <QHBoxLayout>
 #include <QFont>
 #include <QTimerEvent>
+#include <QIntValidator>
 
 STANDACalibratorWidget::STANDACalibratorWidget(QWidget *parent/* = nullptr*/)
     : QWidget(parent)
@@ -56,7 +57,7 @@ void STANDACalibratorWidget::LoadAvailableDevices()
 //  Gets device count from device enumeration data
     setndevs(get_device_count(devenum));
 
-    //setndevs(3);
+    setndevs(3);
 //  Terminate if there are no connected devices
     if (getndevs() <= 0)
     {
@@ -69,8 +70,8 @@ void STANDACalibratorWidget::LoadAvailableDevices()
     }
     else {
         for (int i=0; i<getndevs(); i++) {
-            QString curDevName(get_device_name(devenum, i));
-            //curDevName = "device_"+QString().setNum(i); // Test
+            QString curDevName/*(get_device_name(devenum, i))*/;
+            curDevName = "device_"+QString().setNum(i); // Test
             addDevice(curDevName);
         }
 
@@ -103,10 +104,34 @@ void STANDACalibratorWidget::InitDevice()
     m_pcurDevice->Init();
 }
 
+void STANDACalibratorWidget::CloseDevice()
+{
+    m_pcurDevice->Close();
+    m_curIndex++;
+    if (m_curIndex < getndevs()) {
+        QString devName("curDevName: ");
+        devName += m_devNamesList.at(m_curIndex);
+        m_pDevNameLabel->setText(devName);
+        m_pcurDevice->setName(getcurDevName());
+        m_pcurDevice->Init();
+    }
+    else {
+        m_pInfoWindow->clear();
+        m_pDevNameLabel->setText("End");
+        m_pNext->setText("finish");
+        disconnect(m_pNext, SIGNAL(clicked()), this, SLOT(next()));
+        connect(m_pNext, SIGNAL(clicked()), this, SLOT(finish()));
+        m_pNext->setEnabled(true);
+        m_pSetNomVoltage->setEnabled(false);
+        m_pSetNomSpeed->setEnabled(false);
+        m_pSetZeroPos->setEnabled(false);
+        m_pSetMaxPos->setEnabled(false);
+    }
+}
 QString STANDACalibratorWidget::getcurDevName()
 {
     if ( m_devNamesList.size() > 0)
-        return m_devNamesList.at(getcurIndex());
+        return m_devNamesList.at(m_curIndex);
     else
         return "";
 }
@@ -148,6 +173,16 @@ void STANDACalibratorWidget::connectButtons()
     connect(m_pRight, SIGNAL(pressed()),  m_pcurDevice, SLOT(right()));
     connect(m_pRight, SIGNAL(released()), m_pcurDevice, SLOT(stop()));
 
+    connect(m_pSetNomVoltage , SIGNAL(clicked()), this, SLOT(setNomVoltage()));
+    connect(m_pSetNomSpeed, SIGNAL(clicked()), this, SLOT(setNomSpeed()));
+    connect(m_pSetZeroPos, SIGNAL(clicked()), this, SLOT(setZeroPos()));
+    connect(m_pSetMaxPos, SIGNAL(clicked()), this, SLOT(setMaxPos()));
+
+}
+
+bool STANDACalibratorWidget::check()
+{
+    return m_nomVoltageIsSet&m_nomSpeedIsSet&m_zeroPosIsSet&m_maxPosIsSet;
 }
 
 void STANDACalibratorWidget::timerEvent(QTimerEvent *ptimerEv)
@@ -156,6 +191,8 @@ void STANDACalibratorWidget::timerEvent(QTimerEvent *ptimerEv)
     m_pCurVoltageLabel->setText(QString().setNum(m_pcurDevice->getCurVoltage()));
     m_pCurSpeedLabel->setText(QString().setNum(m_pcurDevice->getCurSpeed()));
     m_pCurPosLabel->setText(QString().setNum(m_pcurDevice->getCurOwnPosition()));
+
+    if (check()) m_pNext->setEnabled(true);
 }
 
 // ---- Private slots -----------------------------------------------------------------
@@ -163,6 +200,7 @@ void STANDACalibratorWidget::InitCalibration()
 {
 //    m_pInfoWindow->resize(size().width(), size().height()-400);
     disconnect(m_pNext, SIGNAL(clicked()), this, SLOT(InitCalibration()));
+    connect(m_pNext, SIGNAL(clicked()), this, SLOT(next()));
     m_pNext->setEnabled(false);
     //m_pInfoWindow->clear();
     startTimer(10);
@@ -202,12 +240,14 @@ void STANDACalibratorWidget::InitCalibration()
     QLabel *nomvolLabel = new QLabel("nomVoltage");
     nomvolLabel->setFont(font);
     pvbx2ColumnLayout->addWidget(nomvolLabel, 0, Qt::AlignCenter);
-    m_pNomVoltageEdit = new QLineEdit("nomvol");
+    m_pNomVoltageEdit = new QLineEdit(QString().setNum(m_pcurDevice->getCurVoltage()));
+    m_pNomVoltageEdit->setValidator(new QIntValidator);
     pvbx2ColumnLayout->addWidget(m_pNomVoltageEdit);
-    QLabel *nomspeedLabel = new QLabel("nomSpeed");
+    QLabel *nomspeedLabel = new QLabel("0");
     nomspeedLabel->setFont(font);
     pvbx2ColumnLayout->addWidget(nomspeedLabel, 0, Qt::AlignCenter);
-    m_pNomSpeedEdit = new QLineEdit("nomspeed");
+    m_pNomSpeedEdit = new QLineEdit(QString().setNum(m_pcurDevice->getCurSpeed()));
+    m_pNomSpeedEdit->setValidator(new QIntValidator);
     pvbx2ColumnLayout->addWidget(m_pNomSpeedEdit);
     pvbx2ColumnLayout->addWidget(new QLabel(""));
 
@@ -252,6 +292,85 @@ void STANDACalibratorWidget::InitCalibration()
     setLayout(pvbxLayout);
 
     connectButtons();
+}
+void STANDACalibratorWidget::setNomVoltage()
+{
+    int curNomVoltage = QString(m_pNomVoltageEdit->text()).toInt();
+    qDebug() << "For " << getcurDevName() << " setNomVoltage to " << curNomVoltage;
+    if (!m_nomVoltageIsSet) {
+        m_vDevVoltages.push_back(curNomVoltage);
+        m_nomVoltageIsSet=true;
+    }
+    else {
+        m_vDevVoltages[m_curIndex] = curNomVoltage;
+    }
+}
+void STANDACalibratorWidget::setNomSpeed()
+{
+    int curNomSpeed = QString(m_pNomSpeedEdit->text()).toInt();
+    qDebug() << "For " << getcurDevName() << " setNomSpeed to " << curNomSpeed;
+    if (!m_nomSpeedIsSet) {
+        m_vDevSpeeds.push_back(curNomSpeed);
+        m_nomSpeedIsSet=true;
+    }
+    else {
+        m_vDevSpeeds[m_curIndex] = curNomSpeed;
+    }
+
+}
+void STANDACalibratorWidget::setZeroPos()
+{
+    int curZeroPos = QString(m_pCurPosLabel->text()).toInt();
+    qDebug() << "For " << getcurDevName() << " setZeroPos to " << curZeroPos;
+    if (!m_zeroPosIsSet) {
+        m_vDevZeroPoses.push_back(curZeroPos);
+        m_zeroPosIsSet=true;
+    }
+    else {
+        m_vDevZeroPoses[m_curIndex] = curZeroPos;
+    }
+}
+
+void STANDACalibratorWidget::setMaxPos()
+{
+    int curMaxPos = QString(m_pCurPosLabel->text()).toInt();
+    qDebug() << "For " << getcurDevName() << " setMaxPos to " << curMaxPos;
+    if (!m_maxPosIsSet) {
+        m_vDevMaxPoses.push_back(curMaxPos);
+        m_maxPosIsSet=true;
+    }
+    else {
+        m_vDevMaxPoses[m_curIndex] = curMaxPos;
+    }
+}
+
+void STANDACalibratorWidget::next()
+{
+    qDebug() << "next: ";
+    m_pNext->setEnabled(false);
+    m_nomVoltageIsSet=false;
+    m_nomSpeedIsSet=false;
+    m_zeroPosIsSet=false;
+    m_maxPosIsSet=false;
+    qDebug() << getcurDevName() << "\n"
+             << "zero pos is " << m_vDevMaxPoses.at(m_curIndex) << "\n"
+             << "max pos is "   << m_vDevMaxPoses.at(m_curIndex) << "\n"
+             << "nom voltage is " << m_vDevVoltages.at(m_curIndex) << "\n"
+             << "nom speed is" << m_vDevSpeeds.at(m_curIndex);
+
+    QString outString("For "+getcurDevName()+"\n");
+    outString += "zero pos is " + QString().setNum(m_vDevMaxPoses.at(m_curIndex))+"\n";
+    outString += "max pos is " + QString().setNum(m_vDevMaxPoses.at(m_curIndex)) + "\n";
+    outString += "nom voltage is " + QString().setNum(m_vDevVoltages.at(m_curIndex)) + "\n";
+    outString += "nom speed is " + QString().setNum(m_vDevSpeeds.at(m_curIndex));
+    m_pInfoWindow->setText(outString);
+    CloseDevice();
+}
+
+void STANDACalibratorWidget::finish()
+{
+    QString outString("The end!");
+    m_pInfoWindow->setText(outString);
 }
 // ------------------------------------------------------------------------------------
 
