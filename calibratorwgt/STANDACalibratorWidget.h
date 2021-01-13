@@ -75,6 +75,8 @@ private:
     QPushButton *m_pSetNomSpeed;
     QPushButton *m_pSetZeroPos;
     QPushButton *m_pSetMaxPos;
+    QPushButton *m_pStop;
+    QPushButton *m_pHome;
     QPushButton *m_pLeft;
     QPushButton *m_pRight;
     QPushButton *m_pNext;

@@ -56,7 +56,7 @@ void STANDACalibratorWidget::LoadAvailableDevices()
 //  Gets device count from device enumeration data
     setndevs(get_device_count(devenum));
 
-    setndevs(3);
+    //setndevs(3);
 //  Terminate if there are no connected devices
     if (getndevs() <= 0)
     {
@@ -69,8 +69,8 @@ void STANDACalibratorWidget::LoadAvailableDevices()
     }
     else {
         for (int i=0; i<getndevs(); i++) {
-            QString curDevName/*(get_device_name(devenum, i))*/;
-            curDevName = "device_"+QString().setNum(i); // Test
+            QString curDevName(get_device_name(devenum, i));
+            //curDevName = "device_"+QString().setNum(i); // Test
             addDevice(curDevName);
         }
 
@@ -140,11 +140,14 @@ void STANDACalibratorWidget::Close()
 
 void STANDACalibratorWidget::connectButtons()
 {
+    connect(m_pStop, SIGNAL(clicked()), m_pcurDevice, SLOT(stop()));
+    connect(m_pHome, SIGNAL(clicked()), m_pcurDevice, SLOT(home()));
     connect(m_pLeft, SIGNAL(pressed()),  m_pcurDevice, SLOT(left()));
     connect(m_pLeft, SIGNAL(released()), m_pcurDevice, SLOT(stop()));
 
     connect(m_pRight, SIGNAL(pressed()),  m_pcurDevice, SLOT(right()));
     connect(m_pRight, SIGNAL(released()), m_pcurDevice, SLOT(stop()));
+
 }
 
 void STANDACalibratorWidget::timerEvent(QTimerEvent *ptimerEv)
@@ -207,8 +210,16 @@ void STANDACalibratorWidget::InitCalibration()
     m_pNomSpeedEdit = new QLineEdit("nomspeed");
     pvbx2ColumnLayout->addWidget(m_pNomSpeedEdit);
     pvbx2ColumnLayout->addWidget(new QLabel(""));
+
+    QHBoxLayout *phbxButtonsRowLayout = new QHBoxLayout;
+    m_pStop = new QPushButton("stop");
+    m_pHome = new QPushButton("home");
     m_pLeft = new QPushButton("left");
-    pvbx2ColumnLayout->addWidget(m_pLeft,  0, Qt::AlignRight);
+    phbxButtonsRowLayout->addWidget(m_pStop);
+    phbxButtonsRowLayout->addWidget(m_pHome);
+    phbxButtonsRowLayout->addWidget(m_pLeft, 0, Qt::AlignRight);
+
+    pvbx2ColumnLayout->addLayout(phbxButtonsRowLayout);
 
 
     QVBoxLayout *pvbx3ColumnLayout = new QVBoxLayout;
@@ -239,6 +250,8 @@ void STANDACalibratorWidget::InitCalibration()
     pvbxLayout->addWidget(m_pInfoWindow); // last row
 
     setLayout(pvbxLayout);
+
+    connectButtons();
 }
 // ------------------------------------------------------------------------------------
 
