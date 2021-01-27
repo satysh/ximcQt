@@ -137,7 +137,7 @@ QString STANDACalibratorWidget::getcurDevName()
 
 void STANDACalibratorWidget::writeOutputTxt()
 {
-    QFile fileOut("fileout.txt"); 
+    QFile fileOut("../settingsdata/fileout.txt"); 
     if(fileOut.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QTextStream writeStream(&fileOut);
         for (int i=0; i<getndevs(); i++) {
