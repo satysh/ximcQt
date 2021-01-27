@@ -8,6 +8,8 @@
 #include <QFont>
 #include <QTimerEvent>
 #include <QIntValidator>
+#include <QFile>
+#include <QTextStream>
 
 STANDACalibratorWidget::STANDACalibratorWidget(QWidget *parent/* = nullptr*/)
     : QWidget(parent)
@@ -57,7 +59,7 @@ void STANDACalibratorWidget::LoadAvailableDevices()
 //  Gets device count from device enumeration data
     setndevs(get_device_count(devenum));
 
-    //setndevs(3);
+    //setndevs(2); // TODO It exists just for test
 //  Terminate if there are no connected devices
     if (getndevs() <= 0)
     {
@@ -71,7 +73,7 @@ void STANDACalibratorWidget::LoadAvailableDevices()
     else {
         for (int i=0; i<getndevs(); i++) {
             QString curDevName(get_device_name(devenum, i));
-            //curDevName = "device_"+QString().setNum(i); // Test
+            //curDevName = "device_"+QString().setNum(i); // TODO It exits just for Tests
             addDevice(curDevName);
         }
 
@@ -98,13 +100,7 @@ void STANDACalibratorWidget::LoadAvailableDevices()
     }
 }
 
-void STANDACalibratorWidget::InitDevice()
-{
-    m_pcurDevice = new STANDADevice(getcurDevName());
-    m_pcurDevice->Init();
-}
-
-void STANDACalibratorWidget::CloseDevice()
+void STANDACalibratorWidget::CloseCurDevice()
 {
     m_pcurDevice->Close();
     m_curIndex++;
@@ -139,6 +135,21 @@ QString STANDACalibratorWidget::getcurDevName()
         return "";
 }
 
+void STANDACalibratorWidget::writeOutputTxt()
+{
+    QFile fileOut("fileout.txt"); 
+    if(fileOut.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream writeStream(&fileOut);
+        for (int i=0; i<getndevs(); i++) {
+            writeStream << m_devNamesList.at(i) << "\t";
+            writeStream << m_vDevVoltages.at(i) << "\t";
+            writeStream << m_vDevSpeeds.at(i) << "\t";
+            writeStream << m_vDevZeroPoses.at(i) << "\t";
+            writeStream << m_vDevMaxPoses.at(i) << "\n";
+        }
+    }
+    fileOut.close(); 
+}
 
 void STANDACalibratorWidget::connectButtons()
 {
@@ -181,7 +192,10 @@ void STANDACalibratorWidget::InitCalibration()
     m_pNext->setEnabled(false);
     //m_pInfoWindow->clear();
     startTimer(10);
-    InitDevice();
+    
+    // Init first device 
+    m_pcurDevice = new STANDADevice(getcurDevName());
+    m_pcurDevice->Init();
 
     QVBoxLayout *pvbxLayout = new QVBoxLayout;
 
@@ -341,7 +355,7 @@ void STANDACalibratorWidget::next()
     outString += "nom voltage is " + QString().setNum(m_vDevVoltages.at(m_curIndex)) + "\n";
     outString += "nom speed is " + QString().setNum(m_vDevSpeeds.at(m_curIndex));
     m_pInfoWindow->setText(outString);
-    CloseDevice();
+    CloseCurDevice();
 }
 
 void STANDACalibratorWidget::finish()
@@ -358,6 +372,7 @@ void STANDACalibratorWidget::finish()
     m_pInfoWindow->setText(outString);
     disconnect(m_pNext, SIGNAL(clicked()), this, SLOT(finish()));
     connect(m_pNext, SIGNAL(clicked()), this, SLOT(Close()));
+    writeOutputTxt();
     m_pNext->setText("Close");
 }
 void STANDACalibratorWidget::Close()

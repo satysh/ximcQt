@@ -22,8 +22,7 @@ public:
     void LoadAvailableDevices();
     void addDevice(QString devName) { m_devNamesList << devName; }
 
-    void InitDevice();
-    void CloseDevice();
+    void CloseCurDevice();
 
     void setndevs(int ndevs) { m_ndevs=ndevs; }
     void setcurIndex(int index) { m_curIndex=index; }
@@ -34,6 +33,7 @@ public:
     QString getcurDevName();
 
 private:
+	void writeOutputTxt();
     void connectButtons();
     bool check();
 
