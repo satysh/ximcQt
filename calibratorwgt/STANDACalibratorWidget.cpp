@@ -125,6 +125,8 @@ void STANDACalibratorWidget::CloseCurDevice()
         m_pHome->setEnabled(false);
         m_pLeft->setEnabled(false);
         m_pRight->setEnabled(false);
+        m_pNomVoltageEdit->setEnabled(false);
+        m_pNomSpeedEdit->setEnabled(false);
     }
 }
 QString STANDACalibratorWidget::getcurDevName()
@@ -137,7 +139,7 @@ QString STANDACalibratorWidget::getcurDevName()
 
 void STANDACalibratorWidget::writeOutputTxt()
 {
-    QFile fileOut("../settingsdata/fileout.txt"); 
+    QFile fileOut("../settingsdata/fileout.txt");
     if(fileOut.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QTextStream writeStream(&fileOut);
         for (int i=0; i<getndevs(); i++) {
@@ -148,7 +150,7 @@ void STANDACalibratorWidget::writeOutputTxt()
             writeStream << m_vDevMaxPoses.at(i) << "\n";
         }
     }
-    fileOut.close(); 
+    fileOut.close();
 }
 
 void STANDACalibratorWidget::connectButtons()
@@ -192,8 +194,8 @@ void STANDACalibratorWidget::InitCalibration()
     m_pNext->setEnabled(false);
     //m_pInfoWindow->clear();
     startTimer(10);
-    
-    // Init first device 
+
+    // Init first device
     m_pcurDevice = new STANDADevice(getcurDevName());
     m_pcurDevice->Init();
 
