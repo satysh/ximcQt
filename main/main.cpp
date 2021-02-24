@@ -18,7 +18,8 @@ int main(int argc, char **argv)
 
     //STANDAVisualization viewWgt;
 
-    devsloader.findDevices(); 
+    devsloader.check();
+    devsloader.findDevices();
     const int nDevs = devsloader.getnDevs();
 /*
     if (nDevs > 0) {
@@ -55,7 +56,7 @@ int main(int argc, char **argv)
       devWgt[i].Init();
       pvbxLayout->addWidget(&devWgt[i]);
     }
-    
+
     mainWgt.setLayout(pvbxLayout);
 
     // Connect device widget and view widget

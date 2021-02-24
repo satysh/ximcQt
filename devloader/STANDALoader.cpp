@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QString>
 #include <QByteArray>
+#include <QFile>
 
 #include "STANDALoader.h"
 
@@ -24,6 +25,20 @@ QString STANDALoader::getDevName(int i)
 		return NULL;
 	}
     return m_vDevnameslist.at(i);
+}
+
+void STANDALoader::check()
+{
+
+    QFile fileOut("../settingsdata/fileout.txt");
+    if(fileOut.open(QIODevice::ReadOnly | QIODevice::Text)) {
+
+        QByteArray data;
+        data = fileOut.readAll();
+        qDebug() << "file: " << QString(data);
+    }
+    fileOut.close();
+
 }
 void STANDALoader::findDevices()
 {

@@ -19,7 +19,7 @@ public:
     int getnDevs() { return m_ndevs; }
     QString getDevName(int i);
 
-
+    void check();
     void findDevices();
 signals:
     void successfull();
