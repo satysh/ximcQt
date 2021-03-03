@@ -20,7 +20,7 @@ STANDACalibratorWidget::STANDACalibratorWidget(QWidget *parent/* = nullptr*/)
     m_pInfoWindow->setReadOnly(true);
 
     FindAvailableDevices();
-    MakeDevButtons();
+    MakeDevSelectButtons();
 
     QVBoxLayout *pmainLayout = new QVBoxLayout;
     pmainLayout->addWidget(m_pgbxOfDevs);
@@ -114,7 +114,7 @@ void STANDACalibratorWidget::FindAvailableDevices()
     }
 }
 
-void STANDACalibratorWidget::MakeDevButtons()
+void STANDACalibratorWidget::MakeDevSelectButtons()
 {
     m_pgbxOfDevs = new QGroupBox("&Devices");
     //connect(m_pgbxOfDevs, SIGNAL(toggled(bool)), this, SLOT(test(bool)));
@@ -122,13 +122,11 @@ void STANDACalibratorWidget::MakeDevButtons()
     QHBoxLayout *phbxLayout = new QHBoxLayout;
 
     for (int i=0; i<m_ndevs; i++) {
-        QRadioButton *pcurRbtn = new QRadioButton( QString("&")+m_devFriendlyNamesList.at(i) );
+        QRadioButton *pcurRbtn = new QRadioButton(m_devFriendlyNamesList.at(i));
         phbxLayout->addWidget(pcurRbtn);
-        m_vectorOfDevs.fill(pcurRbtn, i);
         connect(pcurRbtn, SIGNAL(toggled(bool)), this, SLOT(trigger(bool)));
     }
 
-    qDebug() << "m_vectorOfDevs size is " << m_vectorOfDevs.size();
     m_pgbxOfDevs->setLayout(phbxLayout);
 }
 
