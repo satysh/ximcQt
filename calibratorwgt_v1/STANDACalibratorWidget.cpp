@@ -6,7 +6,6 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QTimerEvent>
-#include <QRadioButton>
 
 
 STANDACalibratorWidget::STANDACalibratorWidget(QWidget *parent/* = nullptr*/)
@@ -30,9 +29,18 @@ STANDACalibratorWidget::STANDACalibratorWidget(QWidget *parent/* = nullptr*/)
 }
 // ---------- Public slots -----
 
-void STANDACalibratorWidget::test()
+void STANDACalibratorWidget::trigger(bool flag)
 {
-    Print("toggled");
+    QRadioButton *pcurRbtn = (QRadioButton*)sender();
+    QString outStr = pcurRbtn->text();
+    if (flag) {
+        outStr += " was on";
+    }
+    else {
+        outStr += " was off";
+    }
+
+    Print(outStr);
 }
 
 // -----------------------------
@@ -109,14 +117,18 @@ void STANDACalibratorWidget::FindAvailableDevices()
 void STANDACalibratorWidget::MakeDevButtons()
 {
     m_pgbxOfDevs = new QGroupBox("&Devices");
+    //connect(m_pgbxOfDevs, SIGNAL(toggled(bool)), this, SLOT(test(bool)));
 
     QHBoxLayout *phbxLayout = new QHBoxLayout;
 
     for (int i=0; i<m_ndevs; i++) {
         QRadioButton *pcurRbtn = new QRadioButton( QString("&")+m_devFriendlyNamesList.at(i) );
         phbxLayout->addWidget(pcurRbtn);
+        m_vectorOfDevs.fill(pcurRbtn, i);
+        connect(pcurRbtn, SIGNAL(toggled(bool)), this, SLOT(trigger(bool)));
     }
 
+    qDebug() << "m_vectorOfDevs size is " << m_vectorOfDevs.size();
     m_pgbxOfDevs->setLayout(phbxLayout);
 }
 

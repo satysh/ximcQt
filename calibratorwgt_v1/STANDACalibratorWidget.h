@@ -7,6 +7,8 @@
 #include <QTextEdit>
 #include <QStringList>
 #include <QGroupBox>
+#include <QVector>
+#include <QRadioButton>
 
 #include "../deviceobj/STANDADevice.h"
 
@@ -22,7 +24,7 @@ public:
     void MakeDevButtons();
 
 public slots:
-    void test();
+    void trigger(bool);
 
 protected:
     virtual void timerEvent(QTimerEvent*);
@@ -31,6 +33,8 @@ private:
     QTextEdit    *m_pInfoWindow;
     QGroupBox    *m_pgbxOfDevs;
     STANDADevice *m_device;
+
+    QVector<QRadioButton*> m_vectorOfDevs;
 
     int m_ndevs=0;
     int m_curDevId;
