@@ -8,6 +8,10 @@
 #include <QStringList>
 #include <QGroupBox>
 #include <QRadioButton>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QVBoxLayout>
 
 #include "../deviceobj/STANDADevice.h"
 
@@ -21,6 +25,7 @@ public:
     void Print(QString str);
     void FindAvailableDevices();
     void MakeDevSelectButtons();
+    void MakeControlWindow();
 
 public slots:
     void trigger(bool);
@@ -32,6 +37,34 @@ private:
     QTextEdit    *m_pInfoWindow;
     QGroupBox    *m_pgbxOfDevs;
     STANDADevice *m_device;
+    QVBoxLayout  *m_pmainLayout;
+
+    /* Control Window Widgets */
+    QLabel *m_pcurDevNameLable;
+    QLabel *m_pcurDevVoltage;
+    QLabel *m_pcurDevSpeed;
+    QLabel *m_pcurDevAcceleration;
+    QLabel *m_pcurDevPos;
+
+    QLineEdit *m_pDevNameEdit;
+    QLineEdit *m_pDevVoltageEdit;
+    QLineEdit *m_pDevSpeedEdit;
+    QLineEdit *m_pDevAccelerationEdit;
+
+    QPushButton *m_pcmdDevSetZeroPos;
+    QPushButton *m_pcmdDevSetMaxPos;
+    QPushButton *m_pDevNameOk;
+    QPushButton *m_pDevVoltageOk;
+    QPushButton *m_pDevSpeedOk;
+    QPushButton *m_pDevAccelerationOk;
+
+    QPushButton *m_pDevLeft;
+    QPushButton *m_pDevRight;
+    QPushButton *m_pDevHome;
+    QPushButton *m_pDevStop;
+
+    QRadioButton *m_pDevRenameMe1; // TODO
+    QRadioButton *m_pDevRenameMe2; // TODO
 
     int m_ndevs=0;
     int m_curDevId;

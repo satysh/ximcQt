@@ -4,28 +4,30 @@
 
 #include <QDebug>
 #include <QHBoxLayout>
-#include <QVBoxLayout>
 #include <QTimerEvent>
+#include <QSize>
 
 
 STANDACalibratorWidget::STANDACalibratorWidget(QWidget *parent/* = nullptr*/)
     : QWidget(parent)
 {
     qDebug() << "STANDACalibratorWidget::STANDACalibratorWidget";
-    int fixedw=500;
-    int fixedh=500;
+    startTimer(1);
+    int fixedw=900;
+    int fixedh=600;
     //setFixedSize(fixedw, fixedh);
 
     m_pInfoWindow = new QTextEdit;
     m_pInfoWindow->setReadOnly(true);
 
+    m_pmainLayout = new QVBoxLayout;
+
     FindAvailableDevices();
     MakeDevSelectButtons();
+    MakeControlWindow();
 
-    QVBoxLayout *pmainLayout = new QVBoxLayout;
-    pmainLayout->addWidget(m_pgbxOfDevs);
-    pmainLayout->addWidget(m_pInfoWindow);
-    setLayout(pmainLayout);
+    m_pmainLayout->addWidget(m_pInfoWindow);
+    setLayout(m_pmainLayout);
 }
 // ---------- Public slots -----
 
@@ -128,8 +130,102 @@ void STANDACalibratorWidget::MakeDevSelectButtons()
     }
 
     m_pgbxOfDevs->setLayout(phbxLayout);
+
+    m_pmainLayout->addWidget(m_pgbxOfDevs);
+}
+
+void STANDACalibratorWidget::MakeControlWindow()
+{
+    QHBoxLayout *phbxLayoutCW = new QHBoxLayout;
+
+    m_pcurDevNameLable = new QLabel("empty");
+    m_pcurDevVoltage = new QLabel("empty");
+    m_pcurDevSpeed = new QLabel("empty");
+    m_pcurDevAcceleration = new QLabel("empty");
+    m_pcurDevPos = new QLabel("empty");
+
+    QVBoxLayout *pvbxLayout1Row = new QVBoxLayout;
+    pvbxLayout1Row->addWidget(new QLabel("current"), 0, Qt::AlignCenter);
+    pvbxLayout1Row->addWidget(m_pcurDevNameLable);
+    pvbxLayout1Row->addWidget(m_pcurDevVoltage);
+    pvbxLayout1Row->addWidget(m_pcurDevSpeed);
+    pvbxLayout1Row->addWidget(m_pcurDevAcceleration);
+    pvbxLayout1Row->addWidget(m_pcurDevPos);
+
+    phbxLayoutCW->addLayout(pvbxLayout1Row);
+
+    m_pDevNameEdit = new QLineEdit;
+    m_pDevVoltageEdit = new QLineEdit;
+    m_pDevSpeedEdit = new QLineEdit;
+    m_pDevAccelerationEdit = new QLineEdit;
+
+    QVBoxLayout *pvbxLayout2Row = new QVBoxLayout;
+    pvbxLayout2Row->addWidget(new QLabel("set"), 0, Qt::AlignCenter);
+    pvbxLayout2Row->addWidget(m_pDevNameEdit);
+    pvbxLayout2Row->addWidget(m_pDevVoltageEdit);
+    pvbxLayout2Row->addWidget(m_pDevSpeedEdit);
+    pvbxLayout2Row->addWidget(m_pDevAccelerationEdit);
+
+
+
+    m_pcmdDevSetZeroPos = new QPushButton("setZeroPos");
+    m_pcmdDevSetMaxPos = new QPushButton("setMaxPos");
+
+    QHBoxLayout *phbxLayout = new QHBoxLayout;
+    phbxLayout->addWidget(m_pcmdDevSetZeroPos);
+    phbxLayout->addWidget(m_pcmdDevSetMaxPos);
+    pvbxLayout2Row->addLayout(phbxLayout);
+
+    phbxLayoutCW->addLayout(pvbxLayout2Row);
+
+    m_pDevNameOk = new QPushButton("ok");
+    m_pDevVoltageOk = new QPushButton("ok");
+    m_pDevSpeedOk = new QPushButton("ok");
+    m_pDevAccelerationOk = new QPushButton("ok");
+
+    QVBoxLayout *pvbxLayout3Row = new QVBoxLayout;
+    pvbxLayout3Row->addWidget(new QLabel("ok"), 0, Qt::AlignCenter);
+    pvbxLayout3Row->addWidget(m_pDevNameOk);
+    pvbxLayout3Row->addWidget(m_pDevVoltageOk);
+    pvbxLayout3Row->addWidget(m_pDevSpeedOk);
+    pvbxLayout3Row->addWidget(m_pDevAccelerationOk);
+    pvbxLayout3Row->addWidget(new QLabel(""));
+
+    phbxLayoutCW->addLayout(pvbxLayout3Row);
+
+    m_pDevLeft = new QPushButton("left");
+    m_pDevRight = new QPushButton("right");
+
+    QHBoxLayout *phbxLayoutLR = new QHBoxLayout;
+    phbxLayoutLR->addWidget(m_pDevLeft);
+    phbxLayoutLR->addWidget(m_pDevRight);
+
+    m_pDevHome = new QPushButton("home");
+    m_pDevStop = new QPushButton("stop");
+
+    m_pDevRenameMe1 = new QRadioButton("on/off"); // TODO
+    m_pDevRenameMe2 = new QRadioButton("on/off"); // TODO
+
+    QVBoxLayout *pvbxLayout4Row = new QVBoxLayout;
+    pvbxLayout4Row->addWidget(new QLabel("move"), 0, Qt::AlignCenter);
+    pvbxLayout4Row->addLayout(phbxLayoutLR);
+    pvbxLayout4Row->addWidget(m_pDevHome);
+    pvbxLayout4Row->addWidget(m_pDevStop);
+    pvbxLayout4Row->addWidget(m_pDevRenameMe1);
+    pvbxLayout4Row->addWidget(m_pDevRenameMe2);
+
+    phbxLayoutCW->addLayout(pvbxLayout4Row);
+
+    m_pmainLayout->addLayout(phbxLayoutCW);
 }
 
 void STANDACalibratorWidget::timerEvent(QTimerEvent*)
 {
+/*
+    m_pDevNameEdit->resize(m_pDevHome->size().width(), m_pDevHome->size().height());
+    m_pDevVoltageEdit->resize(m_pDevHome->size().width(), m_pDevHome->size().height());
+    m_pDevSpeedEdit->resize(m_pDevHome->size().width(), m_pDevHome->size().height());
+    m_pDevAccelerationEdit->resize(m_pDevHome->size().width(), m_pDevHome->size().height());
+    m_pcmdDevSetZeroPos->resize(m_pDevHome->size().width(), m_pDevHome->size().height());
+    m_pcmdDevSetMaxPos->resize(m_pDevHome->size().width(), m_pDevHome->size().height());*/
 }
