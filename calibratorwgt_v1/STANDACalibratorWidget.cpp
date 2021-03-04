@@ -264,8 +264,10 @@ void STANDACalibratorWidget::MakeControlWindow()
 
 void STANDACalibratorWidget::ConnectDeviceAndCW()
 {
-    connect(m_pDevLeft, SIGNAL(clicked()), m_device, SLOT(left()));
-    connect(m_pDevRight, SIGNAL(clicked()), m_device, SLOT(right()));
+    connect(m_pDevLeft, SIGNAL(pressed()), m_device, SLOT(left()));
+    connect(m_pDevLeft, SIGNAL(released()), m_device, SLOT(stop()));
+    connect(m_pDevRight, SIGNAL(pressed()), m_device, SLOT(right()));
+    connect(m_pDevRight, SIGNAL(released()), m_device, SLOT(stop()));
     connect(m_pDevHome, SIGNAL(clicked()), m_device, SLOT(home()));
     connect(m_pDevStop, SIGNAL(clicked()), m_device, SLOT(stop()));
 
