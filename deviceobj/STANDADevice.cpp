@@ -63,6 +63,16 @@ int STANDADevice::getCurSpeed()
     get_status(m_device, &m_status);
     return m_status.CurSpeed;
 }
+int STANDADevice::getCurAcceleration()
+{
+    get_move_settings(m_device, &m_move_settings);
+    return m_move_settings.Accel;
+}
+int STANDADevice::getCurDeceleration()
+{
+    get_move_settings(m_device, &m_move_settings);
+    return m_move_settings.Decel;
+}
 int STANDADevice::getCurOwnPosition()
 {
     get_status(m_device, &m_status);

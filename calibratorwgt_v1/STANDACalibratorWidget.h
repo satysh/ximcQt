@@ -1,6 +1,7 @@
 #pragma once
 
-#include <vector>
+#include <map>
+
 
 #include <QWidget>
 #include <QString>
@@ -43,20 +44,20 @@ private:
     QLabel *m_pcurDevNameLable;
     QLabel *m_pcurDevVoltage;
     QLabel *m_pcurDevSpeed;
-    QLabel *m_pcurDevAcceleration;
+    QLabel *m_pcurDevDeceleration;
     QLabel *m_pcurDevPos;
 
     QLineEdit *m_pDevNameEdit;
     QLineEdit *m_pDevVoltageEdit;
     QLineEdit *m_pDevSpeedEdit;
-    QLineEdit *m_pDevAccelerationEdit;
+    QLineEdit *m_pDevDecelerationEdit;
 
     QPushButton *m_pcmdDevSetZeroPos;
     QPushButton *m_pcmdDevSetMaxPos;
     QPushButton *m_pDevNameOk;
     QPushButton *m_pDevVoltageOk;
     QPushButton *m_pDevSpeedOk;
-    QPushButton *m_pDevAccelerationOk;
+    QPushButton *m_pDevDecelerationOk;
 
     QPushButton *m_pDevLeft;
     QPushButton *m_pDevRight;
@@ -70,4 +71,6 @@ private:
     int m_curDevId;
     QStringList m_devNamesList;
     QStringList m_devFriendlyNamesList;
+
+    std::map<QString, QString> m_mapDevNameVsFriendlyName;
 };

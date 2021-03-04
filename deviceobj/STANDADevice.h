@@ -31,6 +31,8 @@ public:
 
     int getCurVoltage();
     int getCurSpeed();
+    int getCurAcceleration();
+    int getCurDeceleration();
     int getCurOwnPosition();
 
 public:
@@ -101,6 +103,7 @@ private:
     device_t          m_device;
     status_t          m_status;
     engine_settings_t m_engine_settings;
+    move_settings_t   m_move_settings;
     status_calb_t     m_status_calb;
     calibration_t     m_calibration;
     get_position_t    m_get_position;
