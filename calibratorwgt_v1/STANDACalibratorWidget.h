@@ -28,9 +28,16 @@ public:
     void MakeDevSelectButtons();
     void MakeControlWindow(); // CW
     void ConnectDeviceAndCW();
+    void WriteOutputTxt();
 
 public slots:
     void trigger(bool);
+
+    void setDevVoltage() { m_curDevVoltage=m_pDevVoltageEdit->text().toDouble(); }
+    void setDevSpeed  () { m_curDevSpeeds=m_pDevSpeedEdit->text().toDouble(); }
+    void setDevZeroPos() { m_curDevZeroPos=m_pcurDevPos->text().toDouble(); }
+    void setDevMaxPos () { m_curDevMaxPos=m_pcurDevPos->text().toDouble(); }
+    void setDevDecel  () { m_curDevDecel=m_pDevDecelerationEdit->text().toDouble(); }
 
 protected:
     virtual void timerEvent(QTimerEvent*);
@@ -74,4 +81,15 @@ private:
     QStringList m_devFriendlyNamesList;
 
     std::map<QString, QString> m_mapDevNameVsFriendlyName;
+    std::map<QString, int> m_mapOfDevVoltages;
+    std::map<QString, int> m_mapOfDevSpeeds;
+    std::map<QString, int> m_mapOfDevZeroPoses;
+    std::map<QString, int> m_mapOfDevMaxPoses;
+    std::map<QString, int> m_mapOfDevDecel;
+
+    int m_curDevVoltage=0;
+    int m_curDevSpeeds=0;
+    int m_curDevZeroPos=0;
+    int m_curDevMaxPos=0;
+    int m_curDevDecel=0;
 };

@@ -6,7 +6,8 @@
 #include <QHBoxLayout>
 #include <QTimerEvent>
 #include <QIntValidator>
-
+#include <QFile>
+#include <QTextStream>
 
 STANDACalibratorWidget::STANDACalibratorWidget(QWidget *parent/* = nullptr*/)
     : QWidget(parent)
@@ -43,10 +44,21 @@ void STANDACalibratorWidget::trigger(bool flag)
         outStr += " was on";
         m_device->setName(curDevName);
         m_device->Init();
+        m_curDevVoltage=0;
+        m_curDevSpeeds=0;
+        m_curDevZeroPos=0;
+        m_curDevMaxPos=0;
+        m_curDevDecel=0;
     }
     else {
         outStr += " was off";
         m_device->Close();
+
+        m_mapOfDevVoltages[curDevName] = m_curDevVoltage;
+        m_mapOfDevSpeeds[curDevName] = m_curDevSpeeds;
+        m_mapOfDevZeroPoses[curDevName] = m_curDevZeroPos;
+        m_mapOfDevMaxPoses[curDevName] = m_curDevMaxPos;
+        m_mapOfDevDecel[curDevName] = m_curDevDecel;
     }
 
     Print(outStr);
@@ -55,6 +67,13 @@ void STANDACalibratorWidget::trigger(bool flag)
 // -----------------------------
 STANDACalibratorWidget::~STANDACalibratorWidget()
 {
+    QString curDevName = m_pcurDevNameLable->text();
+    m_mapOfDevVoltages[curDevName] = m_curDevVoltage;
+    m_mapOfDevSpeeds[curDevName] = m_curDevSpeeds;
+    m_mapOfDevZeroPoses[curDevName] = m_curDevZeroPos;
+    m_mapOfDevMaxPoses[curDevName] = m_curDevMaxPos;
+    m_mapOfDevDecel[curDevName] = m_curDevDecel;
+    WriteOutputTxt();
 }
 
 void STANDACalibratorWidget::Print(QString str)
@@ -249,6 +268,29 @@ void STANDACalibratorWidget::ConnectDeviceAndCW()
     connect(m_pDevRight, SIGNAL(clicked()), m_device, SLOT(right()));
     connect(m_pDevHome, SIGNAL(clicked()), m_device, SLOT(home()));
     connect(m_pDevStop, SIGNAL(clicked()), m_device, SLOT(stop()));
+
+    connect(m_pDevVoltageOk, SIGNAL(clicked()),this, SLOT(setDevVoltage()));
+    connect(m_pDevSpeedOk, SIGNAL(clicked()),this, SLOT(setDevSpeed()));
+    connect(m_pcmdDevSetZeroPos, SIGNAL(clicked()),this, SLOT(setDevZeroPos()));
+    connect(m_pcmdDevSetMaxPos, SIGNAL(clicked()),this, SLOT(setDevMaxPos()));
+    connect(m_pDevDecelerationOk, SIGNAL(clicked()),this, SLOT(setDevDecel()));
+}
+
+void STANDACalibratorWidget::WriteOutputTxt()
+{
+    QFile fileOut("../settingsdata/fileout.txt");
+    if(fileOut.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream writeStream(&fileOut);
+        for (int i=0; i<m_ndevs; i++) {
+            writeStream << m_devNamesList.at(i) << "\t";
+            writeStream << m_mapOfDevVoltages[m_devNamesList.at(i)] << "\t";
+            writeStream << m_mapOfDevSpeeds[m_devNamesList.at(i)] << "\t";
+            writeStream << m_mapOfDevZeroPoses[m_devNamesList.at(i)] << "\t";
+            writeStream << m_mapOfDevMaxPoses[m_devNamesList.at(i)] << "\t";
+            writeStream << m_mapOfDevDecel[m_devNamesList.at(i)] << "\n";
+        }
+    }
+    fileOut.close();
 }
 
 void STANDACalibratorWidget::timerEvent(QTimerEvent*)
