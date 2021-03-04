@@ -30,6 +30,7 @@ STANDACalibratorWidget::STANDACalibratorWidget(QWidget *parent/* = nullptr*/)
     setLayout(m_pmainLayout);
 
     m_device = new STANDADevice;
+    ConnectDeviceAndCW();
 }
 // ---------- Public slots -----
 
@@ -240,6 +241,14 @@ void STANDACalibratorWidget::MakeControlWindow()
     phbxLayoutCW->addLayout(pvbxLayout4Row);
 
     m_pmainLayout->addLayout(phbxLayoutCW);
+}
+
+void STANDACalibratorWidget::ConnectDeviceAndCW()
+{
+    connect(m_pDevLeft, SIGNAL(clicked()), m_device, SLOT(left()));
+    connect(m_pDevRight, SIGNAL(clicked()), m_device, SLOT(right()));
+    connect(m_pDevHome, SIGNAL(clicked()), m_device, SLOT(home()));
+    connect(m_pDevStop, SIGNAL(clicked()), m_device, SLOT(stop()));
 }
 
 void STANDACalibratorWidget::timerEvent(QTimerEvent*)

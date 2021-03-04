@@ -26,7 +26,8 @@ public:
     void Print(QString str);
     void FindAvailableDevices();
     void MakeDevSelectButtons();
-    void MakeControlWindow();
+    void MakeControlWindow(); // CW
+    void ConnectDeviceAndCW();
 
 public slots:
     void trigger(bool);
