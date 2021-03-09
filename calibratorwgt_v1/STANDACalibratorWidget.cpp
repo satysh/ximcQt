@@ -112,8 +112,7 @@ void STANDACalibratorWidget::FindAvailableDevices()
 
 //  Gets device count from device enumeration data
     m_ndevs = get_device_count(devenum);
-    //m_ndevs = 10;
-    //setndevs(2); // TODO It exists just for test
+    m_ndevs = 10;
 //  Terminate if there are no connected devices
     if (m_ndevs <= 0)
     {
@@ -125,7 +124,7 @@ void STANDACalibratorWidget::FindAvailableDevices()
     else {
         for (int i=0; i<m_ndevs; i++) {
             QString curDevName(get_device_name(devenum, i));
-            //curDevName = "device_"+QString().setNum(i); // TODO It exits just for Tests
+            curDevName = "device_"+QString().setNum(i); // TODO It exits just for Tests
             m_devNamesList << curDevName;
             m_devFriendlyNamesList << curDevName;
             m_mapDevNameVsFriendlyName[curDevName] = curDevName; // TODO
@@ -196,8 +195,6 @@ void STANDACalibratorWidget::MakeControlWindow()
     m_pDevSpeedEdit = new QLineEdit;
     m_pDevDecelerationEdit = new QLineEdit;
 
-
-    m_pDevNameEdit->setValidator(new QIntValidator(0, 1500));
     m_pDevVoltageEdit->setValidator(new QIntValidator(0, 1500));
     m_pDevSpeedEdit->setValidator(new QIntValidator(0, 1500));
     m_pDevDecelerationEdit->setValidator(new QIntValidator(0, 1500));
@@ -271,6 +268,7 @@ void STANDACalibratorWidget::ConnectDeviceAndCW()
     connect(m_pDevHome, SIGNAL(clicked()), m_device, SLOT(home()));
     connect(m_pDevStop, SIGNAL(clicked()), m_device, SLOT(stop()));
 
+    connect(m_pDevNameOk, SIGNAL(clicked()), this, SLOT(setStageName()));
     connect(m_pDevVoltageOk, SIGNAL(clicked()),this, SLOT(setDevVoltage()));
     connect(m_pDevSpeedOk, SIGNAL(clicked()),this, SLOT(setDevSpeed()));
     connect(m_pcmdDevSetZeroPos, SIGNAL(clicked()),this, SLOT(setDevZeroPos()));

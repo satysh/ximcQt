@@ -23,9 +23,21 @@ STANDADevice::~STANDADevice()
     Close();
 }
 
-void STANDADevice::setDevName(QString name)
+void STANDADevice::setStageName(QString name)
 {
-    qDebug() << "STANDADevice::setDevName Dev name changed to " << name;
+    qDebug() << "STANDADevice::setStageName Dev name changed to " << name;
+    if (name.length() < 16) {
+        QByteArray ba = name.toLocal8Bit();
+        const char* positionerName = ba.data();
+        for (int i=0; i<name.length(); i++ ) {
+            m_stage_name.PositionerName[i] = positionerName[i];
+        }
+        m_stage_name.PositionerName[name.length()-1] = '\0';
+        set_stage_name(m_device, &m_stage_name);
+    }
+    else {
+        qDebug() << "Can't setStageName " << name << ". It has more than 16 bytes!";
+    }
 }
 
 void STANDADevice::setNomVoltage(int voltage)
@@ -54,6 +66,12 @@ void STANDADevice::setDevDecel(int decel)
     qDebug() << "STANDADevice::setDevDecel(" << decel << ")";
     m_move_settings.Decel = decel;
     set_move_settings(m_device, &m_move_settings);
+}
+
+QString STANDADevice::getStageName()
+{
+    get_stage_name(m_device, &m_stage_name);
+    return QString(m_stage_name.PositionerName);
 }
 
 int STANDADevice::getNomVoltage()

@@ -23,12 +23,13 @@ public:
     double  getStep() { return devStep; }
 
 public:
-    void setNomSpeed(int speed);
+    void setStageName(QString name);
     void setNomVoltage(int voltage);
-    void setDevName(QString name);
+    void setNomSpeed(int speed);
     void setDevAccel(int accel);
     void setDevDecel(int decel);
 
+    QString getStageName();
     int getNomVoltage();
     int getNomCurrent();
     int getNomSpeed();
@@ -38,6 +39,7 @@ public:
     int getCurAcceleration();
     int getCurDeceleration();
     int getCurOwnPosition();
+
 
 public:
     bool check(); // This method provides checking device to be moved safty
@@ -105,6 +107,7 @@ private:
     bool devStepIsValid=false;
 
     device_t          m_device;
+    stage_name_t      m_stage_name;
     status_t          m_status;
     engine_settings_t m_engine_settings;
     move_settings_t   m_move_settings;
