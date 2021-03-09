@@ -24,6 +24,10 @@ public:
 
 public:
     void setNomSpeed(int speed);
+    void setNomVoltage(int voltage);
+    void setDevName(QString name);
+    void setDevAccel(int accel);
+    void setDevDecel(int decel);
 
     int getNomVoltage();
     int getNomCurrent();

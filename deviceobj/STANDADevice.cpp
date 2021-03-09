@@ -23,10 +23,33 @@ STANDADevice::~STANDADevice()
     Close();
 }
 
+void STANDADevice::setDevName(QString name)
+{
+    qDebug() << "Dev name changed to " << name;
+}
+
+void STANDADevice::setNomVoltage(int voltage)
+{
+    m_engine_settings.NomVoltage = voltage;
+    set_engine_settings( m_device, &m_engine_settings );
+}
+
 void STANDADevice::setNomSpeed(int speed)
 {
     m_engine_settings.NomSpeed = speed;
     set_engine_settings( m_device, &m_engine_settings );
+}
+
+void STANDADevice::setDevAccel(int accel)
+{
+    m_move_settings.Accel = accel;
+    set_move_settings(m_device, &m_move_settings);
+}
+
+void STANDADevice::setDevDecel(int decel)
+{
+    m_move_settings.Decel = decel;
+    set_move_settings(m_device, &m_move_settings);
 }
 
 int STANDADevice::getNomVoltage()
@@ -123,7 +146,7 @@ void STANDADevice::Init()
 //      Read engine settings from a device
         get_engine_settings( m_device, &m_engine_settings );
         printf( "voltage %d, current %d, speed %d\n", m_engine_settings.NomVoltage, m_engine_settings.NomCurrent, m_engine_settings.NomSpeed );
-        m_engine_settings.NomSpeed=1500;
+        //m_engine_settings.NomSpeed=1500;
         set_engine_settings( m_device, &m_engine_settings );
         const char* units = "mm";
 
