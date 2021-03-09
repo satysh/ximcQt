@@ -25,29 +25,33 @@ STANDADevice::~STANDADevice()
 
 void STANDADevice::setDevName(QString name)
 {
-    qDebug() << "Dev name changed to " << name;
+    qDebug() << "STANDADevice::setDevName Dev name changed to " << name;
 }
 
 void STANDADevice::setNomVoltage(int voltage)
 {
+    qDebug() << "STANDADevice::setNomVoltage(" << voltage << ")";
     m_engine_settings.NomVoltage = voltage;
     set_engine_settings( m_device, &m_engine_settings );
 }
 
 void STANDADevice::setNomSpeed(int speed)
 {
+    qDebug() << "STANDADevice::setNomSpeed(" << speed << ")";
     m_engine_settings.NomSpeed = speed;
     set_engine_settings( m_device, &m_engine_settings );
 }
 
 void STANDADevice::setDevAccel(int accel)
 {
+    qDebug() << "STANDADevice::setDevAccel(" << accel << ")";
     m_move_settings.Accel = accel;
     set_move_settings(m_device, &m_move_settings);
 }
 
 void STANDADevice::setDevDecel(int decel)
 {
+    qDebug() << "STANDADevice::setDevDecel(" << decel << ")";
     m_move_settings.Decel = decel;
     set_move_settings(m_device, &m_move_settings);
 }
