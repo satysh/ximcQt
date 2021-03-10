@@ -14,6 +14,7 @@ STANDACalibratorWidget::STANDACalibratorWidget(QWidget *parent/* = nullptr*/)
 {
     qDebug() << "STANDACalibratorWidget::STANDACalibratorWidget";
     startTimer(1);
+    m_device = new STANDADevice;
     int fixedw=900;
     int fixedh=600;
     //setFixedSize(fixedw, fixedh);
@@ -30,7 +31,6 @@ STANDACalibratorWidget::STANDACalibratorWidget(QWidget *parent/* = nullptr*/)
     m_pmainLayout->addWidget(m_pInfoWindow);
     setLayout(m_pmainLayout);
 
-    m_device = new STANDADevice;
     ConnectDeviceAndCW();
 }
 // ---------- Public slots -----
@@ -38,8 +38,15 @@ STANDACalibratorWidget::STANDACalibratorWidget(QWidget *parent/* = nullptr*/)
 void STANDACalibratorWidget::trigger(bool flag)
 {
     QRadioButton *pcurRbtn = (QRadioButton*)sender();
-    QString curDevName = pcurRbtn->text();
-    QString outStr = curDevName;
+    QString curDevFriendlyName = pcurRbtn->text();
+    QString curDevName="empty";
+    for (int i=0; i<m_ndevs; i++) {
+        if (m_devFriendlyNamesList.at(i) == curDevFriendlyName) {
+            curDevName = m_devNamesList.at(i);
+            break;
+        }
+    }
+    QString outStr = curDevFriendlyName;
     if (flag) {
         outStr += " was on";
         m_device->setName(curDevName);
@@ -67,6 +74,7 @@ void STANDACalibratorWidget::trigger(bool flag)
 // -----------------------------
 STANDACalibratorWidget::~STANDACalibratorWidget()
 {
+    // Write Last device calibration Info
     QString curDevName = m_pcurDevNameLable->text();
     m_mapOfDevVoltages[curDevName] = m_curDevVoltage;
     m_mapOfDevSpeeds[curDevName] = m_curDevSpeeds;
@@ -112,7 +120,7 @@ void STANDACalibratorWidget::FindAvailableDevices()
 
 //  Gets device count from device enumeration data
     m_ndevs = get_device_count(devenum);
-    m_ndevs = 10;
+    //m_ndevs = 10; // TODO It exits just for Tests
 //  Terminate if there are no connected devices
     if (m_ndevs <= 0)
     {
@@ -124,10 +132,19 @@ void STANDACalibratorWidget::FindAvailableDevices()
     else {
         for (int i=0; i<m_ndevs; i++) {
             QString curDevName(get_device_name(devenum, i));
-            curDevName = "device_"+QString().setNum(i); // TODO It exits just for Tests
+            //curDevName = "device_"+QString().setNum(i); // TODO It exits just for Tests
             m_devNamesList << curDevName;
-            m_devFriendlyNamesList << curDevName;
-            m_mapDevNameVsFriendlyName[curDevName] = curDevName; // TODO
+            //m_devFriendlyNamesList << curDevName;
+            // m_mapDevNameVsFriendlyName[curDevName] = curDevName; // TODO
+        }
+
+        for (int i=0; i<m_ndevs; i++) {
+            m_device->setName(m_devNamesList.at(i));
+            m_device->Init();
+            QString curDevFriendlyName = m_device->getStageName();
+            //curDevFriendlyName = "fr_device_"+QString().setNum(i); // TODO It exits just for Tests
+            m_devFriendlyNamesList << curDevFriendlyName;
+            m_device->Close();
         }
 
 
