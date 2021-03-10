@@ -87,7 +87,6 @@ private:
     QStringList m_devNamesList;
     QStringList m_devFriendlyNamesList;
 
-    //std::map<QString, QString> m_mapDevNameVsFriendlyName; // TODO remove It
     std::map<QString, int> m_mapOfDevVoltages;
     std::map<QString, int> m_mapOfDevSpeeds;
     std::map<QString, int> m_mapOfDevZeroPoses;

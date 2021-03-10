@@ -134,8 +134,6 @@ void STANDACalibratorWidget::FindAvailableDevices()
             QString curDevName(get_device_name(devenum, i));
             //curDevName = "device_"+QString().setNum(i); // TODO It exits just for Tests
             m_devNamesList << curDevName;
-            //m_devFriendlyNamesList << curDevName;
-            // m_mapDevNameVsFriendlyName[curDevName] = curDevName; // TODO
         }
 
         for (int i=0; i<m_ndevs; i++) {
@@ -260,8 +258,8 @@ void STANDACalibratorWidget::MakeControlWindow()
     m_pDevHome = new QPushButton("home");
     m_pDevStop = new QPushButton("stop");
 
-    m_pDevRenameMe1 = new QRadioButton("on/off"); // TODO
-    m_pDevRenameMe2 = new QRadioButton("on/off"); // TODO
+    m_pDevRenameMe1 = new QRadioButton("on/off"); // TODO rename title
+    m_pDevRenameMe2 = new QRadioButton("on/off"); // TODO rename title
 
     QVBoxLayout *pvbxLayout4Row = new QVBoxLayout;
     pvbxLayout4Row->addWidget(new QLabel("move"), 0, Qt::AlignCenter);
