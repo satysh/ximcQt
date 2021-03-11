@@ -40,6 +40,22 @@ void STANDADevice::setStageName(QString name)
     }
 }
 
+void STANDADevice::setFriendlyName(QString name)
+{
+    qDebug() << "STANDADevice::setFriendlyName Dev name changed to " << name;
+    if (name.length() < 16) {
+        QByteArray ba = name.toLocal8Bit();
+        const char* friendlyName = ba.data();
+        for (int i=0; i<name.length(); i++ ) {
+            m_controller_name.ControllerName[i] = friendlyName[i];
+        }
+        m_controller_name.ControllerName[name.length()] = '\0';
+        set_controller_name(m_device, &m_controller_name);
+    }
+    else {
+        qDebug() << "Can't setFriendlyName " << name << ". It has more than 16 bytes!";
+    }
+}
 void STANDADevice::setNomVoltage(int voltage)
 {
     qDebug() << "STANDADevice::setNomVoltage(" << voltage << ")";
@@ -70,10 +86,12 @@ void STANDADevice::setDevDecel(int decel)
 
 QString STANDADevice::getStageName()
 {
-    /*
     get_stage_name(m_device, &m_stage_name);
-    return QString(m_stage_name.PositionerName);*/
+    return QString(m_stage_name.PositionerName);
+}
 
+QString STANDADevice::getFriendlyName()
+{
     get_controller_name(m_device, &m_controller_name);
     return QString(m_controller_name.ControllerName);
 }

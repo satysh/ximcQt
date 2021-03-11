@@ -24,12 +24,14 @@ public:
 
 public:
     void setStageName(QString name);
+    void setFriendlyName(QString name);
     void setNomVoltage(int voltage);
     void setNomSpeed(int speed);
     void setDevAccel(int accel);
     void setDevDecel(int decel);
 
     QString getStageName();
+    QString getFriendlyName();
     int getNomVoltage();
     int getNomCurrent();
     int getNomSpeed();
