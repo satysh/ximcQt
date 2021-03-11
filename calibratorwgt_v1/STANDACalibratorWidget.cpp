@@ -139,7 +139,7 @@ void STANDACalibratorWidget::FindAvailableDevices()
         for (int i=0; i<m_ndevs; i++) {
             m_device->setName(m_devNamesList.at(i));
             m_device->Init();
-            QString curDevFriendlyName = m_device->getStageName();
+            QString curDevFriendlyName = m_device->getFriendlyName();
             //curDevFriendlyName = "fr_device_"+QString().setNum(i); // TODO It exits just for Tests
             m_devFriendlyNamesList << curDevFriendlyName;
             m_device->Close();
@@ -283,7 +283,7 @@ void STANDACalibratorWidget::ConnectDeviceAndCW()
     connect(m_pDevHome, SIGNAL(clicked()), m_device, SLOT(home()));
     connect(m_pDevStop, SIGNAL(clicked()), m_device, SLOT(stop()));
 
-    connect(m_pDevNameOk, SIGNAL(clicked()), this, SLOT(setStageName()));
+    connect(m_pDevNameOk, SIGNAL(clicked()), this, SLOT(setFriendlyName()));
     connect(m_pDevVoltageOk, SIGNAL(clicked()),this, SLOT(setDevVoltage()));
     connect(m_pDevSpeedOk, SIGNAL(clicked()),this, SLOT(setDevSpeed()));
     connect(m_pcmdDevSetZeroPos, SIGNAL(clicked()),this, SLOT(setDevZeroPos()));

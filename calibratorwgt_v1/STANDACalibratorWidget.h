@@ -30,21 +30,21 @@ public:
     void ConnectDeviceAndCW();
     void WriteOutputTxt();
 
-    void setStageName(QString name) { m_device->setStageName(name); }
-    void setDevVoltage(int voltage) { m_device->setNomVoltage(voltage); }
-    void setDevSpeed(int speed)     { m_device->setNomSpeed(speed); }
-    void setDevAccel(int accel)     { m_device->setDevAccel(accel); }
-    void setDevDecel(int decel)     { m_device->setDevDecel(decel); }
+    void setFriendlyName(QString name) { m_device->setFriendlyName(name); }
+    void setDevVoltage(int voltage)    { m_device->setNomVoltage(voltage); }
+    void setDevSpeed(int speed)        { m_device->setNomSpeed(speed); }
+    void setDevAccel(int accel)        { m_device->setDevAccel(accel); }
+    void setDevDecel(int decel)        { m_device->setDevDecel(decel); }
 
 public slots:
     void trigger(bool);
 
-    void setStageName () { m_curStageName=m_pDevNameEdit->text(); setStageName(m_curStageName); }
-    void setDevVoltage() { m_curDevVoltage=m_pDevVoltageEdit->text().toDouble(); setDevVoltage(m_curDevVoltage); }
-    void setDevSpeed  () { m_curDevSpeeds=m_pDevSpeedEdit->text().toDouble(); setDevSpeed(m_curDevSpeeds); }
-    void setDevZeroPos() { m_curDevZeroPos=m_pcurDevPos->text().toDouble(); }
-    void setDevMaxPos () { m_curDevMaxPos=m_pcurDevPos->text().toDouble(); }
-    void setDevDecel  () { m_curDevDecel=m_pDevDecelerationEdit->text().toDouble(); setDevDecel(m_curDevDecel); }
+    void setFriendlyName () { m_curFriendlyName=m_pDevNameEdit->text(); setFriendlyName(m_curFriendlyName); }
+    void setDevVoltage()    { m_curDevVoltage=m_pDevVoltageEdit->text().toDouble(); setDevVoltage(m_curDevVoltage); }
+    void setDevSpeed  ()    { m_curDevSpeeds=m_pDevSpeedEdit->text().toDouble(); setDevSpeed(m_curDevSpeeds); }
+    void setDevZeroPos()    { m_curDevZeroPos=m_pcurDevPos->text().toDouble(); }
+    void setDevMaxPos ()    { m_curDevMaxPos=m_pcurDevPos->text().toDouble(); }
+    void setDevDecel  ()    { m_curDevDecel=m_pDevDecelerationEdit->text().toDouble(); setDevDecel(m_curDevDecel); }
 
 protected:
     virtual void timerEvent(QTimerEvent*);
@@ -93,7 +93,7 @@ private:
     std::map<QString, int> m_mapOfDevMaxPoses;
     std::map<QString, int> m_mapOfDevDecel;
 
-    QString m_curStageName="";
+    QString m_curFriendlyName="";
     int m_curDevVoltage=0;
     int m_curDevSpeeds=0;
     int m_curDevZeroPos=0;
