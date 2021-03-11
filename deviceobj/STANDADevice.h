@@ -108,6 +108,7 @@ private:
 
     device_t          m_device;
     stage_name_t      m_stage_name;
+    controller_name_t m_controller_name;
     status_t          m_status;
     engine_settings_t m_engine_settings;
     move_settings_t   m_move_settings;

@@ -32,7 +32,7 @@ void STANDADevice::setStageName(QString name)
         for (int i=0; i<name.length(); i++ ) {
             m_stage_name.PositionerName[i] = positionerName[i];
         }
-        m_stage_name.PositionerName[name.length()-1] = '\0';
+        m_stage_name.PositionerName[name.length()] = '\0';
         set_stage_name(m_device, &m_stage_name);
     }
     else {
@@ -70,8 +70,12 @@ void STANDADevice::setDevDecel(int decel)
 
 QString STANDADevice::getStageName()
 {
+    /*
     get_stage_name(m_device, &m_stage_name);
-    return QString(m_stage_name.PositionerName);
+    return QString(m_stage_name.PositionerName);*/
+
+    get_controller_name(m_device, &m_controller_name);
+    return QString(m_controller_name.ControllerName);
 }
 
 int STANDADevice::getNomVoltage()
