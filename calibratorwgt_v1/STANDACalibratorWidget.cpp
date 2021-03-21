@@ -8,6 +8,7 @@
 #include <QIntValidator>
 #include <QFile>
 #include <QTextStream>
+#include <QListWidgetItem>
 
 STANDACalibratorWidget::STANDACalibratorWidget(QWidget *parent/* = nullptr*/)
     : QWidget(parent)
@@ -69,6 +70,31 @@ void STANDACalibratorWidget::trigger(bool flag)
     }
 
     Print(outStr);
+}
+// -----------------------------
+// --- Private Slots -----------
+void STANDACalibratorWidget::setLSw1Border(QString str)
+{
+    if (str == "left") {
+        m_pLSw2Border->setCurrentIndex(1);
+    }
+    else {
+        m_pLSw2Border->setCurrentIndex(0);
+    }
+    Print(str);
+    qDebug() << str;
+}
+
+void STANDACalibratorWidget::setLSw2Border(QString str)
+{
+    if (str == "left") {
+        m_pLSw1Border->setCurrentIndex(1);
+    }
+    else {
+        m_pLSw1Border->setCurrentIndex(0);
+    }
+    Print(str);
+    qDebug() << str;
 }
 
 // -----------------------------
@@ -186,6 +212,10 @@ void STANDACalibratorWidget::MakeControlWindow()
     pvbxLayout0Row->addWidget(new QLabel("devSpeed:"), 0, Qt::AlignLeft);
     pvbxLayout0Row->addWidget(new QLabel("devDecel:"), 0, Qt::AlignLeft);
     pvbxLayout0Row->addWidget(new QLabel("devPos:"), 0, Qt::AlignLeft);
+    pvbxLayout0Row->addWidget(new QLabel(""));
+    pvbxLayout0Row->addWidget(new QLabel(""));
+    pvbxLayout0Row->addWidget(new QLabel(""));
+    pvbxLayout0Row->addWidget(new QLabel(""));
 
     phbxLayoutCW->addLayout(pvbxLayout0Row);
 
@@ -202,6 +232,10 @@ void STANDACalibratorWidget::MakeControlWindow()
     pvbxLayout1Row->addWidget(m_pcurDevSpeed);
     pvbxLayout1Row->addWidget(m_pcurDevDeceleration);
     pvbxLayout1Row->addWidget(m_pcurDevPos);
+    pvbxLayout1Row->addWidget(new QLabel(""));
+    pvbxLayout1Row->addWidget(new QLabel(""));
+    pvbxLayout1Row->addWidget(new QLabel(""));
+    pvbxLayout1Row->addWidget(new QLabel(""));
 
     phbxLayoutCW->addLayout(pvbxLayout1Row);
 
@@ -230,6 +264,10 @@ void STANDACalibratorWidget::MakeControlWindow()
     phbxLayout->addWidget(m_pcmdDevSetZeroPos);
     phbxLayout->addWidget(m_pcmdDevSetMaxPos);
     pvbxLayout2Row->addLayout(phbxLayout);
+    pvbxLayout2Row->addWidget(new QLabel(""));
+    pvbxLayout2Row->addWidget(new QLabel(""));
+    pvbxLayout2Row->addWidget(new QLabel(""));
+    pvbxLayout2Row->addWidget(new QLabel(""));
 
     phbxLayoutCW->addLayout(pvbxLayout2Row);
 
@@ -244,6 +282,10 @@ void STANDACalibratorWidget::MakeControlWindow()
     pvbxLayout3Row->addWidget(m_pDevVoltageOk);
     pvbxLayout3Row->addWidget(m_pDevSpeedOk);
     pvbxLayout3Row->addWidget(m_pDevDecelerationOk);
+    pvbxLayout3Row->addWidget(new QLabel(""));
+    pvbxLayout3Row->addWidget(new QLabel(""));
+    pvbxLayout3Row->addWidget(new QLabel(""));
+    pvbxLayout3Row->addWidget(new QLabel(""));
     pvbxLayout3Row->addWidget(new QLabel(""));
 
     phbxLayoutCW->addLayout(pvbxLayout3Row);
@@ -266,8 +308,46 @@ void STANDACalibratorWidget::MakeControlWindow()
     pvbxLayout4Row->addLayout(phbxLayoutLR);
     pvbxLayout4Row->addWidget(m_pDevHome);
     pvbxLayout4Row->addWidget(m_pDevStop);
-    pvbxLayout4Row->addWidget(m_pDevRenameMe1);
-    pvbxLayout4Row->addWidget(m_pDevRenameMe2);
+   /* pvbxLayout4Row->addWidget(m_pDevRenameMe1);
+    pvbxLayout4Row->addWidget(m_pDevRenameMe2);*/
+
+    m_pLSw1PushedPos = new QComboBox;
+    m_pLSw1PushedPos->addItem("open");
+    m_pLSw1PushedPos->addItem("close");
+    m_pLSw1Border = new QComboBox;
+    m_pLSw1Border->addItem("left");
+    m_pLSw1Border->addItem("right");
+    m_pLSw1Border->setCurrentIndex(0);
+    m_pLSw2PushedPos = new QComboBox;
+    m_pLSw2PushedPos->addItem("open");
+    m_pLSw2PushedPos->addItem("close");
+    m_pLSw2Border = new QComboBox;
+    m_pLSw2Border->addItem("left");
+    m_pLSw2Border->addItem("right");
+    m_pLSw2Border->setCurrentIndex(1);
+
+    connect(m_pLSw1Border, SIGNAL(textActivated(QString)), this, SLOT(setLSw1Border(QString)));
+    connect(m_pLSw2Border, SIGNAL(textActivated(QString)), this, SLOT(setLSw2Border(QString)));
+
+    pvbxLayout4Row->addWidget(new QLabel("Limit Switch 1"));
+    QHBoxLayout *phbxLSw1PushedPosLayout = new QHBoxLayout;
+    phbxLSw1PushedPosLayout->addWidget(new QLabel("Pushed Position"));
+    phbxLSw1PushedPosLayout->addWidget(m_pLSw1PushedPos);
+    pvbxLayout4Row->addLayout(phbxLSw1PushedPosLayout);
+    QHBoxLayout *phbxLSw1BorderLayout = new QHBoxLayout;
+    phbxLSw1BorderLayout->addWidget(new QLabel("Border"));
+    phbxLSw1BorderLayout->addWidget(m_pLSw1Border);
+    pvbxLayout4Row->addLayout(phbxLSw1BorderLayout);
+
+    pvbxLayout4Row->addWidget(new QLabel("Limit Switch 2"));
+    QHBoxLayout *phbxLSw2PushedPosLayout = new QHBoxLayout;
+    phbxLSw2PushedPosLayout->addWidget(new QLabel("Pushed Position"));
+    phbxLSw2PushedPosLayout->addWidget(m_pLSw2PushedPos);
+    pvbxLayout4Row->addLayout(phbxLSw2PushedPosLayout);
+    QHBoxLayout *phbxLSw2BorderLayout = new QHBoxLayout;
+    phbxLSw2BorderLayout->addWidget(new QLabel("Border"));
+    phbxLSw2BorderLayout->addWidget(m_pLSw2Border);
+    pvbxLayout4Row->addLayout(phbxLSw2BorderLayout);
 
     phbxLayoutCW->addLayout(pvbxLayout4Row);
 

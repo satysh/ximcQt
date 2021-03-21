@@ -13,6 +13,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QComboBox>
 
 #include "../deviceobj/STANDADevice.h"
 
@@ -45,6 +46,10 @@ public slots:
     void setDevZeroPos()    { m_curDevZeroPos=m_pcurDevPos->text().toDouble(); }
     void setDevMaxPos ()    { m_curDevMaxPos=m_pcurDevPos->text().toDouble(); }
     void setDevDecel  ()    { m_curDevDecel=m_pDevDecelerationEdit->text().toDouble(); setDevDecel(m_curDevDecel); }
+
+private slots:
+    void setLSw1Border(QString);
+    void setLSw2Border(QString);
 
 protected:
     virtual void timerEvent(QTimerEvent*);
@@ -81,6 +86,11 @@ private:
 
     QRadioButton *m_pDevRenameMe1; // TODO
     QRadioButton *m_pDevRenameMe2; // TODO
+
+    QComboBox *m_pLSw1PushedPos;
+    QComboBox *m_pLSw1Border;
+    QComboBox *m_pLSw2PushedPos;
+    QComboBox *m_pLSw2Border;
 
     int m_ndevs=0;
     int m_curDevId;
