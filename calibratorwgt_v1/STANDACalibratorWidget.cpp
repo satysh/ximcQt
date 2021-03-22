@@ -40,7 +40,7 @@ void STANDACalibratorWidget::trigger(bool flag)
 {
     QRadioButton *pcurRbtn = (QRadioButton*)sender();
     QString curDevFriendlyName = pcurRbtn->text();
-    QString curDevName="empty";
+    QString curDevName;
     for (int i=0; i<m_ndevs; i++) {
         if (m_devFriendlyNamesList.at(i) == curDevFriendlyName) {
             curDevName = m_devNamesList.at(i);
@@ -57,6 +57,10 @@ void STANDACalibratorWidget::trigger(bool flag)
         m_curDevZeroPos=0;
         m_curDevMaxPos=0;
         m_curDevDecel=0;
+        m_pDevNameEdit->setText(m_device->getFriendlyName());
+        m_pDevVoltageEdit->setText(QString().setNum(m_device->getNomVoltage()));
+        m_pDevSpeedEdit->setText(QString().setNum(m_device->getNomSpeed()));
+        m_pDevDecelerationEdit->setText(QString().setNum(m_device->getCurDeceleration()));
     }
     else {
         outStr += " was off";
@@ -425,7 +429,7 @@ void STANDACalibratorWidget::timerEvent(QTimerEvent*)
     m_pcmdDevSetZeroPos->resize(m_pDevHome->size().width(), m_pDevHome->size().height());
     m_pcmdDevSetMaxPos->resize(m_pDevHome->size().width(), m_pDevHome->size().height());*/
 
-    m_pcurDevNameLable->setText(m_device->getName());
+    m_pcurDevNameLable->setText(m_device->getFriendlyName());
     m_pcurDevVoltage->setText(QString().setNum(m_device->getCurVoltage()));
     m_pcurDevSpeed->setText(QString().setNum(m_device->getCurSpeed()));
     m_pcurDevDeceleration->setText(QString().setNum(m_device->getCurDeceleration()));
