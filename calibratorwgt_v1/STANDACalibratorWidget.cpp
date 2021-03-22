@@ -75,26 +75,51 @@ void STANDACalibratorWidget::trigger(bool flag)
 // --- Private Slots -----------
 void STANDACalibratorWidget::setLSw1Border(QString str)
 {
+    qDebug() << str;
     if (str == "left") {
         m_pLSw2Border->setCurrentIndex(1);
+        m_device->setSW1ToLeft();
     }
     else {
         m_pLSw2Border->setCurrentIndex(0);
+        m_device->setSW1ToRight();
     }
-    Print(str);
-    qDebug() << str;
 }
 
 void STANDACalibratorWidget::setLSw2Border(QString str)
 {
+    qDebug() << str;
     if (str == "left") {
         m_pLSw1Border->setCurrentIndex(1);
+        m_device->setSW1ToRight();
     }
     else {
         m_pLSw1Border->setCurrentIndex(0);
+        m_device->setSW1ToLeft();
     }
-    Print(str);
+}
+
+void STANDACalibratorWidget::setLSw1LOW(QString str)
+{
     qDebug() << str;
+    if (str == "open") {
+        m_device->setSW1LOW(false);
+    }
+    else {
+        m_device->setSW1LOW(true);
+    }
+
+}
+
+void STANDACalibratorWidget::setLSw2LOW(QString str)
+{
+    qDebug() << str;
+    if (str == "open") {
+        m_device->setSW2LOW(false);
+    }
+    else {
+        m_device->setSW2LOW(true);
+    }
 }
 
 // -----------------------------
@@ -328,6 +353,8 @@ void STANDACalibratorWidget::MakeControlWindow()
 
     connect(m_pLSw1Border, SIGNAL(textActivated(QString)), this, SLOT(setLSw1Border(QString)));
     connect(m_pLSw2Border, SIGNAL(textActivated(QString)), this, SLOT(setLSw2Border(QString)));
+    connect(m_pLSw1PushedPos, SIGNAL(textActivated(QString)), this, SLOT(setLSw1LOW(QString)));
+    connect(m_pLSw2PushedPos, SIGNAL(textActivated(QString)), this, SLOT(setLSw2LOW(QString)));
 
     pvbxLayout4Row->addWidget(new QLabel("Limit Switch 1"));
     QHBoxLayout *phbxLSw1PushedPosLayout = new QHBoxLayout;

@@ -50,6 +50,8 @@ public slots:
 private slots:
     void setLSw1Border(QString);
     void setLSw2Border(QString);
+    void setLSw1LOW(QString);
+    void setLSw2LOW(QString);
 
 protected:
     virtual void timerEvent(QTimerEvent*);

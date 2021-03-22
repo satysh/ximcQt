@@ -29,6 +29,10 @@ public:
     void setNomSpeed(int speed);
     void setDevAccel(int accel);
     void setDevDecel(int decel);
+    void setSW1ToRight();
+    void setSW1ToLeft();
+    void setSW1LOW(bool flag);
+    void setSW2LOW(bool flag);
 
     QString getStageName();
     QString getFriendlyName();

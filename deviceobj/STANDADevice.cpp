@@ -84,6 +84,57 @@ void STANDADevice::setDevDecel(int decel)
     set_move_settings(m_device, &m_move_settings);
 }
 
+void STANDADevice::setSW1ToRight()
+{
+    qDebug() << "STANDADevice::setSW1ToRight";
+    get_edges_settings(m_device, &m_edges_settings);
+    unsigned int curEnderFlags = m_edges_settings.EnderFlags;
+    qDebug() << "Prev flags = " << curEnderFlags;
+    m_edges_settings.EnderFlags = curEnderFlags | ENDER_SWAP;
+    qDebug() << "It is set to " << m_edges_settings.EnderFlags;
+    set_edges_settings(m_device, &m_edges_settings);
+}
+
+void STANDADevice::setSW1ToLeft()
+{
+    qDebug() << "STANDADevice::setSW1ToLeft";
+    get_edges_settings(m_device, &m_edges_settings);
+    unsigned int curEnderFlags = m_edges_settings.EnderFlags;
+    qDebug() << "Prev flags = " << curEnderFlags;
+    m_edges_settings.EnderFlags = curEnderFlags & 0x06; // unset ENDER_SWAP
+    qDebug() << "It is set to " << m_edges_settings.EnderFlags;
+    set_edges_settings(m_device, &m_edges_settings);
+}
+
+void STANDADevice::setSW1LOW(bool flag)
+{
+    qDebug() << "STANDADevice::setSW1LOW(" << flag << ")";
+    get_edges_settings(m_device, &m_edges_settings);
+    unsigned int curEnderFlags = m_edges_settings.EnderFlags;
+    qDebug() << "Prev flags = " << curEnderFlags;
+    if (flag)
+        m_edges_settings.EnderFlags = curEnderFlags | ENDER_SW1_ACTIVE_LOW;
+    else
+        m_edges_settings.EnderFlags = curEnderFlags & 0x05; // unset ENDER_SW1_ACTIVE_LOW
+    qDebug() << "It is set to " << m_edges_settings.EnderFlags;
+    set_edges_settings(m_device, &m_edges_settings);
+
+}
+
+void STANDADevice::setSW2LOW(bool flag)
+{
+    qDebug() << "STANDADevice::setSW2LOW(" << flag << ")";
+    get_edges_settings(m_device, &m_edges_settings);
+    unsigned int curEnderFlags = m_edges_settings.EnderFlags;
+    qDebug() << "Prev flags = " << curEnderFlags;
+    if (flag)
+        m_edges_settings.EnderFlags = curEnderFlags | ENDER_SW2_ACTIVE_LOW;
+    else
+        m_edges_settings.EnderFlags = curEnderFlags & 0x03; // unset ENDER_SW2_ACTIVE_LOW
+    qDebug() << "It is set to " << m_edges_settings.EnderFlags;
+    set_edges_settings(m_device, &m_edges_settings);
+}
+
 QString STANDADevice::getStageName()
 {
     get_stage_name(m_device, &m_stage_name);
@@ -207,6 +258,8 @@ void STANDADevice::Init()
         get_edges_settings(m_device, &m_edges_settings);
         printf( "lB %d, ulb %d, rB %d, urB\n", m_edges_settings.LeftBorder, m_edges_settings.uLeftBorder, m_edges_settings.RightBorder, m_edges_settings.uRightBorder);
 
+        m_edges_settings.EnderFlags = 0;
+        set_edges_settings(m_device, &m_edges_settings);
         moveToBasePos();
         qDebug() << " ----------------- Init End -----------------";
     }
