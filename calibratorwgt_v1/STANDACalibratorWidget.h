@@ -37,6 +37,9 @@ public:
     void setDevAccel(int accel)        { m_device->setDevAccel(accel); }
     void setDevDecel(int decel)        { m_device->setDevDecel(decel); }
 
+    QStringList getDevNamesList()         { return m_devNamesList; }
+    QStringList getDevFriendlyNamesList() { return m_devFriendlyNamesList; }
+
 public slots:
     void trigger(bool);
 
