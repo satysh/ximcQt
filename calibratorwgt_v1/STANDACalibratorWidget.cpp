@@ -34,6 +34,17 @@ STANDACalibratorWidget::STANDACalibratorWidget(QWidget *parent/* = nullptr*/)
 
     ConnectDeviceAndCW();
 }
+STANDACalibratorWidget::~STANDACalibratorWidget()
+{
+    // Write Last device calibration Info
+    QString curDevName = m_pcurDevNameLable->text();
+    m_mapOfDevVoltages[curDevName] = m_curDevVoltage;
+    m_mapOfDevSpeeds[curDevName] = m_curDevSpeeds;
+    m_mapOfDevZeroPoses[curDevName] = m_curDevZeroPos;
+    m_mapOfDevMaxPoses[curDevName] = m_curDevMaxPos;
+    m_mapOfDevDecel[curDevName] = m_curDevDecel;
+    WriteOutputTxt();
+}
 // ---------- Public slots -----
 
 void STANDACalibratorWidget::trigger(bool flag)
@@ -127,17 +138,6 @@ void STANDACalibratorWidget::setLSw2LOW(QString str)
 }
 
 // -----------------------------
-STANDACalibratorWidget::~STANDACalibratorWidget()
-{
-    // Write Last device calibration Info
-    QString curDevName = m_pcurDevNameLable->text();
-    m_mapOfDevVoltages[curDevName] = m_curDevVoltage;
-    m_mapOfDevSpeeds[curDevName] = m_curDevSpeeds;
-    m_mapOfDevZeroPoses[curDevName] = m_curDevZeroPos;
-    m_mapOfDevMaxPoses[curDevName] = m_curDevMaxPos;
-    m_mapOfDevDecel[curDevName] = m_curDevDecel;
-    WriteOutputTxt();
-}
 
 void STANDACalibratorWidget::Print(QString str)
 {
