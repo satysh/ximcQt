@@ -250,6 +250,12 @@ void STANDADevice::Init()
         //m_engine_settings.NomSpeed=1500;
         set_engine_settings( m_device, &m_engine_settings );
         const char* units = "mm";
+        if (m_engine_settings.EngineFlags & ENGINE_LIMIT_VOLT) {
+            qDebug() << "For " << getFriendlyName() << " ENGINE_LIMIT_VOLT is set!";
+        }
+        else {
+            qDebug() << "For " << getFriendlyName() << " ENGINE_LIMIT_VOLT is not set!";
+        }
 
         printf( "Getting calibrated parameters: " );
 //      Setting calibration constant to 0.1 (one controller step equals this many units)
