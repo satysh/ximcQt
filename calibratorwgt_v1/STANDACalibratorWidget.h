@@ -97,9 +97,6 @@ private:
     QPushButton *m_pDevHome;
     QPushButton *m_pDevStop;
 
-    QRadioButton *m_pDevRenameMe1; // TODO
-    QRadioButton *m_pDevRenameMe2; // TODO
-
     QComboBox *m_pLSw1PushedPos;
     QComboBox *m_pLSw1Border;
     QComboBox *m_pLSw2PushedPos;

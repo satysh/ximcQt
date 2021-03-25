@@ -199,7 +199,7 @@ int STANDADevice::getCurOwnPosition()
 
 void STANDADevice::moveTo(int pos)
 {
-    qDebug() << getName() << " is moving to " << pos;
+    qDebug() << getFriendlyName() << " is moving to " << pos;
     command_move (m_device, pos, 0);
 }
 void STANDADevice::moveToBasePos()
