@@ -196,6 +196,12 @@ int STANDADevice::getCurOwnPosition()
     get_status(m_device, &m_status);
     return m_status.CurPosition;
 }
+
+void STANDADevice::moveTo(int pos)
+{
+    qDebug() << getName() << " is moving to " << pos;
+    command_move (m_device, pos, 0);
+}
 void STANDADevice::moveToBasePos()
 {
     //get_status( m_device, &m_status );

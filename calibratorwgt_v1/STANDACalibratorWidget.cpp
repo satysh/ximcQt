@@ -39,7 +39,7 @@ STANDACalibratorWidget::~STANDACalibratorWidget()
     // Write Last device calibration Info
     QString curDevName = m_pcurDevNameLable->text();
     m_mapOfDevVoltages[curDevName] = m_curDevVoltage;
-    m_mapOfDevSpeeds[curDevName] = m_curDevSpeeds;
+    m_mapOfDevSpeeds[curDevName] = m_curDevSpeed;
     m_mapOfDevZeroPoses[curDevName] = m_curDevZeroPos;
     m_mapOfDevMaxPoses[curDevName] = m_curDevMaxPos;
     m_mapOfDevDecel[curDevName] = m_curDevDecel;
@@ -64,7 +64,7 @@ void STANDACalibratorWidget::trigger(bool flag)
         m_device->setName(curDevName);
         m_device->Init();
         m_curDevVoltage=0;
-        m_curDevSpeeds=0;
+        m_curDevSpeed=0;
         m_curDevZeroPos=0;
         m_curDevMaxPos=0;
         m_curDevDecel=0;
@@ -78,7 +78,7 @@ void STANDACalibratorWidget::trigger(bool flag)
         m_device->Close();
 
         m_mapOfDevVoltages[curDevName] = m_curDevVoltage;
-        m_mapOfDevSpeeds[curDevName] = m_curDevSpeeds;
+        m_mapOfDevSpeeds[curDevName] = m_curDevSpeed;
         m_mapOfDevZeroPoses[curDevName] = m_curDevZeroPos;
         m_mapOfDevMaxPoses[curDevName] = m_curDevMaxPos;
         m_mapOfDevDecel[curDevName] = m_curDevDecel;
@@ -239,9 +239,9 @@ void STANDACalibratorWidget::MakeControlWindow()
     pvbxLayout0Row->addWidget(new QLabel("devName:"), 0, Qt::AlignLeft);
     pvbxLayout0Row->addWidget(new QLabel("devVoltage:"), 0, Qt::AlignLeft);
     pvbxLayout0Row->addWidget(new QLabel("devSpeed:"), 0, Qt::AlignLeft);
+    pvbxLayout0Row->addWidget(new QLabel("devAccel:"), 0, Qt::AlignLeft);
     pvbxLayout0Row->addWidget(new QLabel("devDecel:"), 0, Qt::AlignLeft);
     pvbxLayout0Row->addWidget(new QLabel("devPos:"), 0, Qt::AlignLeft);
-    pvbxLayout0Row->addWidget(new QLabel(""));
     pvbxLayout0Row->addWidget(new QLabel(""));
     pvbxLayout0Row->addWidget(new QLabel(""));
     pvbxLayout0Row->addWidget(new QLabel(""));
@@ -251,6 +251,7 @@ void STANDACalibratorWidget::MakeControlWindow()
     m_pcurDevNameLable = new QLabel("empty");
     m_pcurDevVoltage = new QLabel("empty");
     m_pcurDevSpeed = new QLabel("empty");
+    m_pcurDevAcceleration = new QLabel("empty");
     m_pcurDevDeceleration = new QLabel("empty");
     m_pcurDevPos = new QLabel("empty");
 
@@ -259,9 +260,9 @@ void STANDACalibratorWidget::MakeControlWindow()
     pvbxLayout1Row->addWidget(m_pcurDevNameLable);
     pvbxLayout1Row->addWidget(m_pcurDevVoltage);
     pvbxLayout1Row->addWidget(m_pcurDevSpeed);
+    pvbxLayout1Row->addWidget(m_pcurDevAcceleration);
     pvbxLayout1Row->addWidget(m_pcurDevDeceleration);
     pvbxLayout1Row->addWidget(m_pcurDevPos);
-    pvbxLayout1Row->addWidget(new QLabel(""));
     pvbxLayout1Row->addWidget(new QLabel(""));
     pvbxLayout1Row->addWidget(new QLabel(""));
     pvbxLayout1Row->addWidget(new QLabel(""));
@@ -271,18 +272,24 @@ void STANDACalibratorWidget::MakeControlWindow()
     m_pDevNameEdit = new QLineEdit;
     m_pDevVoltageEdit = new QLineEdit;
     m_pDevSpeedEdit = new QLineEdit;
+    m_pDevAccelerationEdit = new QLineEdit;
     m_pDevDecelerationEdit = new QLineEdit;
+    m_pDevPosEdit = new QLineEdit;
 
-    m_pDevVoltageEdit->setValidator(new QIntValidator(0, 1500));
-    m_pDevSpeedEdit->setValidator(new QIntValidator(0, 1500));
-    m_pDevDecelerationEdit->setValidator(new QIntValidator(0, 1500));
+    m_pDevVoltageEdit->setValidator(new QIntValidator);
+    m_pDevSpeedEdit->setValidator(new QIntValidator);
+    m_pDevAccelerationEdit->setValidator(new QIntValidator);
+    m_pDevDecelerationEdit->setValidator(new QIntValidator);
+    m_pDevPosEdit->setValidator(new QIntValidator);
 
     QVBoxLayout *pvbxLayout2Row = new QVBoxLayout;
     pvbxLayout2Row->addWidget(new QLabel("set"), 0, Qt::AlignCenter);
     pvbxLayout2Row->addWidget(m_pDevNameEdit);
     pvbxLayout2Row->addWidget(m_pDevVoltageEdit);
     pvbxLayout2Row->addWidget(m_pDevSpeedEdit);
+    pvbxLayout2Row->addWidget(m_pDevAccelerationEdit);
     pvbxLayout2Row->addWidget(m_pDevDecelerationEdit);
+    pvbxLayout2Row->addWidget(m_pDevPosEdit);
 
 
 
@@ -295,24 +302,24 @@ void STANDACalibratorWidget::MakeControlWindow()
     pvbxLayout2Row->addLayout(phbxLayout);
     pvbxLayout2Row->addWidget(new QLabel(""));
     pvbxLayout2Row->addWidget(new QLabel(""));
-    pvbxLayout2Row->addWidget(new QLabel(""));
-    pvbxLayout2Row->addWidget(new QLabel(""));
 
     phbxLayoutCW->addLayout(pvbxLayout2Row);
 
     m_pDevNameOk = new QPushButton("ok");
     m_pDevVoltageOk = new QPushButton("ok");
     m_pDevSpeedOk = new QPushButton("ok");
+    m_pDevAccelerationOk = new QPushButton("ok");
     m_pDevDecelerationOk = new QPushButton("ok");
+    m_pDevPosOk = new QPushButton("ok");
 
     QVBoxLayout *pvbxLayout3Row = new QVBoxLayout;
     pvbxLayout3Row->addWidget(new QLabel("ok"), 0, Qt::AlignCenter);
     pvbxLayout3Row->addWidget(m_pDevNameOk);
     pvbxLayout3Row->addWidget(m_pDevVoltageOk);
     pvbxLayout3Row->addWidget(m_pDevSpeedOk);
+    pvbxLayout3Row->addWidget(m_pDevAccelerationOk);
     pvbxLayout3Row->addWidget(m_pDevDecelerationOk);
-    pvbxLayout3Row->addWidget(new QLabel(""));
-    pvbxLayout3Row->addWidget(new QLabel(""));
+    pvbxLayout3Row->addWidget(m_pDevPosOk);
     pvbxLayout3Row->addWidget(new QLabel(""));
     pvbxLayout3Row->addWidget(new QLabel(""));
     pvbxLayout3Row->addWidget(new QLabel(""));
@@ -399,7 +406,9 @@ void STANDACalibratorWidget::ConnectDeviceAndCW()
     connect(m_pDevSpeedOk, SIGNAL(clicked()),this, SLOT(setDevSpeed()));
     connect(m_pcmdDevSetZeroPos, SIGNAL(clicked()),this, SLOT(setDevZeroPos()));
     connect(m_pcmdDevSetMaxPos, SIGNAL(clicked()),this, SLOT(setDevMaxPos()));
+    connect(m_pDevAccelerationOk, SIGNAL(clicked()), this, SLOT(setDevAccel()));
     connect(m_pDevDecelerationOk, SIGNAL(clicked()),this, SLOT(setDevDecel()));
+    connect(m_pDevPosOk, SIGNAL(clicked()), this, SLOT(setDevPos()));
 }
 
 void STANDACalibratorWidget::WriteOutputTxt()
@@ -432,6 +441,7 @@ void STANDACalibratorWidget::timerEvent(QTimerEvent*)
     m_pcurDevNameLable->setText(m_device->getFriendlyName());
     m_pcurDevVoltage->setText(QString().setNum(m_device->getCurVoltage()));
     m_pcurDevSpeed->setText(QString().setNum(m_device->getCurSpeed()));
+    m_pcurDevAcceleration->setText(QString().setNum(m_device->getCurAcceleration()));
     m_pcurDevDeceleration->setText(QString().setNum(m_device->getCurDeceleration()));
     m_pcurDevPos->setText(QString().setNum(m_device->getCurOwnPosition()));
 }

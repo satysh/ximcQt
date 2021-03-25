@@ -34,6 +34,7 @@ public:
     void setSW1LOW(bool flag);
     void setSW2LOW(bool flag);
 
+
     QString getStageName();
     QString getFriendlyName();
     int getNomVoltage();
@@ -46,6 +47,7 @@ public:
     int getCurDeceleration();
     int getCurOwnPosition();
 
+    void moveTo(int pos);
 
 public:
     bool check(); // This method provides checking device to be moved safty
