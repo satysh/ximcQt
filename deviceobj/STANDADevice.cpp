@@ -293,6 +293,13 @@ void STANDADevice::stop()
     command_stop( m_device );
     emit deviceIsStopped();
 }
+
+void STANDADevice::sstp()
+{
+    qDebug() << "Device " << getFriendlyName() << " is stopped by deccel! pos: " << getPos();
+    command_sstp( m_device );
+    emit deviceIsStopped();
+}
 void STANDADevice::move()
 {
     startTimer(1000);

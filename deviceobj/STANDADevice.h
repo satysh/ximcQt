@@ -68,6 +68,7 @@ public slots:
     void Close();
 
     void stop ();
+    void sstp (); // Soft stop engine
     void move ();
     void left ();
     void right();
