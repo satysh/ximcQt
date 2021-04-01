@@ -26,6 +26,7 @@ STANDACalibratorWidget::STANDACalibratorWidget(QWidget *parent/* = nullptr*/)
     m_pmainLayout = new QVBoxLayout;
 
     FindAvailableDevices();
+    CheckOutputTxt();
     MakeDevSelectButtons();
     MakeControlWindow();
 
@@ -37,12 +38,17 @@ STANDACalibratorWidget::STANDACalibratorWidget(QWidget *parent/* = nullptr*/)
 STANDACalibratorWidget::~STANDACalibratorWidget()
 {
     // Write Last device calibration Info
-    QString curDevName = m_pcurDevNameLable->text();
-    m_mapOfDevVoltages[curDevName] = m_curDevVoltage;
-    m_mapOfDevSpeeds[curDevName] = m_curDevSpeed;
-    m_mapOfDevZeroPoses[curDevName] = m_curDevZeroPos;
-    m_mapOfDevMaxPoses[curDevName] = m_curDevMaxPos;
-    m_mapOfDevDecel[curDevName] = m_curDevDecel;
+    qDebug() << "STANDACalibratorWidget::~STANDACalibratorWidget()";
+    //m_curFriendlyName = m_device->getFriendlyName();
+    m_device->Close();
+    /*QString curDevName;
+    for (int i=0; i<m_ndevs; i++) {
+        if (m_curFriendlyName == m_mapOfFriendlyNames[m_devNamesList.at(i)]) {
+            curDevName = m_devNamesList.at(i);
+            break;
+        }
+    }*/
+    //saveCurrentDevParams(curDevName);
     WriteOutputTxt();
 }
 // ---------- Public slots -----
@@ -53,7 +59,7 @@ void STANDACalibratorWidget::trigger(bool flag)
     QString curDevFriendlyName = pcurRbtn->text();
     QString curDevName;
     for (int i=0; i<m_ndevs; i++) {
-        if (m_devFriendlyNamesList.at(i) == curDevFriendlyName) {
+        if (curDevFriendlyName == m_mapOfFriendlyNames[m_devNamesList.at(i)]) {
             curDevName = m_devNamesList.at(i);
             break;
         }
@@ -63,31 +69,73 @@ void STANDACalibratorWidget::trigger(bool flag)
         outStr += " was on";
         m_device->setName(curDevName);
         m_device->Init();
-        m_curDevVoltage=0;
-        m_curDevSpeed=0;
-        m_curDevZeroPos=0;
-        m_curDevMaxPos=0;
-        m_curDevDecel=0;
         m_pDevNameEdit->setText(m_device->getFriendlyName());
         m_pDevVoltageEdit->setText(QString().setNum(m_device->getNomVoltage()));
         m_pDevSpeedEdit->setText(QString().setNum(m_device->getNomSpeed()));
         m_pDevDecelerationEdit->setText(QString().setNum(m_device->getCurDeceleration()));
+        /*
+        m_curFriendlyName = m_device->getFriendlyName();
+        m_curDevVoltage = m_device->getNomVoltage();
+        m_curDevSpeed = m_device->getNomSpeed();
+        m_curDevAccel = m_device->getCurAcceleration();
+        m_curDevDecel = m_device->getCurDeceleration();*/
     }
     else {
         outStr += " was off";
         m_device->Close();
-
-        m_mapOfDevVoltages[curDevName] = m_curDevVoltage;
-        m_mapOfDevSpeeds[curDevName] = m_curDevSpeed;
-        m_mapOfDevZeroPoses[curDevName] = m_curDevZeroPos;
-        m_mapOfDevMaxPoses[curDevName] = m_curDevMaxPos;
-        m_mapOfDevDecel[curDevName] = m_curDevDecel;
+        //saveCurrentDevParams(curDevName);
     }
 
     Print(outStr);
 }
+
 // -----------------------------
 // --- Private Slots -----------
+void STANDACalibratorWidget::setFriendlyName()
+{
+    QString curDevFriendlyName=m_pDevNameEdit->text();
+    m_device->setFriendlyName(curDevFriendlyName);
+    m_mapOfFriendlyNames[m_device->getName()]=curDevFriendlyName;
+}
+void STANDACalibratorWidget::setDevVoltage()
+{
+    int curDevVoltage = (int)m_pDevVoltageEdit->text().toDouble();
+    m_device->setNomVoltage(curDevVoltage);
+    m_mapOfDevVoltages[m_device->getName()]=curDevVoltage;
+}
+void STANDACalibratorWidget::setDevSpeed()
+{
+    int curDevSpeed = (int)m_pDevSpeedEdit->text().toDouble();
+    m_device->setNomSpeed(curDevSpeed);
+    m_mapOfDevSpeeds[m_device->getName()]=curDevSpeed;
+}
+void STANDACalibratorWidget::setDevAccel()
+{
+    int curDevAccel = (int)m_pDevAccelerationEdit->text().toDouble();
+    m_device->setDevAccel(curDevAccel);
+    m_mapOfDevAccel[m_device->getName()]=curDevAccel;
+}
+void STANDACalibratorWidget::setDevDecel()
+{
+    int curDevDecel = (int)m_pDevDecelerationEdit->text().toDouble();
+    m_device->setDevDecel(curDevDecel);
+    m_mapOfDevDecel[m_device->getName()]=curDevDecel;
+}
+void STANDACalibratorWidget::setDevPos()
+{
+    int curDevPos = (int)m_pDevPosEdit->text().toDouble();
+    m_device->moveTo(curDevPos);
+}
+void STANDACalibratorWidget::setDevZeroPos()
+{
+    int curDevZeroPos = (int)m_pcurDevPos->text().toDouble();
+    m_mapOfDevZeroPoses[m_device->getName()]=curDevZeroPos;
+}
+void STANDACalibratorWidget::setDevMaxPos()
+{
+    int curDevMaxPos = (int)m_pcurDevPos->text().toDouble();
+    m_mapOfDevMaxPoses[m_device->getName()]=curDevMaxPos;
+}
 void STANDACalibratorWidget::setLSw1Border(QString str)
 {
     qDebug() << str;
@@ -175,7 +223,7 @@ void STANDACalibratorWidget::FindAvailableDevices()
 
 //  Gets device count from device enumeration data
     m_ndevs = get_device_count(devenum);
-    //m_ndevs = 10; // TODO It exits just for Tests
+    m_ndevs = 3; // TODO It exits just for Tests
 //  Terminate if there are no connected devices
     if (m_ndevs <= 0)
     {
@@ -187,7 +235,7 @@ void STANDACalibratorWidget::FindAvailableDevices()
     else {
         for (int i=0; i<m_ndevs; i++) {
             QString curDevName(get_device_name(devenum, i));
-            //curDevName = "device_"+QString().setNum(i); // TODO It exits just for Tests
+            curDevName = "device_"+QString().setNum(i); // TODO It exits just for Tests
             m_devNamesList << curDevName;
         }
 
@@ -195,8 +243,9 @@ void STANDACalibratorWidget::FindAvailableDevices()
             m_device->setName(m_devNamesList.at(i));
             m_device->Init();
             QString curDevFriendlyName = m_device->getFriendlyName();
-            //curDevFriendlyName = "fr_device_"+QString().setNum(i); // TODO It exits just for Tests
+            curDevFriendlyName = "fr_device_"+QString().setNum(i); // TODO It exits just for Tests
             m_devFriendlyNamesList << curDevFriendlyName;
+            m_mapOfFriendlyNames[m_devNamesList.at(i)]=curDevFriendlyName;
             m_device->Close();
         }
 
@@ -215,12 +264,11 @@ void STANDACalibratorWidget::FindAvailableDevices()
 void STANDACalibratorWidget::MakeDevSelectButtons()
 {
     m_pgbxOfDevs = new QGroupBox("&Devices");
-    //connect(m_pgbxOfDevs, SIGNAL(toggled(bool)), this, SLOT(test(bool)));
 
     QHBoxLayout *phbxLayout = new QHBoxLayout;
 
     for (int i=0; i<m_ndevs; i++) {
-        QRadioButton *pcurRbtn = new QRadioButton(m_devFriendlyNamesList.at(i));
+        QRadioButton *pcurRbtn = new QRadioButton(m_mapOfFriendlyNames[m_devNamesList.at(i)]);
         phbxLayout->addWidget(pcurRbtn);
         connect(pcurRbtn, SIGNAL(toggled(bool)), this, SLOT(trigger(bool)));
     }
@@ -410,23 +458,72 @@ void STANDACalibratorWidget::ConnectDeviceAndCW()
     connect(m_pDevPosOk, SIGNAL(clicked()), this, SLOT(setDevPos()));
 }
 
+void STANDACalibratorWidget::CheckOutputTxt()
+{
+    QFile file("../settingsdata/fileout.txt");
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "../settingsdata/fileout.txt does not exist!";
+    }
+    else {
+        QTextStream in(&file);
+        while (!in.atEnd()) {
+            QString line;
+            in >> line;
+            for (int i=0; i<m_ndevs; i++) {
+                QString curDevName=m_devNamesList.at(i);
+                if (line == curDevName) {
+                    in >> line;
+                    m_mapOfFriendlyNames[curDevName]=line;
+                    in >> line;
+                    m_mapOfDevVoltages[curDevName]=line.toDouble();
+                    in >> line;
+                    m_mapOfDevSpeeds[curDevName]=line.toDouble();
+                    in >> line;
+                    m_mapOfDevAccel[curDevName]=line.toDouble();
+                    in >> line;
+                    m_mapOfDevDecel[curDevName]=line.toDouble();
+                    in >> line;
+                    m_mapOfDevZeroPoses[curDevName]=line.toDouble();
+                    in >> line;
+                    m_mapOfDevMaxPoses[curDevName]=line.toDouble();
+                    break;
+                }
+            }
+        }
+    }
+
+}
 void STANDACalibratorWidget::WriteOutputTxt()
 {
     QFile fileOut("../settingsdata/fileout.txt");
     if(fileOut.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QTextStream writeStream(&fileOut);
         for (int i=0; i<m_ndevs; i++) {
-            writeStream << m_devNamesList.at(i) << "\t";
-            writeStream << m_mapOfDevVoltages[m_devNamesList.at(i)] << "\t";
-            writeStream << m_mapOfDevSpeeds[m_devNamesList.at(i)] << "\t";
-            writeStream << m_mapOfDevZeroPoses[m_devNamesList.at(i)] << "\t";
-            writeStream << m_mapOfDevMaxPoses[m_devNamesList.at(i)] << "\t";
-            writeStream << m_mapOfDevDecel[m_devNamesList.at(i)] << "\n";
+            QString curDevName=m_devNamesList.at(i);
+            writeStream << curDevName << "\t";
+            writeStream << m_mapOfFriendlyNames[curDevName] << "\t";
+            writeStream << m_mapOfDevVoltages[curDevName] << "\t";
+            writeStream << m_mapOfDevSpeeds[curDevName] << "\t";
+            writeStream << m_mapOfDevAccel[curDevName] << "\t";
+            writeStream << m_mapOfDevDecel[curDevName] << "\t";
+            writeStream << m_mapOfDevZeroPoses[curDevName] << "\t";
+            writeStream << m_mapOfDevMaxPoses[curDevName] << "\n";
         }
     }
     fileOut.close();
 }
-
+/*
+void STANDACalibratorWidget::saveCurrentDevParams(QString curDevName)
+{
+    m_mapOfFriendlyNames[curDevName]=m_curFriendlyName;
+    m_mapOfDevVoltages[curDevName]=m_curDevVoltage;
+    m_mapOfDevSpeeds[curDevName]=m_curDevSpeed;
+    m_mapOfDevAccel[curDevName]=m_curDevAccel;
+    m_mapOfDevDecel[curDevName]=m_curDevDecel;
+    m_mapOfDevZeroPoses[curDevName]=m_curDevZeroPos;
+    m_mapOfDevMaxPoses[curDevName]=m_curDevMaxPos;
+}
+*/
 void STANDACalibratorWidget::timerEvent(QTimerEvent*)
 {
 /*

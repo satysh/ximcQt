@@ -29,14 +29,8 @@ public:
     void MakeDevSelectButtons();
     void MakeControlWindow(); // CW
     void ConnectDeviceAndCW();
+    void CheckOutputTxt();
     void WriteOutputTxt();
-
-    void setFriendlyName(QString name) { m_device->setFriendlyName(name); }
-    void setDevVoltage(int voltage)    { m_device->setNomVoltage(voltage); }
-    void setDevSpeed(int speed)        { m_device->setNomSpeed(speed); }
-    void setDevAccel(int accel)        { m_device->setDevAccel(accel); }
-    void setDevDecel(int decel)        { m_device->setDevDecel(decel); }
-    void setDevPos(int pos)            { m_device->moveTo(pos); }
 
     QStringList getDevNamesList()         { return m_devNamesList; }
     QStringList getDevFriendlyNamesList() { return m_devFriendlyNamesList; }
@@ -44,21 +38,25 @@ public:
 public slots:
     void trigger(bool);
 
-    void setFriendlyName () { m_curFriendlyName=m_pDevNameEdit->text(); setFriendlyName(m_curFriendlyName); }
-    void setDevVoltage()    { m_curDevVoltage=m_pDevVoltageEdit->text().toDouble(); setDevVoltage(m_curDevVoltage); }
-    void setDevSpeed  ()    { m_curDevSpeed=m_pDevSpeedEdit->text().toDouble(); setDevSpeed(m_curDevSpeed); }
-    void setDevZeroPos()    { m_curDevZeroPos=m_pcurDevPos->text().toDouble(); }
-    void setDevMaxPos ()    { m_curDevMaxPos=m_pcurDevPos->text().toDouble(); }
-    void setDevAccel  ()    { m_curDevAccel=m_pDevAccelerationEdit->text().toDouble(); setDevAccel(m_curDevAccel); }
-    void setDevDecel  ()    { m_curDevDecel=m_pDevDecelerationEdit->text().toDouble(); setDevDecel(m_curDevDecel); }
-    void setDevPos    ()    { m_curDevPos=m_pDevPosEdit->text().toDouble(); setDevPos(m_curDevPos); }
 
 private slots:
+    void setFriendlyName ();
+    void setDevVoltage   ();
+    void setDevSpeed     ();
+    void setDevAccel     ();
+    void setDevDecel     ();
+    void setDevPos       ();
+    void setDevZeroPos   ();
+    void setDevMaxPos    ();
+
     void setLSw1Border(QString);
     void setLSw2Border(QString);
     void setLSw1LOW(QString);
     void setLSw2LOW(QString);
-
+/*
+private:
+    void saveCurrentDevParams(QString curDevName);
+*/
 protected:
     virtual void timerEvent(QTimerEvent*);
 
@@ -107,12 +105,14 @@ private:
     QStringList m_devNamesList;
     QStringList m_devFriendlyNamesList;
 
+    std::map<QString, QString> m_mapOfFriendlyNames;
     std::map<QString, int> m_mapOfDevVoltages;
     std::map<QString, int> m_mapOfDevSpeeds;
     std::map<QString, int> m_mapOfDevZeroPoses;
     std::map<QString, int> m_mapOfDevMaxPoses;
+    std::map<QString, int> m_mapOfDevAccel;
     std::map<QString, int> m_mapOfDevDecel;
-
+/*
     QString m_curFriendlyName="";
     int m_curDevVoltage=0;
     int m_curDevSpeed=0;
@@ -120,5 +120,5 @@ private:
     int m_curDevMaxPos=0;
     int m_curDevAccel=0;
     int m_curDevDecel=0;
-    int m_curDevPos;
+    int m_curDevPos;*/
 };
