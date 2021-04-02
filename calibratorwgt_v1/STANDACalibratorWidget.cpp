@@ -16,9 +16,9 @@ STANDACalibratorWidget::STANDACalibratorWidget(QWidget *parent/* = nullptr*/)
     qDebug() << "STANDACalibratorWidget::STANDACalibratorWidget";
     startTimer(1);
     m_device = new STANDADevice;
-    int fixedw=700;
+    /*int fixedw=700;
     int fixedh=600;
-    setFixedSize(fixedw, fixedh);
+    setFixedSize(fixedw, fixedh);*/
 
     m_pInfoWindow = new QTextEdit;
     m_pInfoWindow->setReadOnly(true);
