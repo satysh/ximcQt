@@ -223,7 +223,7 @@ void STANDACalibratorWidget::FindAvailableDevices()
 
 //  Gets device count from device enumeration data
     m_ndevs = get_device_count(devenum);
-    m_ndevs = 3; // TODO It exits just for Tests
+    //m_ndevs = 3; // TODO It exits just for Tests
 //  Terminate if there are no connected devices
     if (m_ndevs <= 0)
     {
@@ -235,7 +235,7 @@ void STANDACalibratorWidget::FindAvailableDevices()
     else {
         for (int i=0; i<m_ndevs; i++) {
             QString curDevName(get_device_name(devenum, i));
-            curDevName = "device_"+QString().setNum(i); // TODO It exits just for Tests
+            //curDevName = "device_"+QString().setNum(i); // TODO It exits just for Tests
             m_devNamesList << curDevName;
         }
 
@@ -243,7 +243,7 @@ void STANDACalibratorWidget::FindAvailableDevices()
             m_device->setName(m_devNamesList.at(i));
             m_device->Init();
             QString curDevFriendlyName = m_device->getFriendlyName();
-            curDevFriendlyName = "fr_device_"+QString().setNum(i); // TODO It exits just for Tests
+            //curDevFriendlyName = "fr_device_"+QString().setNum(i); // TODO It exits just for Tests
             m_devFriendlyNamesList << curDevFriendlyName;
             m_mapOfFriendlyNames[m_devNamesList.at(i)]=curDevFriendlyName;
             m_device->Close();
