@@ -4,7 +4,7 @@
 #include "../view/STANDAVisualization.h"
 #include "../deviceobj/STANDADevice.h"
 #include "../devloader/STANDALoader.h"
-#include "../devsettings/STANDASettingsWidget.h"
+//#include "../devsettings/STANDASettingsWidget.h"
 
 int main(int argc, char **argv)
 {
@@ -12,53 +12,96 @@ int main(int argc, char **argv)
     QWidget      mainWgt;
     QVBoxLayout* pvbxLayout = new QVBoxLayout;
     STANDALoader devsloader;
-    STANDADevice device[2];
-    STANDADeviceWidget devWgt[2];
-    STANDASettingsWidget* devSettWgt;
+    std::vector<STANDADevice*> vOfdevs;
+    std::vector<STANDADeviceWidget*> vOfDevWgts;
+    //STANDASettingsWidget* devSettWgt;
 
     //STANDAVisualization viewWgt;
 
-    devsloader.check();
     devsloader.findDevices();
+    devsloader.findInputFile();
+    qDebug() << "loader result is " << devsloader.getResult();
+
     const int nDevs = devsloader.getnDevs();
+    qDebug() << "loader found devs=" << nDevs;
+
+    if (nDevs < 1) {
+      qDebug() << "no devs were found!";
+      return -1;
+    }
+
+    for (int i=0; i<nDevs; i++) {
+        STANDADevice* p_curdevice = new STANDADevice(&mainWgt);
+        STANDADeviceWidget* p_curdevWgt = new STANDADeviceWidget(&mainWgt);
+        //devSettWgt = new STANDASettingsWidget[nDevs];
+        QObject::connect(p_curdevWgt, SIGNAL(turnOnDevice()),
+                         p_curdevice, SLOT(Init())
+                        );
+        QObject::connect(p_curdevWgt, SIGNAL(turnOffDevice()),
+                         p_curdevice, SLOT(Delete())
+                        );
+        QObject::connect(p_curdevWgt, SIGNAL(posIsValid(QString)),
+                         p_curdevice, SLOT(setPos(QString))
+                        );
+        QObject::connect(p_curdevWgt, SIGNAL(startMoveDevice()),
+                         p_curdevice, SLOT(move())
+                        );
+        QObject::connect(p_curdevWgt, SIGNAL(stopMoveDevice()),
+                         p_curdevice, SLOT(stop())
+                        );
+        QObject::connect(p_curdevice, SIGNAL(deviceMoveEnd()),
+                         p_curdevWgt, SLOT(setMoveMod())
+                        );
+        //p_curdevWgt->setmaxPos(73000);
+        p_curdevice->setName(devsloader.getDevName(i));
+        p_curdevice->Init();
+        p_curdevWgt->Init();
+        pvbxLayout->addWidget(p_curdevWgt);
+    }
+    mainWgt.setLayout(pvbxLayout);
+
 /*
     if (nDevs > 0) {
-        device = new STANDADevice[nDevs];
-        devWgt = new STANDADeviceWidget[nDevs];
+        STANDADevice* p_curdevice = new STANDADevice(&mainWgt);
+        vOfdevs.push_back(p_curdevice);
+        STANDADeviceWidget* p_curdevWgt = new STANDADeviceWidget(&mainWgt);
+        vOfDevWgts.push_back(p_curdevWgt);
         //devSettWgt = new STANDASettingsWidget[nDevs];
     }
     else {
     	return -1;
     }
-*/
+
     for (int i=0; i<nDevs; i++) {
-      QObject::connect(&devWgt[i], SIGNAL(turnOnDevice()),
-                       &device[i], SLOT(Init())
+      STANDADevice* p_curdevice = (STANDADevice*)vOfdevs.at(i);
+      STANDADeviceWidget* p_curdevWgt = (STANDADeviceWidget*)vOfDevWgts.at(i);
+      QObject::connect(p_curdevWgt, SIGNAL(turnOnDevice()),
+                       p_curdevice, SLOT(Init())
                       );
-      QObject::connect(&devWgt[i], SIGNAL(turnOffDevice()),
-                       &device[i], SLOT(Delete())
+      QObject::connect(p_curdevWgt, SIGNAL(turnOffDevice()),
+                       p_curdevice, SLOT(Delete())
                       );
-      QObject::connect(&devWgt[i], SIGNAL(posIsValid(QString)),
-                       &device[i], SLOT(setPos(QString))
+      QObject::connect(p_curdevWgt, SIGNAL(posIsValid(QString)),
+                       p_curdevice, SLOT(setPos(QString))
                       );
-      QObject::connect(&devWgt[i], SIGNAL(startMoveDevice()),
-                       &device[i], SLOT(move())
+      QObject::connect(p_curdevWgt, SIGNAL(startMoveDevice()),
+                       p_curdevice, SLOT(move())
                       );
-      QObject::connect(&devWgt[i], SIGNAL(stopMoveDevice()),
-                       &device[i], SLOT(stop())
+      QObject::connect(p_curdevWgt, SIGNAL(stopMoveDevice()),
+                       p_curdevice, SLOT(stop())
                       );
-      QObject::connect(&device[i], SIGNAL(deviceMoveEnd()),
-                       &devWgt[i], SLOT(setMoveMod())
+      QObject::connect(p_curdevice, SIGNAL(deviceMoveEnd()),
+                       p_curdevWgt, SLOT(setMoveMod())
                       );
-      devWgt[i].setmaxPos(73000);
-      device[i].setName(devsloader.getDevName(i));
-      device[i].Init();
-      devWgt[i].Init();
-      pvbxLayout->addWidget(&devWgt[i]);
+      //p_curdevWgt->setmaxPos(73000);
+      p_curdevice->setName(devsloader.getDevName(i));
+      p_curdevice->Init();
+      p_curdevWgt->Init();
+      pvbxLayout->addWidget(p_curdevWgt);
     }
 
     mainWgt.setLayout(pvbxLayout);
-
+*/
     // Connect device widget and view widget
     /*
     QObject::connect(&devWgt,  SIGNAL(posIsValid(QString)),
