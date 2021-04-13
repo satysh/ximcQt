@@ -11,6 +11,9 @@ int main(int argc, char** argv)
     QPushButton* pcmdRight = new QPushButton("right", &wgt);
     QPushButton* pcmdStop = new QPushButton("stop", &wgt);
     STANDALoader loader(&wgt);
+    loader.findInputFile();
+
+    qDebug() << "Loader results is " << loader.getResult();
 
 /*
     QObject::connect(pcmdOk,  SIGNAL(clicked()),
