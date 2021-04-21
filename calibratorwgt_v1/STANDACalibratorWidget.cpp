@@ -25,21 +25,21 @@ STANDACalibratorWidget::STANDACalibratorWidget(QWidget *parent/* = nullptr*/)
 
     m_pmainLayout = new QVBoxLayout;
 
-    FindAvailableDevices();
-    CheckOutputTxt();
+    if (FindAvailableDevices()) {
+        CheckOutputTxt();
+    }
     MakeDevSelectButtons();
     MakeControlWindow();
-
     m_pmainLayout->addWidget(m_pInfoWindow);
     setLayout(m_pmainLayout);
-
     ConnectDeviceAndCW();
 }
 STANDACalibratorWidget::~STANDACalibratorWidget()
 {
     qDebug() << "STANDACalibratorWidget::~STANDACalibratorWidget()";
     m_device->Close();
-    WriteOutputTxt();
+    if (m_availableDevsStatus) // TODO It is sheet! Remove It!s
+        WriteOutputTxt();
 }
 // ---------- Public slots -----
 
@@ -190,7 +190,7 @@ void STANDACalibratorWidget::Print(QString str)
     iStr++;
 }
 
-void STANDACalibratorWidget::FindAvailableDevices()
+bool STANDACalibratorWidget::FindAvailableDevices()
 {
     const int probe_flags = ENUMERATE_PROBE;
     const char* enumerate_hints = "";
@@ -221,6 +221,7 @@ void STANDACalibratorWidget::FindAvailableDevices()
         Print(QString("No devices found"));
     //  Free memory used by device enumeration data
         free_enumerate_devices(devenum);
+        return false;
     }
     else {
         for (int i=0; i<m_ndevs; i++) {
@@ -249,6 +250,8 @@ void STANDACalibratorWidget::FindAvailableDevices()
         //Free memory used by device enumeration data
         free_enumerate_devices(devenum);
     }
+    m_availableDevsStatus=true; // // TODO It is sheet! Remove It!
+    return true;
 }
 
 void STANDACalibratorWidget::MakeDevSelectButtons()

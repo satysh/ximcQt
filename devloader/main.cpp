@@ -8,6 +8,7 @@ int main(int argc, char** argv)
     STANDALoader loader(&wgt);
 
     loader.findAvailableDevices();
+    loader.findUserSettingsFile();
 
     wgt.show();
 	return app.exec();

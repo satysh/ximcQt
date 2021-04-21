@@ -26,7 +26,7 @@ public:
     ~STANDACalibratorWidget();
 
     void Print(QString str);
-    void FindAvailableDevices();
+    bool FindAvailableDevices();
     void MakeDevSelectButtons();
     void MakeControlWindow(); // CW
     void ConnectDeviceAndCW();
@@ -107,6 +107,8 @@ private:
     QStringList m_devFriendlyNamesList;
 
     std::map<QString, STANDASettings> m_mapOfSettings; // <DeviceName, Settings>
+
+    bool m_availableDevsStatus=false; // TODO It is sheet! Remove It!
     /*
     std::map<QString, QString> m_mapOfFriendlyNames;
     std::map<QString, int> m_mapOfDevVoltages;

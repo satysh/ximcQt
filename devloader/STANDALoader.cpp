@@ -79,13 +79,13 @@ void STANDALoader::findAvailableDevices()
             STANDADevice curDevice;
             curDevice.setName(curDeviceName);
             curDevice.Init();
-            STANDASettings curDeviceSettings;
-            curDeviceSettings.setDeviceName(curDeviceName);
-            curDeviceSettings.setFriendlyName(curDevice.getFriendlyName());
-            curDeviceSettings.setNomVoltage  (curDevice.getNomVoltage());
-            curDeviceSettings.setNomSpeed    (curDevice.getNomSpeed());
-            curDeviceSettings.setAccel       (curDevice.getCurAcceleration());
-            curDeviceSettings.setDecel       (curDevice.getCurDeceleration());
+            STANDASettings *curDeviceSettings = new STANDASettings(this);
+            curDeviceSettings->setDeviceName(curDeviceName);
+            curDeviceSettings->setFriendlyName(curDevice.getFriendlyName());
+            curDeviceSettings->setNomVoltage(curDevice.getNomVoltage());
+            curDeviceSettings->setNomSpeed(curDevice.getNomSpeed());
+            curDeviceSettings->setAccel(curDevice.getCurAcceleration());
+            curDeviceSettings->setDecel(curDevice.getCurDeceleration());
             //m_vOfAvailableDevsSettings
 			/*QString s = "device_";
 			s += QString().setNum(i+1);
@@ -93,10 +93,22 @@ void STANDALoader::findAvailableDevices()
 			m_vDevnamesList << s;*/
 			//m_vDevnamesList << get_device_name(devenum, i);
             curDevice.Close();
+            m_vOfAvailableDevsSettings << curDeviceSettings;
 		}
 
 
 		qDebug() << m_nAvailableDevs << " devices are found:";
+        for (int i=0; i<m_vOfAvailableDevsSettings.size(); i++) {
+            STANDASettings *curDeviceSettings = m_vOfAvailableDevsSettings.at(i);
+            qDebug() << curDeviceSettings->getDeviceName() << '\t'
+                     << curDeviceSettings->getFriendlyName() << '\t'
+                     << curDeviceSettings->getNomVoltage() << '\t'
+                     << curDeviceSettings->getNomSpeed() << '\t'
+                     << curDeviceSettings->getAccel() << '\t'
+                     << curDeviceSettings->getDecel() << '\t'
+                     << curDeviceSettings->getZeroPosition() << '\t'
+                     << curDeviceSettings->getMaxPosition();
+        }
         /*
 		for (int i=0; i<m_vDevnamesList.size(); i++) {
 			qDebug() << " " << i+1 << ": " << m_vDevnamesList.at(i);
@@ -105,32 +117,59 @@ void STANDALoader::findAvailableDevices()
 	    free_enumerate_devices( devenum );
 		emit successfull();
 	}
+
 }
-/*
-void STANDALoader::findInputFile()
+
+void STANDALoader::findUserSettingsFile()
 {
+    qDebug() << "STANDALoader::findUserSettingsFile";
     QFile fileOut("../settingsdata/fileout.txt");
     int ndevsInFile=0;
     if(fileOut.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QTextStream readStream(&fileOut);
         while (!readStream.atEnd()) {
+            // read device name
             QString curString;
             readStream >> curString;
-            qDebug() << curString;
-            if (curString != "") {
-                if (!doesDevFromFileExist(curString))
-                    setResult(false);
-                ndevsInFile++;
-            }
-            for (int i=0; i<7; i++) {
-                readStream >> curString; // skip info in file
-            }
+            if (curString == "") break;
+
+            STANDASettings *curDeviceSettings = new STANDASettings(this);
+            curDeviceSettings->setDeviceName(curString);
+
+            // read setting for the one device
+
+            readStream >> curString;
+            curDeviceSettings->setFriendlyName(curString);
+            readStream >> curString;
+            curDeviceSettings->setNomVoltage((int)curString.toDouble());
+            readStream >> curString;
+            curDeviceSettings->setNomSpeed((int)curString.toDouble());
+            readStream >> curString;
+            curDeviceSettings->setAccel((int)curString.toDouble());
+            readStream >> curString;
+            curDeviceSettings->setDecel((int)curString.toDouble());
+            readStream >> curString;
+            curDeviceSettings->setZeroPosition((int)curString.toDouble());
+            readStream >> curString;
+            curDeviceSettings->setMaxPosition((int)curString.toDouble());
+            ndevsInFile++;
+            m_vOfUserDevsSettings << curDeviceSettings;
         }
     }
     else {
         qDebug() << "The input file doesn't exist!";
     }
     qDebug() << "ndevsInFile=" << ndevsInFile;
+    for (int i=0; i<m_vOfUserDevsSettings.size(); i++) {
+        STANDASettings *curDeviceSettings = m_vOfUserDevsSettings.at(i);
+        qDebug() << curDeviceSettings->getDeviceName() << '\t'
+                 << curDeviceSettings->getFriendlyName() << '\t'
+                 << curDeviceSettings->getNomVoltage() << '\t'
+                 << curDeviceSettings->getNomSpeed() << '\t'
+                 << curDeviceSettings->getAccel() << '\t'
+                 << curDeviceSettings->getDecel() << '\t'
+                 << curDeviceSettings->getZeroPosition() << '\t'
+                 << curDeviceSettings->getMaxPosition();
+    }
     fileOut.close();
 }
-*/

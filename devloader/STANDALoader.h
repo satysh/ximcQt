@@ -5,6 +5,7 @@
 #include <vector>
 
 #include <QObject>
+#include <QVector>
 
 class QStringList;
 class QString;
@@ -29,6 +30,7 @@ public:
     //void setResult(bool rslt) { m_result=rslt; }
     //void check();
     void findAvailableDevices();
+    void findUserSettingsFile();
     //void findInputFile();
 signals:
     void successfull();
@@ -37,7 +39,8 @@ signals:
 private:
     int m_nAvailableDevs=0;
 
-    std::vector<STANDASettings> m_vOfAvailableDevsSettings;
+    QVector<STANDASettings*> m_vOfAvailableDevsSettings;
+    QVector<STANDASettings*> m_vOfUserDevsSettings;
     //QStringList m_vDevnamesList;
     //QStringList m_vDevnamesListFromFile;
 
