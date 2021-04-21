@@ -173,3 +173,20 @@ void STANDALoader::findUserSettingsFile()
     }
     fileOut.close();
 }
+
+void STANDALoader::compareAvailableAndUserSettings()
+{
+    qDebug() << "STANDALoader::compareAvailableAndUserSettings";
+    if (m_vOfAvailableDevsSettings.size() != m_vOfUserDevsSettings.size()) {
+        qDebug() << "[WARNING]: the number of the available devs is " << m_vOfAvailableDevsSettings.size()
+                 << ", but the number of the user devs is " << m_vOfUserDevsSettings.size();
+    }
+
+    for (int i=0; i<m_vOfAvailableDevsSettings.size(); i++) {
+        STANDASettings *curAvailableDevsSettings = m_vOfAvailableDevsSettings.at(i);
+        for (int j=0; j<m_vOfUserDevsSettings.size(); j++) {
+            STANDASettings *curUserDevsSettings = m_vOfUserDevsSettings.at(j);
+            /* TODO add compare here! */
+        }
+    }
+}

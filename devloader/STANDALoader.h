@@ -20,6 +20,7 @@ public:
 	~STANDALoader();
 
     int getnAvailableDevs() { return m_nAvailableDevs; }
+    STANDASettings *getUserSettings(int iDev) { return m_vOfUserDevsSettings.at(iDev); }
 
     //QString getDevName(int i);
 
@@ -31,6 +32,7 @@ public:
     //void check();
     void findAvailableDevices();
     void findUserSettingsFile();
+    void compareAvailableAndUserSettings();
     //void findInputFile();
 signals:
     void successfull();

@@ -9,6 +9,7 @@ int main(int argc, char** argv)
 
     loader.findAvailableDevices();
     loader.findUserSettingsFile();
+    loader.compareAvailableAndUserSettings();
 
     wgt.show();
 	return app.exec();
