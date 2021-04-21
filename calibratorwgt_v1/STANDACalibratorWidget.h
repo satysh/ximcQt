@@ -16,6 +16,7 @@
 #include <QComboBox>
 
 #include "../deviceobj/STANDADevice.h"
+#include "../settingsdata/STANDASettings.h"
 
 class STANDACalibratorWidget : public QWidget
 {
@@ -41,13 +42,13 @@ public slots:
 
 private slots:
     void setFriendlyName ();
-    void setDevVoltage   ();
-    void setDevSpeed     ();
+    void setNomVoltage   ();
+    void setNomSpeed     ();
     void setDevAccel     ();
     void setDevDecel     ();
-    void setDevPos       ();
-    void setDevZeroPos   ();
-    void setDevMaxPos    ();
+    void setPosition     ();
+    void setZeroPosition ();
+    void setMaxPosition  ();
 
     void setLSw1Border(QString);
     void setLSw2Border(QString);
@@ -105,13 +106,15 @@ private:
     QStringList m_devNamesList;
     QStringList m_devFriendlyNamesList;
 
+    std::map<QString, STANDASettings> m_mapOfSettings; // <DeviceName, Settings>
+    /*
     std::map<QString, QString> m_mapOfFriendlyNames;
     std::map<QString, int> m_mapOfDevVoltages;
     std::map<QString, int> m_mapOfDevSpeeds;
     std::map<QString, int> m_mapOfDevZeroPoses;
     std::map<QString, int> m_mapOfDevMaxPoses;
     std::map<QString, int> m_mapOfDevAccel;
-    std::map<QString, int> m_mapOfDevDecel;
+    std::map<QString, int> m_mapOfDevDecel;*/
 /*
     QString m_curFriendlyName="";
     int m_curDevVoltage=0;
