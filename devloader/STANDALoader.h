@@ -9,6 +9,8 @@
 class QStringList;
 class QString;
 
+#include "../settingsdata/STANDASettings.h"
+
 class STANDALoader : public QObject
 {
 	Q_OBJECT
@@ -16,26 +18,30 @@ public:
 	STANDALoader(QObject *parent = nullptr);
 	~STANDALoader();
 
-    int getnDevs() { return m_ndevs; }
-    QString getDevName(int i);
-    bool getResult() { return m_result; }
+    int getnAvailableDevs() { return m_nAvailableDevs; }
 
-    bool doesDevFromFileExist(QString devName);
+    //QString getDevName(int i);
 
-    void setResult(bool rslt) { m_result=rslt; }
-    void check();
-    void findDevices();
-    void findInputFile();
+    //bool getResult() { return m_result; }
+
+    //bool doesDevFromFileExist(QString devName);
+
+    //void setResult(bool rslt) { m_result=rslt; }
+    //void check();
+    void findAvailableDevices();
+    //void findInputFile();
 signals:
     void successfull();
     void failed();
 
 private:
-    int m_ndevs=0;
-    QStringList m_vDevnamesList;
-    QStringList m_vDevnamesListFromFile;
+    int m_nAvailableDevs=0;
 
-    bool m_result=true;
+    std::vector<STANDASettings> m_vOfAvailableDevsSettings;
+    //QStringList m_vDevnamesList;
+    //QStringList m_vDevnamesListFromFile;
 
-	device_t m_device;
+    //bool m_result=true;
+
+	//device_t m_device;
 };

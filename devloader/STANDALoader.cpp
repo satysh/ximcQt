@@ -7,6 +7,7 @@
 #include <QTextStream>
 
 #include "STANDALoader.h"
+#include "../deviceobj/STANDADevice.h"
 
 
 //const char* enumerate_hints = "addr="; // this hint will use broadcast enumeration, if ENUMERATE_NETWORK flag is enabled
@@ -18,7 +19,7 @@ STANDALoader::STANDALoader(QObject *parent/* = nullptr*/)
 STANDALoader::~STANDALoader()
 {
 }
-
+/*
 QString STANDALoader::getDevName(int i)
 {
 	if (i >= m_vDevnamesList.size()) {
@@ -30,7 +31,7 @@ QString STANDALoader::getDevName(int i)
 
 bool STANDALoader::doesDevFromFileExist(QString devName)
 {
-    for (int i=0; i<m_ndevs; i++) {
+    for (int i=0; i<m_nAvailableDevs; i++) {
         if (devName == getDevName(i)) return true;
     }
     return false;
@@ -39,19 +40,12 @@ void STANDALoader::check()
 {
 
 }
-
-void STANDALoader::findDevices()
+*/
+void STANDALoader::findAvailableDevices()
 {
-	const int probe_flags = ENUMERATE_PROBE/* | BORDER_IS_ENCODER*/;
-	//const char* enumerate_hints = "addr=192.168.1.1,172.16.2.3";
+    qDebug() << "STANDALoader::findAvailableDevices";
+	const int probe_flags = ENUMERATE_PROBE;
 	const char* enumerate_hints = "";
-	/*engine_settings_t engine_settings;
-	const char* units = "mm";
-	const int seconds = 3;
-	status_t status;
-	status_calb_t status_calb;
-	calibration_t calibration;
-	char device_name[256];*/
 	char ximc_version_str[32];
 	device_enumeration_t devenum;
 
@@ -68,37 +62,51 @@ void STANDALoader::findDevices()
 	devenum = enumerate_devices( probe_flags, enumerate_hints );
 
 //	Gets device count from device enumeration data
-	m_ndevs = get_device_count( devenum );
+	m_nAvailableDevs = get_device_count( devenum );
 
-    //m_ndevs=2;
+    //m_nAvailableDevs=2;
 //	Terminate if there are no connected devices
-	if (m_ndevs <= 0)
+	if (m_nAvailableDevs <= 0)
 	{
-		//printf( "No devices found\n" );
+		printf( "No devices found\n" );
 	//	Free memory used by device enumeration data
 		free_enumerate_devices( devenum );
 		emit failed();
 	}
     else {
-		for (int i=0; i<m_ndevs; i++) {
+		for (int i=0; i<m_nAvailableDevs; i++) {
+            QString curDeviceName(get_device_name(devenum, i));
+            STANDADevice curDevice;
+            curDevice.setName(curDeviceName);
+            curDevice.Init();
+            STANDASettings curDeviceSettings;
+            curDeviceSettings.setDeviceName(curDeviceName);
+            curDeviceSettings.setFriendlyName(curDevice.getFriendlyName());
+            curDeviceSettings.setNomVoltage  (curDevice.getNomVoltage());
+            curDeviceSettings.setNomSpeed    (curDevice.getNomSpeed());
+            curDeviceSettings.setAccel       (curDevice.getCurAcceleration());
+            curDeviceSettings.setDecel       (curDevice.getCurDeceleration());
+            //m_vOfAvailableDevsSettings
 			/*QString s = "device_";
 			s += QString().setNum(i+1);
 			qDebug() << "s=" << s;
 			m_vDevnamesList << s;*/
-			m_vDevnamesList << get_device_name(devenum, i);
+			//m_vDevnamesList << get_device_name(devenum, i);
+            curDevice.Close();
 		}
 
 
-		qDebug() << m_ndevs << " devices are found:";
+		qDebug() << m_nAvailableDevs << " devices are found:";
+        /*
 		for (int i=0; i<m_vDevnamesList.size(); i++) {
 			qDebug() << " " << i+1 << ": " << m_vDevnamesList.at(i);
-		}
+		}*/
 		//Free memory used by device enumeration data
 	    free_enumerate_devices( devenum );
 		emit successfull();
 	}
 }
-
+/*
 void STANDALoader::findInputFile()
 {
     QFile fileOut("../settingsdata/fileout.txt");
@@ -125,3 +133,4 @@ void STANDALoader::findInputFile()
     qDebug() << "ndevsInFile=" << ndevsInFile;
     fileOut.close();
 }
+*/
