@@ -19,12 +19,12 @@ int main(int argc, char **argv)
 
     //STANDAVisualization viewWgt;
 
-    devsloader.findDevices();
-    devsloader.findInputFile();
-    qDebug() << "loader result is " << devsloader.getResult();
+    devsloader.findAvailableDevices();
+    devsloader.findUserSettingsFile();
+    devsloader.compareAvailableAndUserSettings();
 
-    int nDevs = devsloader.getnDevs();
-    qDebug() << "loader found devs=" << nDevs;
+    int nDevs = devsloader.getnAvailableDevs();
+    qDebug() << "Available devices number is " << nDevs;
 
     if (nDevs < 1) {
       qDebug() << "no devs were found!";
@@ -54,8 +54,12 @@ int main(int argc, char **argv)
                          p_curdevWgt, SLOT(setMoveMod())
                         );
         //p_curdevWgt->setmaxPos(73000);
-        p_curdevice->setName(devsloader.getDevName(i));
+        STANDASettings *curUserSettings = new STANDASettings(&mainWgt);
+        curUserSettings = devsloader.getUserSettings(i);
+
+        p_curdevice->setName(curUserSettings->getDeviceName());
         p_curdevice->Init();
+        /* TODO add set the other user params */
         p_curdevWgt->Init();
         pvbxLayout->addWidget(p_curdevWgt);
     }
