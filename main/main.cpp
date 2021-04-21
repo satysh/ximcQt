@@ -4,6 +4,7 @@
 #include "../view/STANDAVisualization.h"
 #include "../deviceobj/STANDADevice.h"
 #include "../devloader/STANDALoader.h"
+#include "../settingsdata/STANDASettings.h"
 //#include "../devsettings/STANDASettingsWidget.h"
 
 int main(int argc, char **argv)
@@ -22,7 +23,7 @@ int main(int argc, char **argv)
     devsloader.findInputFile();
     qDebug() << "loader result is " << devsloader.getResult();
 
-    const int nDevs = devsloader.getnDevs();
+    int nDevs = devsloader.getnDevs();
     qDebug() << "loader found devs=" << nDevs;
 
     if (nDevs < 1) {

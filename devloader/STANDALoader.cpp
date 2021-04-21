@@ -74,7 +74,7 @@ void STANDALoader::findDevices()
 //	Terminate if there are no connected devices
 	if (m_ndevs <= 0)
 	{
-		printf( "No devices found\n" );
+		//printf( "No devices found\n" );
 	//	Free memory used by device enumeration data
 		free_enumerate_devices( devenum );
 		emit failed();
