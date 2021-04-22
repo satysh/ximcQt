@@ -18,16 +18,18 @@ public:
     void Init();
 
     void setdPos  (double dpos) { dPos=dpos; }
-    void setminPos(double pos)  { minPos=pos; }
-    void setmaxPos(double pos)  { maxPos=pos; }
+    void setminPos(double pos)  { m_minPos=pos; }
+    void setmaxPos(double pos)  { m_maxPos=pos; }
+    void setminPosInDeviceCodes(int pos) { m_minPosInDeviceCodes=pos; }
+    void setmaxPosInDeviceCodes(int pos) { m_maxPosInDeviceCodes=pos; }
 
 
     double getdPos  () { return dPos; }
-    double getminPos() { return minPos; }
-    double getmaxPos() { return maxPos; }
+    double getminPos() { return m_minPos; }
+    double getmaxPos() { return m_maxPos; }
 
     int getmaxStepNumber();
-    
+
 private:
     void makeLabels();
     void makeEditors();
@@ -37,12 +39,13 @@ private:
 
 public slots:
     void setdPos(QString);
+/*
     void setminPos(QString);
     void setmaxPos(QString);
     void setDeviceName(QString);
     void setDeviceId(QString);
     void setDeviceToBasePosition();
-
+*/
     void setMoveMod();
     void setStopMod();
 
@@ -68,8 +71,9 @@ signals:
     void turnOffDevice();
     void posIsValid(QString);
     void posIsNotValid();
-    void startMoveDevice();
+    void startMoveDevice(QString);
     void stopMoveDevice ();
+    void moveDeviceTo(int);
 
 private:
     void setPreviousPos       (QString str) { strPreviousPos=str; }
@@ -97,8 +101,13 @@ private:
     bool sliderActiveFlag=false;
 
     double dPos=0.01; // step of position value changing
-    double minPos=0.;
-    double maxPos=1000.;
+    double m_minPos=0.;
+    double m_maxPos=1000.;
+    double m_currentPosition=0.;
+    int    m_currentPositionInDevCodes=0;
+    int m_minPosInDeviceCodes=0;
+    int m_maxPosInDeviceCodes=0;
 
     QString strPreviousPos="";
+    QString m_strCurrentPosition="";
 };

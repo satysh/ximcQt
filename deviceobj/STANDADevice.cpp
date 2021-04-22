@@ -314,7 +314,11 @@ void STANDADevice::move()
     double Position = (double)getHomePos() + getPos();
     command_move ( m_device, (int)Position, 0);
 }
-
+void STANDADevice::moveTo(QString pos)
+{
+    int position = (int)pos.toDouble();
+    moveTo(position);
+}
 void STANDADevice::left()
 {
     qDebug() << getName() << " is moving to the left";

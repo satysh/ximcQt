@@ -20,7 +20,7 @@ public:
 	~STANDALoader();
 
     int getnAvailableDevs() { return m_nAvailableDevs; }
-    STANDASettings *getUserSettings(int iDev) { return m_vOfUserDevsSettings.at(iDev); }
+    STANDASettings *getUserSettings(int iDev);
 
     //QString getDevName(int i);
 

@@ -70,6 +70,7 @@ public slots:
     void stop ();
     void sstp (); // Soft stop engine
     void move ();
+    void moveTo(QString);
     void left ();
     void right();
     void home();
@@ -105,8 +106,8 @@ private:
     //int     devId=0;
     double  m_devMinPos=0.;
     double  m_devMaxPos=1000.;
-    double  devPos=0.;
-    double  devStep=0.;
+    double  devPos=0.; // TODO Is it necessary?
+    double  devStep=0.; // TODO Is it necessary?
 
     int m_homePos=0;
     int m_timerId;

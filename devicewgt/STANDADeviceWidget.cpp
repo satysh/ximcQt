@@ -22,6 +22,10 @@ STANDADeviceWidget::~STANDADeviceWidget()
 
 void STANDADeviceWidget::Init()
 {
+    setminPos(0.);
+    double k =1.;
+    double maxPosition = k*(double)(m_maxPosInDeviceCodes-m_minPosInDeviceCodes); // TODO add correct k here
+    setmaxPos(maxPosition);
     makeLabels();
     makeEditors();
     makeButtons();
@@ -165,6 +169,7 @@ void STANDADeviceWidget::makeBaseConnections()
 // --------------------------------------------------
 
 // ------- Public Slots
+/*
 void STANDADeviceWidget::setminPos(QString str)
 {
     qDebug() << "STANDADeviceWidget::setminPos(" << str << ")";
@@ -184,7 +189,7 @@ void STANDADeviceWidget::setDeviceId(QString str)
 void STANDADeviceWidget::setDeviceToBasePosition()
 {
     qDebug() << "STANDADeviceWidget::setDeviceToBasePosition()";
-}
+}*/
 void STANDADeviceWidget::setMoveMod()
 {
     pcmdMove->setText("move");
@@ -270,6 +275,7 @@ void STANDADeviceWidget::checkUserTypedPosIsValid(QString str)
             setPreviousPos(str);
             setSliderToPos(str);
             posIsValid(str);
+            m_strCurrentPosition=str;
         }
         else {
             emit posIsNotValid();
@@ -280,7 +286,7 @@ void STANDADeviceWidget::checkUserTypedPosIsValid(QString str)
 
 void STANDADeviceWidget::moveStart()
 {
-    emit startMoveDevice();
+    emit startMoveDevice(m_strCurrentPosition);
     setStopMod();
 }
 void STANDADeviceWidget::moveStop()

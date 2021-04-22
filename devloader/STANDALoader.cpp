@@ -41,6 +41,12 @@ void STANDALoader::check()
 
 }
 */
+
+STANDASettings* STANDALoader::getUserSettings(int iDev)
+{
+    if (iDev >= m_vOfUserDevsSettings.size()) return nullptr;
+    return m_vOfUserDevsSettings.at(iDev);
+}
 void STANDALoader::findAvailableDevices()
 {
     qDebug() << "STANDALoader::findAvailableDevices";
@@ -187,13 +193,13 @@ void STANDALoader::compareAvailableAndUserSettings()
         for (int j=0; j<m_vOfUserDevsSettings.size(); j++) {
             STANDASettings *curUserDevsSettings = m_vOfUserDevsSettings.at(j);
             if (curAvailableDevsSettings->getDeviceName() == curUserDevsSettings->getDeviceName()) {
+                /* TODO add here the compare of the params */
                 qDebug() << "For the available device " <<  curAvailableDevsSettings->getDeviceName()
                          << " were found the corresponding user settings: ";
                 qDebug() << "Friendly name: " << curUserDevsSettings->getFriendlyName() << ", but the name wich is set:"
                          << curAvailableDevsSettings->getFriendlyName();
                 qDebug() << "Nom Voltage: " << curUserDevsSettings->getNomVoltage() << ", but the nom voltage wich is set: "
                          << curAvailableDevsSettings->getNomVoltage();
-                /* TODO add here the compare of the other params */
             }
             else {
                 qDebug() << "For the available device " << curAvailableDevsSettings->getDeviceName()
