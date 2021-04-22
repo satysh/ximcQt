@@ -54,7 +54,7 @@ int main(int argc, char **argv)
             // Load device wgt
             p_curdevWgt->setminPosInDeviceCodes(curDevUserSettings->getZeroPosition());
             p_curdevWgt->setmaxPosInDeviceCodes(curDevUserSettings->getMaxPosition());
-            p_curdevWgt->Init();
+            p_curdevWgt->Init(); // TODO It has to be that there are no effects for a place for the widget init
         }
         else {
             p_curdevice->Init();
