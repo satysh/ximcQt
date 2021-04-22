@@ -297,10 +297,6 @@ void STANDACalibratorWidget::MakeControlWindow()
     m_pDevDecelerationEdit->setValidator(new QIntValidator);
     m_pDevPosEdit->setValidator(new QIntValidator);
 
-    m_pcmdDevSetZeroPos = new QPushButton("setZeroPos");
-    m_pcmdDevSetMaxPos = new QPushButton("setMaxPos");
-
-
     m_pDevNameOk = new QPushButton("ok");
     m_pDevVoltageOk = new QPushButton("ok");
     m_pDevSpeedOk = new QPushButton("ok");
@@ -308,6 +304,8 @@ void STANDACalibratorWidget::MakeControlWindow()
     m_pDevDecelerationOk = new QPushButton("ok");
     m_pDevPosOk = new QPushButton("ok");
 
+    m_pcmdDevSetZeroPos = new QPushButton("setZeroPos");
+    m_pcmdDevSetMaxPos = new QPushButton("setMaxPos");
 
     QHBoxLayout *phbxLayout0ColumnRow0 = new QHBoxLayout;
     phbxLayout0ColumnRow0->addWidget(new QLabel(""), 0, Qt::AlignTop | Qt::AlignLeft);
