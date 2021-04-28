@@ -55,6 +55,10 @@ int main(int argc, char **argv)
             p_curdevWgt->setminPosInDeviceCodes(curDevUserSettings->getZeroPosition());
             p_curdevWgt->setmaxPosInDeviceCodes(curDevUserSettings->getMaxPosition());
             p_curdevWgt->Init(); // TODO It has to be that there are no effects for a place for the widget init
+            // TODO remove maxPosition! User should set It by It self!
+            double maxPosition=(double)std::max(curDevUserSettings->getZeroPosition(), curDevUserSettings->getMaxPosition())
+                                      -std::min(curDevUserSettings->getZeroPosition(), curDevUserSettings->getMaxPosition());
+            p_curdevWgt->setmaxPos(maxPosition);
         }
         else {
             p_curdevice->Init();

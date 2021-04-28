@@ -22,10 +22,11 @@ STANDADeviceWidget::~STANDADeviceWidget()
 
 void STANDADeviceWidget::Init()
 {
+    /*
     setminPos(0.);
-    double k =1.;
-    double maxPosition = k*(double)(m_maxPosInDeviceCodes-m_minPosInDeviceCodes); // TODO add correct k here
-    setmaxPos(maxPosition);
+    double maxPosition = (double)std::max(m_maxPosInDeviceCodes, m_minPosInDeviceCodes)
+                                -std::min(m_maxPosInDeviceCodes, m_minPosInDeviceCodes);
+    setmaxPos(maxPosition);*/
     makeLabels();
     makeEditors();
     makeButtons();
@@ -286,7 +287,18 @@ void STANDADeviceWidget::checkUserTypedPosIsValid(QString str)
 
 void STANDADeviceWidget::moveStart()
 {
-    emit startMoveDevice(m_strCurrentPosition);
+    double curPosInWgt = m_strCurrentPosition.toDouble();
+    double dPosInDevCodes = std::abs( std::max(m_minPosInDeviceCodes, m_maxPosInDeviceCodes)
+                                      -std::min(m_minPosInDeviceCodes, m_maxPosInDeviceCodes)
+                                     );
+    double curPosInDevCodes;
+    if (m_maxPosInDeviceCodes > m_minPosInDeviceCodes) {
+        curPosInDevCodes = (double)m_minPosInDeviceCodes + curPosInWgt*dPosInDevCodes/getmaxPos();
+    }
+    else {
+        curPosInDevCodes = (double)m_maxPosInDeviceCodes - curPosInWgt*dPosInDevCodes/getmaxPos();
+    }
+    emit startMoveDevice(QString().setNum(curPosInDevCodes));
     setStopMod();
 }
 void STANDADeviceWidget::moveStop()
