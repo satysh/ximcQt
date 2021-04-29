@@ -26,7 +26,7 @@ int main(int argc, char **argv)
     int nDevs = devsloader.getnAvailableDevs();
     qDebug() << "Available devices number is " << nDevs;
 
-    nDevs=2; // TODO debug
+    //nDevs=2; // TODO debug
     if (nDevs < 1) {
       qDebug() << "no devs were found!";
       return -1;
