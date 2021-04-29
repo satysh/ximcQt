@@ -1,6 +1,5 @@
 #include <QDebug>
 #include <QPushButton>
-#include <QLabel>
 #include <QLineEdit>
 #include <QSlider>
 #include <QIntValidator>
@@ -42,7 +41,7 @@ int STANDADeviceWidget::getmaxStepNumber()
 // -------- make base widgets that the class includes
 void STANDADeviceWidget::makeLabels()
 {
-    //plblName    = new QLabel("&name");
+    plblName    = new QLabel("&name");
     //plblId      = new QLabel("&id");
     plblPos     = new QLabel("&pos [mm]");
     plblupPos   = new QLabel("&up pos");
@@ -104,9 +103,11 @@ void STANDADeviceWidget::makeButtons()
 void STANDADeviceWidget::makeLayout()
 {
     // 1 column
-/*
+
     QVBoxLayout *pvbxLayout1 = new QVBoxLayout;
+    pvbxLayout1->addWidget(new QLabel(""));
     pvbxLayout1->addWidget(plblName,  0, Qt::AlignCenter);
+/*
     pvbxLayout1->addWidget(pnameEdit, 0, Qt::AlignCenter);
 
     // 2 column
@@ -145,8 +146,9 @@ void STANDADeviceWidget::makeLayout()
 
     // 1 row
     QHBoxLayout *phbxLayout = new QHBoxLayout;
-/*
+
     phbxLayout->addLayout(pvbxLayout1);
+/*
     phbxLayout->addLayout(pvbxLayout2);
 */
     phbxLayout->addLayout(pvbxLayout3);

@@ -58,6 +58,7 @@ int main(int argc, char **argv)
             // TODO remove maxPosition! User should set It by It self!
             double maxPosition=(double)std::max(curDevUserSettings->getZeroPosition(), curDevUserSettings->getMaxPosition())
                                       -std::min(curDevUserSettings->getZeroPosition(), curDevUserSettings->getMaxPosition());
+            p_curdevWgt->setDeviceName(p_curdevice->getFriendlyName());
             p_curdevWgt->setmaxPos(maxPosition);
         }
         else {

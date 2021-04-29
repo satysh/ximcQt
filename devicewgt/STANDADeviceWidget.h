@@ -1,9 +1,9 @@
 #pragma once
 
 #include <QWidget>
+#include <QLabel>
 
 class QPushButton;
-class QLabel;
 class QLineEdit;
 class QSlider;
 class QString;
@@ -22,6 +22,7 @@ public:
     void setmaxPos(double pos)  { m_maxPos=pos; }
     void setminPosInDeviceCodes(int pos) { m_minPosInDeviceCodes=pos; }
     void setmaxPosInDeviceCodes(int pos) { m_maxPosInDeviceCodes=pos; }
+    void setDeviceName(QString name) { plblName->setText(name); }
 
 
     double getdPos  () { return dPos; }
@@ -42,7 +43,6 @@ public slots:
 /*
     void setminPos(QString);
     void setmaxPos(QString);
-    void setDeviceName(QString);
     void setDeviceId(QString);
     void setDeviceToBasePosition();
 */
