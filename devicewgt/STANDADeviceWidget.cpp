@@ -233,6 +233,7 @@ void STANDADeviceWidget::setPosBySlider(int num)
     disconnect(pposEdit, SIGNAL(textChanged(QString)), this, SLOT(checkUserTypedPosIsValid(QString)));
     pposEdit->setText(QString().setNum(axisSliderPos));
     emit posIsValid(QString().setNum(axisSliderPos));
+    m_strCurrentPosition.setNum(axisSliderPos);
     connect(pposEdit, SIGNAL(textChanged(QString)), this, SLOT(checkUserTypedPosIsValid(QString)));
 }
 
@@ -295,18 +296,22 @@ void STANDADeviceWidget::checkUserTypedPosIsValid(QString str)
 void STANDADeviceWidget::moveStart()
 {
     qDebug() << "STANDADeviceWidget::moveStart";
-    double curPosInWgt = m_strCurrentPosition.toDouble();
+    qDebug() << "m_strCurrentPosition=" << m_strCurrentPosition;
+    int curPosInWgt = (int)m_strCurrentPosition.toDouble();
     double dPosInDevCodes = std::abs( std::max(m_minPosInDeviceCodes, m_maxPosInDeviceCodes)
                                       -std::min(m_minPosInDeviceCodes, m_maxPosInDeviceCodes)
                                      );
     qDebug() << "curPosInWgt=" << curPosInWgt << ", dPosInDevCodes=" << dPosInDevCodes;
 
-    double curPosInDevCodes;
+    int curPosInDevCodes;
+    qDebug() << "m_minPosInDeviceCodes=" << m_minPosInDeviceCodes << ", "
+             << "m_maxPosInDeviceCodes=" << m_maxPosInDeviceCodes;
+    qDebug() << "getmaxPos()=" << getmaxPos();
     if (m_maxPosInDeviceCodes > m_minPosInDeviceCodes) {
-        curPosInDevCodes = (double)m_minPosInDeviceCodes + curPosInWgt*dPosInDevCodes/getmaxPos();
+        curPosInDevCodes = (int)m_minPosInDeviceCodes + curPosInWgt*dPosInDevCodes/getmaxPos();
     }
     else {
-        curPosInDevCodes = (double)m_maxPosInDeviceCodes - curPosInWgt*dPosInDevCodes/getmaxPos();
+        curPosInDevCodes = (int)m_maxPosInDeviceCodes - curPosInWgt*dPosInDevCodes/getmaxPos();
     }
     qDebug() << "curPosInDevCodes=" << curPosInDevCodes;
     emit startMoveDevice(QString().setNum(curPosInDevCodes));

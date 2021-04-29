@@ -26,11 +26,11 @@ int main(int argc, char **argv)
     int nDevs = devsloader.getnAvailableDevs();
     qDebug() << "Available devices number is " << nDevs;
 
+    nDevs=2; // TODO debug
     if (nDevs < 1) {
       qDebug() << "no devs were found!";
       return -1;
     }
-
     for (int i=0; i<nDevs; i++) {
         STANDADevice* p_curdevice = new STANDADevice(&mainWgt);
         STANDADeviceWidget* p_curdevWgt = new STANDADeviceWidget(&mainWgt);
@@ -54,12 +54,12 @@ int main(int argc, char **argv)
             // Load device wgt
             p_curdevWgt->setminPosInDeviceCodes(curDevUserSettings->getZeroPosition());
             p_curdevWgt->setmaxPosInDeviceCodes(curDevUserSettings->getMaxPosition());
-            p_curdevWgt->Init(); // TODO It has to be that there are no effects for a place for the widget init
-            // TODO remove maxPosition! User should set It by It self!
             double maxPosition=(double)std::max(curDevUserSettings->getZeroPosition(), curDevUserSettings->getMaxPosition())
                                       -std::min(curDevUserSettings->getZeroPosition(), curDevUserSettings->getMaxPosition());
-            p_curdevWgt->setDeviceName(p_curdevice->getFriendlyName());
             p_curdevWgt->setmaxPos(maxPosition);
+            p_curdevWgt->Init(); // TODO It has to be that there are no effects for a place for the widget init
+            // TODO remove maxPosition! User should set It by It self!
+            p_curdevWgt->setDeviceName(p_curdevice->getFriendlyName());
         }
         else {
             p_curdevice->Init();
