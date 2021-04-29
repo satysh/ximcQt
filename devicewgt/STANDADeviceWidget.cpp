@@ -195,6 +195,7 @@ void STANDADeviceWidget::setDeviceToBasePosition()
 }*/
 void STANDADeviceWidget::setMoveMod()
 {
+    qDebug() << "STANDADeviceWidget::setMoveMod";
     pcmdMove->setText("move");
     disconnect(pcmdMove, SIGNAL(clicked()), this, SLOT(moveStop()));
     connect(pcmdMove, SIGNAL(clicked()), this, SLOT(moveStart()));
@@ -206,6 +207,7 @@ void STANDADeviceWidget::setMoveMod()
 }
 void STANDADeviceWidget::setStopMod()
 {
+    qDebug() << "STANDADeviceWidget::setStopMod";
     disconnect(pcmdMove, SIGNAL(clicked()), this, SLOT(moveStart()));
     pcmdMove->setText("stop");
     connect(pcmdMove, SIGNAL(clicked()), this, SLOT(moveStop()));
@@ -279,20 +281,26 @@ void STANDADeviceWidget::checkUserTypedPosIsValid(QString str)
             setSliderToPos(str);
             posIsValid(str);
             m_strCurrentPosition=str;
+            qDebug() << "STANDADeviceWidget::checkUserTypedPosIsValid(" << m_strCurrentPosition << ") posIsValid!";
         }
         else {
             emit posIsNotValid();
             pposEdit->setText(getPreviousPos());
+            m_strCurrentPosition="0";
+            qDebug() << "STANDADeviceWidget::checkUserTypedPosIsValid(" << m_strCurrentPosition << ") posIsNotValid!";
         }
     }
 }
 
 void STANDADeviceWidget::moveStart()
 {
+    qDebug() << "STANDADeviceWidget::moveStart";
     double curPosInWgt = m_strCurrentPosition.toDouble();
     double dPosInDevCodes = std::abs( std::max(m_minPosInDeviceCodes, m_maxPosInDeviceCodes)
                                       -std::min(m_minPosInDeviceCodes, m_maxPosInDeviceCodes)
                                      );
+    qDebug() << "curPosInWgt=" << curPosInWgt << ", dPosInDevCodes=" << dPosInDevCodes;
+
     double curPosInDevCodes;
     if (m_maxPosInDeviceCodes > m_minPosInDeviceCodes) {
         curPosInDevCodes = (double)m_minPosInDeviceCodes + curPosInWgt*dPosInDevCodes/getmaxPos();
@@ -300,6 +308,7 @@ void STANDADeviceWidget::moveStart()
     else {
         curPosInDevCodes = (double)m_maxPosInDeviceCodes - curPosInWgt*dPosInDevCodes/getmaxPos();
     }
+    qDebug() << "curPosInDevCodes=" << curPosInDevCodes;
     emit startMoveDevice(QString().setNum(curPosInDevCodes));
     setStopMod();
 }
