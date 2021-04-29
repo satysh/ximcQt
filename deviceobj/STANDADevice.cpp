@@ -269,10 +269,10 @@ void STANDADevice::Init()
         printf("Getting edges settings: ");
         get_edges_settings(m_device, &m_edges_settings);
         printf( "lB %d, ulb %d, rB %d, urB\n", m_edges_settings.LeftBorder, m_edges_settings.uLeftBorder, m_edges_settings.RightBorder, m_edges_settings.uRightBorder);
-
+/*
         m_edges_settings.EnderFlags = 0;
         set_edges_settings(m_device, &m_edges_settings);
-        moveToBasePos();
+        moveToBasePos();*/
         qDebug() << " ----------------- Init End -----------------";
     }
 }
