@@ -10,6 +10,7 @@ STANDADevice::STANDADevice(QObject *parent/*=nullptr*/)
 {
     qDebug() << "STANDADevice::STANDADevice";
     if (getName() == "") emit Disabled();
+    //startTimer(50);  // 50-millisecond timer
 }
 
 STANDADevice::STANDADevice(QString name, QObject *parent /*= nullptr*/)
@@ -211,7 +212,7 @@ void STANDADevice::moveToBasePos()
 void STANDADevice::timerEvent(QTimerEvent* ptev)
 {
     get_status( m_device, &m_status );
-    //qDebug() << "QTimerEvent speed = " << m_status.CurSpeed;
+    qDebug() << "QTimerEvent speed = " << m_status.CurSpeed;
     if (m_status.CurSpeed == 0) {
         killTimer(ptev->timerId());
         emit deviceMoveEnd();
@@ -308,7 +309,7 @@ void STANDADevice::sstp()
 }
 void STANDADevice::move()
 {
-    startTimer(1000);
+    startTimer(1000); // 1-second timer
     emit deviceMoveStart();
     qDebug() << "Device " << getName() << " is moving to pos: "  << getPos() << "\n";
     double Position = (double)getHomePos() + getPos();
@@ -316,6 +317,7 @@ void STANDADevice::move()
 }
 void STANDADevice::moveTo(QString pos)
 {
+    startTimer(1000); // 1-second timer
     int position = (int)pos.toDouble();
     moveTo(position);
 }
