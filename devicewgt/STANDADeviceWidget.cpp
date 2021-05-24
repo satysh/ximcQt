@@ -32,12 +32,12 @@ void STANDADeviceWidget::Init()
     makeLayout();
     makeBaseConnections();
 }
-
+/*
 int STANDADeviceWidget::getmaxStepNumber()
 {
     double lenAxisMoveDevice= getmaxPos() - getminPos();
     return (int)lenAxisMoveDevice*100; // to provide accuracy 0.01
-}
+}*/
 // -------- make base widgets that the class includes
 void STANDADeviceWidget::makeLabels()
 {
@@ -64,17 +64,18 @@ void STANDADeviceWidget::makeEditors()
     QDoubleValidator *pposValidator = new QDoubleValidator(getminPos(), getmaxPos(), 2);
     pposValidator->setNotation(QDoubleValidator::StandardNotation);
     pposValidator->setLocale(QLocale::C);
-    pposEdit->setValidator(pposValidator);
+    //pposEdit->setValidator(pposValidator);
     //pposValidator->setRange(getminPos(), getmaxPos());
+    pposEdit->setValidator(new QIntValidator(0, (int)getmaxPos()));
     plblPos->setBuddy(pposEdit);
 
     pdPosEdit = new QLineEdit(QString("").setNum(getdPos()));
     pdPosEdit->setAlignment(Qt::AlignRight);
     const QSize editorSize = QSize(50, 25);
     pdPosEdit->setFixedSize(editorSize);
-    QDoubleValidator *pdPosValidator = new QDoubleValidator(pdPosEdit);
-    pdPosValidator->setLocale(QLocale::C);
-    pdPosEdit->setValidator(pdPosValidator);
+    /*QDoubleValidator *pdPosValidator = new QDoubleValidator(pdPosEdit);
+    pdPosValidator->setLocale(QLocale::C);*/
+    pdPosEdit->setValidator(new QIntValidator(0, (int)getmaxPos()));
 }
 void STANDADeviceWidget::makeButtons()
 {
@@ -94,9 +95,9 @@ void STANDADeviceWidget::makeButtons()
     psldr = new QSlider(Qt::Horizontal);
     psldr->setFixedSize(sldrSize);
     psldr->setSingleStep(1);
-    psldr->setRange(0, getmaxStepNumber());
+    psldr->setRange(0, getmaxPos());
     psldr->setValue(QString(pposEdit->text()).toInt());
-    int tickInterval = getmaxStepNumber()/20;
+    int tickInterval = getmaxPos()/20;
     psldr->setTickInterval(tickInterval);
     psldr->setTickPosition(QSlider::TicksBelow);
 }
@@ -223,24 +224,28 @@ void STANDADeviceWidget::setStopMod()
 // ------- Private Slots
 void STANDADeviceWidget::setPosBySlider(int num)
 {
-    //qDebug() << "STANDADeviceWidget::setPosBySlider(" << num << ")";
+    /*
+    qDebug() << "STANDADeviceWidget::setPosBySlider(" << num << ")";
     int mod = num/100;
-    //qDebug() << " mod=" << mod;
+    qDebug() << " mod=" << mod;
     int div = num%100;
-    //qDebug() << " div=" << div;
+    qDebug() << " div=" << div;
     double axisSliderPos = double(mod) + double(div)/100.;
-    //qDebug() << " axisSliderPos=" << axisSliderPos;
+    axisSliderPos = num;
+    qDebug() << " axisSliderPos=" << axisSliderPos;
+    */
     disconnect(pposEdit, SIGNAL(textChanged(QString)), this, SLOT(checkUserTypedPosIsValid(QString)));
-    pposEdit->setText(QString().setNum(axisSliderPos));
-    emit posIsValid(QString().setNum(axisSliderPos));
-    m_strCurrentPosition.setNum(axisSliderPos);
+    pposEdit->setText(QString().setNum(num));
+    emit posIsValid(QString().setNum(num));
+    m_strCurrentPosition.setNum(num);
     connect(pposEdit, SIGNAL(textChanged(QString)), this, SLOT(checkUserTypedPosIsValid(QString)));
 }
 
 void STANDADeviceWidget::setSliderToPos(QString str)
 {
     //qDebug() << "STANDADeviceWidget::setSliderToPos(" << str << ")";
-    int curSliderValue = int(100.*str.toDouble());
+    //int curSliderValue = int(100.*str.toDouble());
+    int curSliderValue = str.toInt();
     //qDebug() << "curSliderValue=" << curSliderValue;
     disconnect(psldr, SIGNAL(valueChanged(int)), this, SLOT(setPosBySlider(int)));
     psldr->setValue(curSliderValue);

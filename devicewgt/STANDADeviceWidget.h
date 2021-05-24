@@ -29,7 +29,7 @@ public:
     double getminPos() { return m_minPos; }
     double getmaxPos() { return m_maxPos; }
 
-    int getmaxStepNumber();
+    //int getmaxStepNumber();
 
 private:
     void makeLabels();
@@ -100,7 +100,7 @@ private:
 
     bool sliderActiveFlag=false;
 
-    double dPos=0.01; // step of position value changing
+    double dPos=1; // step of position value changing
     double m_minPos=0.;
     double m_maxPos=1000.;
     double m_currentPosition=0.;
