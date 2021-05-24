@@ -311,7 +311,7 @@ void STANDADeviceWidget::moveStart()
         curPosInDevCodes = (int)m_minPosInDeviceCodes + curPosInWgt*dPosInDevCodes/getmaxPos();
     }
     else {
-        curPosInDevCodes = (int)m_maxPosInDeviceCodes - curPosInWgt*dPosInDevCodes/getmaxPos();
+        curPosInDevCodes = (int)m_minPosInDeviceCodes - curPosInWgt*dPosInDevCodes/getmaxPos();
     }
     qDebug() << "curPosInDevCodes=" << curPosInDevCodes;
     emit startMoveDevice(QString().setNum(curPosInDevCodes));
