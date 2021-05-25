@@ -49,6 +49,8 @@ public slots:
     void setMoveMod();
     void setStopMod();
 
+    void moveStart();
+    void moveStop();
 
 private slots:
     void setPosBySlider(int);
@@ -59,8 +61,6 @@ private slots:
     void upPos();
     void downPos();
     void checkUserTypedPosIsValid(QString);
-    void moveStart();
-    void moveStop();
     void setSliderToFixedPos();
 
     void posIsValidDebug(QString);
