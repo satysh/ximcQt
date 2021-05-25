@@ -309,7 +309,7 @@ void STANDADevice::sstp()
 }
 void STANDADevice::move()
 {
-    startTimer(1000); // 1-second timer
+    startTimer(3000); // 3-second timer
     emit deviceMoveStart();
     qDebug() << "Device " << getName() << " is moving to pos: "  << getPos() << "\n";
     double Position = (double)getHomePos() + getPos();
