@@ -212,7 +212,7 @@ void STANDADevice::moveToBasePos()
 void STANDADevice::timerEvent(QTimerEvent* ptev)
 {
     get_status( m_device, &m_status );
-    qDebug() << "QTimerEvent speed = " << m_status.CurSpeed;
+    //qDebug() << "QTimerEvent speed = " << m_status.CurSpeed;
     if (m_status.CurSpeed == 0) {
         killTimer(ptev->timerId());
         emit deviceMoveEnd();

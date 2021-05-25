@@ -43,7 +43,7 @@ void STANDADeviceWidget::makeLabels()
 {
     plblName    = new QLabel("&name");
     //plblId      = new QLabel("&id");
-    plblPos     = new QLabel("&pos [mm]");
+    plblPos     = new QLabel("&pos");
     plblupPos   = new QLabel("&up pos");
     plbldownPos = new QLabel("&down pos");
 }
