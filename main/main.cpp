@@ -26,7 +26,14 @@ int main(int argc, char **argv)
     int nDevs = devsloader.getnAvailableDevs();
     qDebug() << "Available devices number is " << nDevs;
 
-    //nDevs=2; // TODO debug
+    // TODO It is temporarily
+    QPushButton *pcmdMoveAll = new QPushButton("move all");
+    QPushButton *pcmdStopAll = new QPushButton("stop all");
+    QHBoxLayout *phbxmovestopLayout = new QHBoxLayout;
+    phbxmovestopLayout->addWidget(pcmdMoveAll);
+    phbxmovestopLayout->addWidget(pcmdStopAll);
+
+    nDevs=2; // TODO debug
     if (nDevs < 1) {
       qDebug() << "no devs were found!";
       return -1;
@@ -75,8 +82,18 @@ int main(int argc, char **argv)
         QObject::connect(p_curdevice, SIGNAL(deviceMoveEnd()),
                          p_curdevWgt, SLOT(setMoveMod())
                         );
+        // TODO It is temporarily
+        QObject::connect(pcmdMoveAll, SIGNAL(clicked()),
+                         p_curdevWgt, SLOT(moveStart())
+                        );
+        QObject::connect(pcmdStopAll, SIGNAL(clicked()),
+                         p_curdevWgt, SLOT(moveStop())
+                        );
+
+
         pvbxLayout->addWidget(p_curdevWgt);
     }
+    pvbxLayout->addLayout(phbxmovestopLayout); // TODO It is temporarily
     mainWgt.setLayout(pvbxLayout);
 
     // Connect device widget and view widget
